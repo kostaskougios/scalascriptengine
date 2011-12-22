@@ -5,7 +5,7 @@ import org.scalatest.FunSuite
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import java.io.File
-
+import scalascriptengine._
 /**
  * @author kostantinos.kougios
  *
@@ -17,6 +17,13 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 	val sourceDir = new File("testfiles/CompilationSuite")
 	val classPath = new File("testfiles/lib").listFiles.filter(_.getName.endsWith(".jar")).toSet + new File("target/test-classes")
 
+	test("code modifications are reloaded") {
+		val destDir = newTmpDir
+		cleanDestinationAndCopyFromSource(new File(sourceDir, "v1"), destDir)
+		val sse = ScalaScriptEngine(destDir, classPath)
+		val v1: TestClassTrait = sse.newInstance(destDir, "reload.Reload")
+		v1.result should be === "v1"
+	}
 	test("scala files to compiled classes") {
 		val sse = ScalaScriptEngine(sourceDir, classPath)
 		sse.newInstance(sourceDir, "test.MyClass")

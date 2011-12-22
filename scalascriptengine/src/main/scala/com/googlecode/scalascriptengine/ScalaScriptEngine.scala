@@ -8,7 +8,10 @@ import java.util.UUID
  *
  * 22 Dec 2011
  */
-class ScalaScriptEngine private (sourcePaths: Set[File], classPaths: Set[File], val outputDir: File) {
+class ScalaScriptEngine private (
+		sourcePaths: Set[File],
+		classPaths: Set[File],
+		val outputDir: File) {
 	private val compileManager = new CompilerManager(sourcePaths, classPaths, outputDir)
 	private val classLoader = new URLClassLoader((classPaths + outputDir).map(_.toURI.toURL).toArray)
 
