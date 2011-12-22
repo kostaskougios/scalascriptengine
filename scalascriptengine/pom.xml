@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.googlecode.scalascriptengine</groupId>
-  <artifactId>scalascriptengine</artifactId>
-  <version>0.5.0</version>
-  <name>scalascriptengine</name>
-  <description>A ScriptEngine for Scala</description>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.googlecode.scalascriptengine</groupId>
+	<artifactId>scalascriptengine</artifactId>
+	<version>0.5.0</version>
+	<name>scalascriptengine</name>
+	<description>A ScriptEngine for Scala</description>
 	<url>https://code.google.com/p/scalascriptengine/</url>
 	<licenses>
 		<license>
@@ -108,7 +108,10 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.10</version>
 				<configuration>
-					<skip>true</skip>
+					<includes>
+						<include>**/*Spec.class</include>
+						<include>**/*Suite.class</include>
+					</includes>
 				</configuration>
 			</plugin>
 			<plugin>
