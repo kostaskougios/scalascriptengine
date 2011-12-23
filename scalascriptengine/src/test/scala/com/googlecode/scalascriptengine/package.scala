@@ -16,8 +16,8 @@ package object scalascriptengine {
 		if (!dir.getAbsolutePath.startsWith(tmpDirStr)) throw new IllegalStateException("only deleting from tmp folder allowed in order to avoid damage")
 		FileUtils.deleteDirectory(dir)
 	}
-	def newTmpDir = {
-		val dir = new File(tmpDir, "scalascriptengine-" + UUID.randomUUID())
+	def newTmpDir(name: String) = {
+		val dir = new File(tmpDir, name)
 		dir.mkdir
 		dir
 	}

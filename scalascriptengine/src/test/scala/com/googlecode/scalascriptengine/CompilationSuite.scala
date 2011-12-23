@@ -18,11 +18,14 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 	val classPath = new File("testfiles/lib").listFiles.filter(_.getName.endsWith(".jar")).toSet + new File("target/test-classes")
 
 	test("code modifications are reloaded") {
-		val destDir = newTmpDir
-		cleanDestinationAndCopyFromSource(new File(sourceDir, "v1"), destDir)
+		val destDir = newTmpDir("dynamicsrc")
+		cleanDestinationAndCopyFromSource(new File(sourceDir, "v1/reload"), destDir)
 		val sse = ScalaScriptEngine(destDir, classPath)
 		val v1: TestClassTrait = sse.newInstance(destDir, "reload.Reload")
 		v1.result should be === "v1"
+		cleanDestinationAndCopyFromSource(new File(sourceDir, "v2/reload"), destDir)
+		val v2: TestClassTrait = sse.newInstance(destDir, "reload.Reload")
+		v2.result should be === "v2"
 	}
 	test("scala files to compiled classes") {
 		val sse = ScalaScriptEngine(sourceDir, classPath)

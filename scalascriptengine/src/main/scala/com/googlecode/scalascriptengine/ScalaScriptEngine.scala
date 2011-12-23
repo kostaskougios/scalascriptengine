@@ -1,6 +1,5 @@
 package com.googlecode.scalascriptengine
 import java.io.File
-import java.net.URLClassLoader
 import java.util.UUID
 
 /**
@@ -12,8 +11,8 @@ class ScalaScriptEngine private (
 		sourcePaths: Set[File],
 		classPaths: Set[File],
 		val outputDir: File) {
-	private val compileManager = new CompilerManager(sourcePaths, classPaths, outputDir)
-	private val classLoader = new URLClassLoader((classPaths + outputDir).map(_.toURI.toURL).toArray)
+	private def compileManager = new CompilerManager(sourcePaths, classPaths, outputDir)
+	private val classLoader = new ScalaClassLoader(classPaths + outputDir)
 
 	def load[T](sourceDir: File, className: String): Class[T] = {
 		val scalaFile = sourceDir.getAbsolutePath + "/" + className.replace('.', '/') + ".scala"
