@@ -19,16 +19,19 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 
 	test("code modifications are reloaded") {
 		val destDir = newTmpDir("dynamicsrc")
-		cleanDestinationAndCopyFromSource(new File(sourceDir, "v1/reload"), destDir)
-		val sse = ScalaScriptEngine(destDir, classPath)
-		sse.refresh
-		val v1: TestClassTrait = sse.newInstance("reload.Reload")
-		v1.result should be === "v1"
-		copyFromSource(new File(sourceDir, "v2/reload"), destDir)
-		sse.refresh
-		val v2: TestClassTrait = sse.newInstance("reload.Reload")
-		v2.result should be === "v2"
+		for (i <- 1 to 5) {
+			copyFromSource(new File(sourceDir, "v1/reload"), destDir)
+			val sse = ScalaScriptEngine(destDir, classPath)
+			sse.refresh
+			val v1: TestClassTrait = sse.newInstance("reload.Reload")
+			v1.result should be === "v1"
+			copyFromSource(new File(sourceDir, "v2/reload"), destDir)
+			sse.refresh
+			val v2: TestClassTrait = sse.newInstance("reload.Reload")
+			v2.result should be === "v2"
+		}
 	}
+
 	test("scala files to compiled classes") {
 		val sse = ScalaScriptEngine(sourceDir, classPath)
 		sse.refresh

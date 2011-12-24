@@ -18,6 +18,7 @@ package object scalascriptengine {
 	}
 	def newTmpDir(name: String) = {
 		val dir = new File(tmpDir, name)
+		if (dir.isDirectory) deleteDir(dir)
 		dir.mkdir
 		dir
 	}
