@@ -1,6 +1,7 @@
 package test
 import com.googlecode.scalascriptengine.TestClassTrait
 import com.googlecode.scalascriptengine.TestParamTrait
+import com.googlecode.scalascriptengine.TestValTrait
 
 /**
  * used to test the scala class loader. Please comment out after
@@ -20,4 +21,8 @@ import com.googlecode.scalascriptengine.TestParamTrait
 
 //class TestParam extends TestParamTrait {
 //	override def result(tct: TestClassTrait) = "TP:" + tct.result
+//}
+
+//class TestVal extends TestValTrait {
+//	val x = 2
 //}

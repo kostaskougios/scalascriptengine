@@ -14,3 +14,7 @@ trait TestClassTrait {
 trait TestParamTrait {
 	def result(tct: TestClassTrait): String
 }
+
+trait TestValTrait {
+	val x: Int
+}

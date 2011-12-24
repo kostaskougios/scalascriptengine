@@ -31,7 +31,7 @@ class ScalaClassLoader(sourceDirs: Set[File], classPath: Set[File], parentClassL
 	def loadAll: ClassLoader = {
 		val loader = new ThrowawayClassLoader
 		val all = sourceDirs.map(dir => loadFromDir(dir, dir, loader)).flatten
-		cache = all.toMap[String, Cached]
+		cache = all.toMap
 		loader
 	}
 
