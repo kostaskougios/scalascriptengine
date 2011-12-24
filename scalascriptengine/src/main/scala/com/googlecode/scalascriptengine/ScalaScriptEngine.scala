@@ -14,16 +14,22 @@ class ScalaScriptEngine private (
 	private def compileManager = new CompilerManager(sourcePaths, classPaths, outputDir)
 	private val classLoader = new ScalaClassLoader(outputDir, classPaths)
 
-	def load[T](sourceDir: File, className: String): Class[T] = {
-		val scalaFile = sourceDir.getAbsolutePath + "/" + className.replace('.', '/') + ".scala"
-		compileManager.compile(Set(scalaFile))
-		classLoader.loadClass(className).asInstanceOf[Class[T]]
+	def refresh: CodeVersion = {
+		val allFiles = sourcePaths.map(srcDir => refresh0(srcDir)).flatten
+		val sourceFiles = allFiles.map(f => SourceFile(f, f.lastModified))
+		compileManager.compile(allFiles.map(_.getAbsolutePath))
+		val tcl = classLoader.loadAll
+		CodeVersion(sourceFiles, tcl)
 	}
 
-	def newInstance[T](sourceDir: File, className: String): T = {
-		val clz = load(sourceDir, className)
-		clz.newInstance
+	private def refresh0(srcDir: File): Set[File] = {
+		val files = srcDir.listFiles
+		val scalaFiles = files.filter(_.getName.endsWith(".scala"))
+		val rest = files.filter(_.isDirectory).map(refresh0 _).flatten
+		(scalaFiles ++ rest).toSet
 	}
+
+	def newInstance[T](className: String): T = classLoader.newInstance(className)
 
 	/**
 	 * please make sure outputDir is valid!!!
