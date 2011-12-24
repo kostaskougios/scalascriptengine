@@ -12,7 +12,7 @@ class ScalaScriptEngine private (
 		classPaths: Set[File],
 		val outputDir: File) {
 	private def compileManager = new CompilerManager(sourcePaths, classPaths, outputDir)
-	private val classLoader = new ScalaClassLoader(classPaths + outputDir)
+	private val classLoader = new ScalaClassLoader(outputDir, classPaths)
 
 	def load[T](sourceDir: File, className: String): Class[T] = {
 		val scalaFile = sourceDir.getAbsolutePath + "/" + className.replace('.', '/') + ".scala"

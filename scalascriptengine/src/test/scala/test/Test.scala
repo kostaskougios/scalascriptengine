@@ -12,3 +12,7 @@ import com.googlecode.scalascriptengine.TestClassTrait
 //class Test extends TestClassTrait {
 //	def result = "v2"
 //}
+//
+//class TestDep extends TestClassTrait {
+//	def result = "TestDep:" + new Test().result
+//}
