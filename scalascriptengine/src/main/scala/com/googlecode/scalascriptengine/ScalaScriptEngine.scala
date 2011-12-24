@@ -18,7 +18,7 @@ class ScalaScriptEngine private (
 		val allFiles = sourcePaths.map(srcDir => refresh0(srcDir)).flatten
 		val sourceFiles = allFiles.map(f => SourceFile(f, f.lastModified))
 		compileManager.compile(allFiles.map(_.getAbsolutePath))
-		val tcl = classLoader.loadAll
+		val tcl = classLoader.refresh
 		CodeVersion(sourceFiles, tcl)
 	}
 
@@ -29,6 +29,7 @@ class ScalaScriptEngine private (
 		(scalaFiles ++ rest).toSet
 	}
 
+	def getClass[T](className: String): Class[T] = classLoader.getClass(className)
 	def newInstance[T](className: String): T = classLoader.newInstance(className)
 
 	/**

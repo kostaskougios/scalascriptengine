@@ -23,6 +23,8 @@ package object scalascriptengine {
 	}
 	def cleanDestinationAndCopyFromSource(src: File, dest: File) {
 		deleteDir(dest)
-		FileUtils.copyDirectoryToDirectory(src, dest)
+		copyFromSource(src, dest)
 	}
+
+	def copyFromSource(src: File, dest: File) = FileUtils.copyDirectoryToDirectory(src, dest)
 }

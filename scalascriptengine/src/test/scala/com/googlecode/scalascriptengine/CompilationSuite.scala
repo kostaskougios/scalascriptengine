@@ -24,7 +24,7 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 		sse.refresh
 		val v1: TestClassTrait = sse.newInstance("reload.Reload")
 		v1.result should be === "v1"
-		cleanDestinationAndCopyFromSource(new File(sourceDir, "v2/reload"), destDir)
+		copyFromSource(new File(sourceDir, "v2/reload"), destDir)
 		sse.refresh
 		val v2: TestClassTrait = sse.newInstance("reload.Reload")
 		v2.result should be === "v2"
