@@ -10,3 +10,7 @@ package com.googlecode.scalascriptengine
 trait TestClassTrait {
 	def result: String
 }
+
+trait TestParamTrait {
+	def result(tct: TestClassTrait): String
+}

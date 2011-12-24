@@ -46,12 +46,28 @@ class ScalaClassLoaderSuite extends FunSuite with ShouldMatchers {
 		val scl = new ScalaClassLoader(destDir, classPath)
 		scl.loadAll
 		val tctV1: TestClassTrait = scl.newInstance("test.TestDep")
-		val cl = tctV1.getClass().getClassLoader()
 		tctV1.result should be === "TestDep:v1"
 
 		cleanDestinationAndCopyFromSource(new File(sourceDir, "v2/test"), destDir)
 		scl.loadAll
 		val tctV2: TestClassTrait = scl.newInstance("test.TestDep")
 		tctV2.result should be === "TestDep:v2"
+	}
+
+	test("using both v1 and v2 classes") {
+		val destDir = newTmpDir("dynamicclass")
+		cleanDestinationAndCopyFromSource(new File(sourceDir, "v1/test"), destDir)
+		val scl = new ScalaClassLoader(destDir, classPath)
+		scl.loadAll
+
+		val tctV1: TestClassTrait = scl.newInstance("test.Test")
+		val tcpV1: TestParamTrait = scl.newInstance("test.TestParam")
+		tcpV1.result(tctV1) should be === "TP:v1"
+
+		cleanDestinationAndCopyFromSource(new File(sourceDir, "v2/test"), destDir)
+		scl.loadAll
+
+		val tcpV2: TestParamTrait = scl.newInstance("test.TestParam")
+		tcpV2.result(tctV1) should be === "TP:v1"
 	}
 }
