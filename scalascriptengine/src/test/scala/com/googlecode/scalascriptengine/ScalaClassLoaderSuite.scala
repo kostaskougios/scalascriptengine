@@ -69,5 +69,8 @@ class ScalaClassLoaderSuite extends FunSuite with ShouldMatchers {
 
 		val tcpV2: TestParamTrait = scl.newInstance("test.TestParam")
 		tcpV2.result(tctV1) should be === "TP:v1"
+
+		val tctV2: TestClassTrait = scl.newInstance("test.Test")
+		tcpV2.result(tctV2) should be === "TP:v2"
 	}
 }

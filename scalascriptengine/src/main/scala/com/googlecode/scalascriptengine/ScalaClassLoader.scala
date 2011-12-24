@@ -11,14 +11,16 @@ class ScalaClassLoader(sourceDirs: Set[File], classPath: Set[File], parentClassL
 	def this(sourceDirs: Set[File], classPath: Set[File]) = this(sourceDirs, classPath, Thread.currentThread.getContextClassLoader)
 	def this(sourceDir: File, classPath: Set[File]) = this(Set(sourceDir), classPath)
 
-	@volatile private var cache = Map[String, Class[_]]()
+	// class cache
+	private case class Cached(clz: Class[_], srcFile: File, srcDir: File, lastModified: Long)
+	@volatile private var cache = Map[String, Cached]()
 
 	override protected def loadClass(name: String, resolve: Boolean): Class[_] =
 		try {
 			parentClassLoader.loadClass(name)
 		} catch {
 			case _: ClassNotFoundException =>
-				cache.getOrElse(name, throw new ClassNotFoundException(name))
+				cache.getOrElse(name, throw new ClassNotFoundException(name)).clz
 		}
 
 	def newInstance[T](className: String): T = {
@@ -29,11 +31,11 @@ class ScalaClassLoader(sourceDirs: Set[File], classPath: Set[File], parentClassL
 	def loadAll: ClassLoader = {
 		val loader = new ThrowawayClassLoader
 		val all = sourceDirs.map(dir => loadFromDir(dir, dir, loader)).flatten
-		cache = all.toMap[String, Class[_]]
+		cache = all.toMap[String, Cached]
 		loader
 	}
 
-	private def loadFromDir(srcDir: File, subDir: File, loader: ThrowawayClassLoader): Array[(String, Class[_])] = {
+	private def loadFromDir(srcDir: File, subDir: File, loader: ThrowawayClassLoader): Array[(String, Cached)] = {
 		val files = subDir.listFiles
 		val fcd = files.filter(_.getName.endsWith(".class")).map(f => loadClassFile(loader, srcDir, f))
 		val fsd = files.filter(_.isDirectory).flatMap(dir => loadFromDir(srcDir, dir, loader))
@@ -44,8 +46,9 @@ class ScalaClassLoader(sourceDirs: Set[File], classPath: Set[File], parentClassL
 		val bytes = Utils.toBytes(f)
 		val fp = f.getAbsolutePath
 		val className = fp.substring(srcDir.getAbsolutePath.length + 1, fp.length - 6).replace("/", ".")
+		val lastModified = f.lastModified
 		val clz = loader.get(className, bytes)
-		(className, clz)
+		(className, Cached(clz, f, srcDir, lastModified))
 	}
 }
 
