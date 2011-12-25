@@ -16,7 +16,6 @@ class ScalaScriptEngine private (
 		val outputDir: File) extends Logging {
 
 	private def compileManager = new CompilerManager(sourcePaths, compilationClassPaths, outputDir)
-	private val classLoader = new ScalaClassLoader(outputDir, classLoadingClassPaths)
 	@volatile private var codeVersion: CodeVersion = null
 	@volatile private var currentVersion = 0
 
@@ -26,7 +25,7 @@ class ScalaScriptEngine private (
 		var sourceFilesSet = allChangedFiles.map(f => SourceFile(f, f.lastModified))
 		compileManager.compile(allChangedFiles.map(_.getAbsolutePath))
 		val sourceFiles = sourceFilesSet.map(s => (s.file, s)).toMap
-		classLoader.refresh
+		val classLoader = new ScalaClassLoader(outputDir, classLoadingClassPaths)
 		debug("done refreshing")
 		currentVersion += 1
 		codeVersion = CodeVersion(currentVersion, sourceFilesSet, classLoader, sourceFiles)
@@ -40,8 +39,8 @@ class ScalaScriptEngine private (
 		(scalaFiles ++ rest).toSet
 	}
 
-	def get[T](className: String): Class[T] = classLoader.get(className)
-	def newInstance[T](className: String): T = classLoader.newInstance(className)
+	def get[T](className: String): Class[T] = codeVersion.get(className)
+	def newInstance[T](className: String): T = codeVersion.newInstance(className)
 
 	/**
 	 * please make sure outputDir is valid!!!
