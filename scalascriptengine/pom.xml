@@ -66,6 +66,11 @@
 			<version>0.9.29</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.googlecode.scalaconcurrency</groupId>
+			<artifactId>scalaconcurrency</artifactId>
+			<version>0.7.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<sourceDirectory>src/main/scala</sourceDirectory>

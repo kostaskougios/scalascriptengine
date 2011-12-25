@@ -22,23 +22,27 @@ class ScalaScriptEngine private (
 
 	def refresh: CodeVersion = {
 		val allChangedFiles = sourcePaths.map(srcDir => refresh0(srcDir)).flatten
-		debug("refreshing changed files %s".format(allChangedFiles))
-		var sourceFilesSet = allChangedFiles.map(f => SourceFile(f, f.lastModified))
-		compileManager.compile(allChangedFiles.map(_.getAbsolutePath))
-		val sourceFiles = sourceFilesSet.map(s => (s.file, s)).toMap
-		val classLoader = new ScalaClassLoader(outputDir, classLoadingClassPaths)
-		debug("done refreshing")
-		codeVersion = CodeVersion(
-			codeVersion.version + 1,
-			sourceFilesSet,
-			classLoader,
-			sourceFiles)
-		codeVersion
+		if (allChangedFiles.isEmpty)
+			codeVersion
+		else {
+			debug("refreshing changed files %s".format(allChangedFiles))
+			var sourceFilesSet = allChangedFiles.map(f => SourceFile(f, f.lastModified))
+			compileManager.compile(allChangedFiles.map(_.getAbsolutePath))
+			val sourceFiles = sourceFilesSet.map(s => (s.file, s)).toMap
+			val classLoader = new ScalaClassLoader(outputDir, classLoadingClassPaths)
+			debug("done refreshing")
+			codeVersion = CodeVersion(
+				codeVersion.version + 1,
+				sourceFilesSet,
+				classLoader,
+				sourceFiles)
+			codeVersion
+		}
 	}
 
 	private def refresh0(srcDir: File): Set[File] = {
 		val files = srcDir.listFiles
-		val scalaFiles = files.filter(f => f.getName.endsWith(".scala") && codeVersion.isModified(f))
+		val scalaFiles = files.filter(f => f.getName.endsWith(".scala") && codeVersion.isModifiedOrNew(f))
 		val rest = files.filter(_.isDirectory).map(refresh0 _).flatten
 		(scalaFiles ++ rest).toSet
 	}
