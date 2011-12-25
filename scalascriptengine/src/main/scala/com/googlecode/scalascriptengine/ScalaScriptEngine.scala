@@ -11,20 +11,22 @@ import org.slf4j.LoggerFactory
  */
 class ScalaScriptEngine private (
 		sourcePaths: Set[File],
-		classPaths: Set[File],
+		compilationClassPaths: Set[File],
+		classLoadingClassPaths: Set[File],
 		val outputDir: File) extends Logging {
 
-	private def compileManager = new CompilerManager(sourcePaths, classPaths, outputDir)
-	private val classLoader = new ScalaClassLoader(outputDir, classPaths)
+	private def compileManager = new CompilerManager(sourcePaths, compilationClassPaths, outputDir)
+	private val classLoader = new ScalaClassLoader(outputDir, classLoadingClassPaths)
 	private var sourceFiles = Map[File, SourceFile]()
 
-	def refresh: CodeVersion = sourceFiles.synchronized {
-		val allFiles = sourcePaths.map(srcDir => refresh0(srcDir)).flatten
-		debug("refreshing %s".format(allFiles))
-		var sourceFilesSet = allFiles.map(f => SourceFile(f, f.lastModified))
+	def refresh: CodeVersion = synchronized {
+		val allChangedFiles = sourcePaths.map(srcDir => refresh0(srcDir)).flatten
+		debug("refreshing changed files %s".format(allChangedFiles))
+		var sourceFilesSet = allChangedFiles.map(f => SourceFile(f, f.lastModified))
 		sourceFiles = sourceFilesSet.map(s => (s.file, s)).toMap
-		compileManager.compile(allFiles.map(_.getAbsolutePath))
+		compileManager.compile(allChangedFiles.map(_.getAbsolutePath))
 		val tcl = classLoader.refresh
+		debug("done refreshing")
 		CodeVersion(sourceFilesSet, tcl)
 	}
 
@@ -56,6 +58,15 @@ object ScalaScriptEngine {
 		dir.mkdir
 		dir
 	}
-	def apply(sourcePaths: Set[File], classPaths: Set[File]) = new ScalaScriptEngine(sourcePaths, classPaths, tmpFolder)
-	def apply(sourcePath: File, classPaths: Set[File]) = new ScalaScriptEngine(Set(sourcePath), classPaths, tmpFolder)
+	def apply(sourcePaths: Set[File],
+		compilationClassPaths: Set[File],
+		classLoadingClassPaths: Set[File],
+		outputDir: File): ScalaScriptEngine = new ScalaScriptEngine(sourcePaths, compilationClassPaths, classLoadingClassPaths, outputDir)
+	def apply(sourcePaths: Set[File], compilationClassPaths: Set[File]): ScalaScriptEngine = new ScalaScriptEngine(sourcePaths, compilationClassPaths, Set(), tmpFolder)
+	def apply(sourcePath: File, compilationClassPaths: Set[File]): ScalaScriptEngine = new ScalaScriptEngine(Set(sourcePath), compilationClassPaths, Set(), tmpFolder)
+	def apply(sourcePaths: Set[File]): ScalaScriptEngine = {
+		val compilationClassPaths = System.getProperty("java.class.path").split(File.pathSeparator).map(p => new File(p)).toSet
+		apply(sourcePaths, compilationClassPaths)
+	}
+	def apply(sourcePath: File): ScalaScriptEngine = apply(Set(sourcePath))
 }
