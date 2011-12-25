@@ -38,7 +38,7 @@ class ScalaScriptEngine private (
 
 	private def refresh0(srcDir: File): Set[File] = {
 		val files = srcDir.listFiles
-		val scalaFiles = files.filter(f => f.getName.endsWith(".scala") && codeVersion.isNewer(f))
+		val scalaFiles = files.filter(f => f.getName.endsWith(".scala") && codeVersion.isModified(f))
 		val rest = files.filter(_.isDirectory).map(refresh0 _).flatten
 		(scalaFiles ++ rest).toSet
 	}

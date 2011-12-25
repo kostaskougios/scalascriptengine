@@ -10,9 +10,7 @@ case class CodeVersion(val version: Int, val files: Set[SourceFile], classLoader
 	def get[T](className: String): Class[T] = classLoader.get(className)
 	def newInstance[T](className: String): T = classLoader.newInstance(className)
 
-	def isNewer(f: File) = sourceFiles.get(f).map(_.lastModified).map(_ < f.lastModified).getOrElse(true)
+	def isModified(f: File) = sourceFiles.get(f).map(_.lastModified).map(_ != f.lastModified).getOrElse(true)
 }
 
-case class SourceFile(file: File, lastModified: Long) {
-	def isNewer(f: File) = f.lastModified > lastModified
-}
+case class SourceFile(file: File, lastModified: Long)
