@@ -1,6 +1,8 @@
 package com.googlecode.scalascriptengine
 
 import java.io.File
+import java.net.URL
+import java.net.URLClassLoader
 
 /**
  * @author kostantinos.kougios
@@ -8,6 +10,9 @@ import java.io.File
  * 22 Dec 2011
  */
 class ScalaClassLoader(sourceDirs: Set[File], classPath: Set[File], parentClassLoader: ClassLoader) extends ClassLoader {
+
+	private val cpUrls = classPath.toArray.map(_.toURI.toURL)
+
 	def this(sourceDirs: Set[File], classPath: Set[File]) = this(sourceDirs, classPath, Thread.currentThread.getContextClassLoader)
 	def this(sourceDir: File, classPath: Set[File]) = this(Set(sourceDir), classPath)
 
@@ -27,7 +32,7 @@ class ScalaClassLoader(sourceDirs: Set[File], classPath: Set[File], parentClassL
 	def newInstance[T](className: String): T = getClass(className).newInstance.asInstanceOf[T]
 
 	def refresh: ClassLoader = {
-		val loader = new ThrowawayClassLoader
+		val loader = new ThrowawayClassLoader(cpUrls, parentClassLoader)
 		val all = sourceDirs.map(dir => loadFromDir(dir, dir, loader)).flatten
 		cache = all.toMap
 		loader
@@ -50,7 +55,7 @@ class ScalaClassLoader(sourceDirs: Set[File], classPath: Set[File], parentClassL
 	}
 }
 
-private class ThrowawayClassLoader extends ClassLoader {
+private class ThrowawayClassLoader(urls: Array[URL], parent: ClassLoader) extends URLClassLoader(urls, parent) {
 	def get(name: String, bytes: Array[Byte]) = {
 		//		val cs = new CodeSource(f.toURI.toURL, Array[java.security.cert.Certificate]())
 		//		val pd = new ProtectionDomain(cs, null, loader, Array[java.security.Principal]())

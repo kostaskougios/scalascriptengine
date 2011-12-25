@@ -15,7 +15,8 @@ import scalascriptengine._
 @RunWith(classOf[JUnitRunner])
 class ScalaClassLoaderSuite extends FunSuite with ShouldMatchers {
 	val sourceDir = new File("testfiles/ScalaClassLoaderSuite")
-	val classPath = new File("testfiles/lib").listFiles.filter(_.getName.endsWith(".jar")).toSet + new File("target/test-classes")
+	// parent classloader will contain scala-lib and all test-compiled classes
+	val classPath = Set[File]()
 
 	test("will load a class") {
 		val destDir = newTmpDir("dynamicclass")

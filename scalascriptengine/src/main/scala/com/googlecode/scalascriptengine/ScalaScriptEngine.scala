@@ -1,6 +1,8 @@
 package com.googlecode.scalascriptengine
 import java.io.File
 import java.util.UUID
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * @author kostantinos.kougios
@@ -10,16 +12,20 @@ import java.util.UUID
 class ScalaScriptEngine private (
 		sourcePaths: Set[File],
 		classPaths: Set[File],
-		val outputDir: File) {
+		val outputDir: File) extends Logging {
+
 	private def compileManager = new CompilerManager(sourcePaths, classPaths, outputDir)
 	private val classLoader = new ScalaClassLoader(outputDir, classPaths)
+	private var sourceFiles = Map[File, SourceFile]()
 
-	def refresh: CodeVersion = {
+	def refresh: CodeVersion = sourceFiles.synchronized {
 		val allFiles = sourcePaths.map(srcDir => refresh0(srcDir)).flatten
-		val sourceFiles = allFiles.map(f => SourceFile(f, f.lastModified))
+		debug("refreshing %s".format(allFiles))
+		var sourceFilesSet = allFiles.map(f => SourceFile(f, f.lastModified))
+		sourceFiles = sourceFilesSet.map(s => (s.file, s)).toMap
 		compileManager.compile(allFiles.map(_.getAbsolutePath))
 		val tcl = classLoader.refresh
-		CodeVersion(sourceFiles, tcl)
+		CodeVersion(sourceFilesSet, tcl)
 	}
 
 	private def refresh0(srcDir: File): Set[File] = {
@@ -29,7 +35,7 @@ class ScalaScriptEngine private (
 		(scalaFiles ++ rest).toSet
 	}
 
-	def getClass[T](className: String): Class[T] = classLoader.getClass(className)
+	def get[T](className: String): Class[T] = classLoader.getClass(className)
 	def newInstance[T](className: String): T = classLoader.newInstance(className)
 
 	/**
