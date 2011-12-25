@@ -28,8 +28,8 @@ class ScalaClassLoader(sourceDirs: Set[File], classPath: Set[File], parentClassL
 				cache.getOrElse(name, throw new ClassNotFoundException(name)).clz
 		}
 
-	def getClass[T](className: String): Class[T] = cache.getOrElse(className, throw new ClassNotFoundException(className)).clz.asInstanceOf[Class[T]]
-	def newInstance[T](className: String): T = getClass(className).newInstance.asInstanceOf[T]
+	def get[T](className: String): Class[T] = cache.getOrElse(className, throw new ClassNotFoundException(className)).clz.asInstanceOf[Class[T]]
+	def newInstance[T](className: String): T = get(className).newInstance.asInstanceOf[T]
 
 	def refresh: ClassLoader = {
 		val loader = new ThrowawayClassLoader(cpUrls, parentClassLoader)

@@ -17,17 +17,20 @@ class ScalaScriptEngine private (
 
 	private def compileManager = new CompilerManager(sourcePaths, compilationClassPaths, outputDir)
 	private val classLoader = new ScalaClassLoader(outputDir, classLoadingClassPaths)
-	private var sourceFiles = Map[File, SourceFile]()
+	@volatile private var codeVersion: CodeVersion = null
+	@volatile private var currentVersion = 0
 
-	def refresh: CodeVersion = synchronized {
+	def refresh: CodeVersion = {
 		val allChangedFiles = sourcePaths.map(srcDir => refresh0(srcDir)).flatten
 		debug("refreshing changed files %s".format(allChangedFiles))
 		var sourceFilesSet = allChangedFiles.map(f => SourceFile(f, f.lastModified))
-		sourceFiles = sourceFilesSet.map(s => (s.file, s)).toMap
 		compileManager.compile(allChangedFiles.map(_.getAbsolutePath))
-		val tcl = classLoader.refresh
+		val sourceFiles = sourceFilesSet.map(s => (s.file, s)).toMap
+		classLoader.refresh
 		debug("done refreshing")
-		CodeVersion(sourceFilesSet, tcl)
+		currentVersion += 1
+		codeVersion = CodeVersion(currentVersion, sourceFilesSet, classLoader, sourceFiles)
+		codeVersion
 	}
 
 	private def refresh0(srcDir: File): Set[File] = {
@@ -37,7 +40,7 @@ class ScalaScriptEngine private (
 		(scalaFiles ++ rest).toSet
 	}
 
-	def get[T](className: String): Class[T] = classLoader.getClass(className)
+	def get[T](className: String): Class[T] = classLoader.get(className)
 	def newInstance[T](className: String): T = classLoader.newInstance(className)
 
 	/**
