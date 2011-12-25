@@ -20,18 +20,17 @@ class TimedRefreshPolicySuite extends FunSuite with ShouldMatchers {
 
 	test("code modifications are reloaded in time") {
 		val destDir = newTmpDir("dynamicsrc")
-		val sse = ScalaScriptEngine(destDir)
-		copyFromSource(new File(sourceDir, "v1/reload"), destDir)
-		sse.refresh
-		val timed = new TimedRefresh(sse, DateTime.now + 500.millis)
+		val sse = ScalaScriptEngine.timedRefresh(destDir, () => DateTime.now + 500.millis)
 		try {
+			copyFromSource(new File(sourceDir, "v1/reload"), destDir)
+			sse.refresh
 			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
 			copyFromSource(new File(sourceDir, "v2/reload"), destDir)
 			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
 			Thread.sleep(3000)
 			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v2"
 		} finally {
-			timed.shutdown
+			sse.shutdown
 		}
 	}
 }
