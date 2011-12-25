@@ -14,7 +14,7 @@ import org.scala_tools.time.Imports._
  * 25 Dec 2011
  */
 @RunWith(classOf[JUnitRunner])
-class TimedRefreshScalaScriptEngineSuite extends FunSuite with ShouldMatchers {
+class TimedRefreshPolicySuite extends FunSuite with ShouldMatchers {
 
 	val sourceDir = new File("testfiles/CompilationSuite")
 
