@@ -25,7 +25,7 @@ class TimedRefreshPolicySuite extends FunSuite with ShouldMatchers {
 			copyFromSource(new File(sourceDir, "v1/reload"), destDir)
 			sse.refresh
 			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-			copyFromSource(new File(sourceDir, "ve/reload"), destDir)
+			copyFromSource(new File("testfiles/erroneous/ve/reload"), destDir)
 			Thread.sleep(3000)
 			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
 			copyFromSource(new File(sourceDir, "v2/reload"), destDir)

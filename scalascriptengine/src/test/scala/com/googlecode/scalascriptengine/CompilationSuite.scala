@@ -20,6 +20,7 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 	test("code modifications are reloaded") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(destDir)
+		sse.deleteAllClassesInOutputDirectory
 		for (i <- 1 to 5) {
 			copyFromSource(new File(sourceDir, "v1/reload"), destDir)
 			sse.refresh
@@ -34,6 +35,7 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 
 	test("scala files to compiled classes") {
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(sourceDir)
+		sse.deleteAllClassesInOutputDirectory
 		sse.refresh
 		sse.newInstance("test.MyClass")
 		new File(sse.outputDir, "test/MyClass.class").exists should be(true)
@@ -42,6 +44,7 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 
 	test("scala files correct") {
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(sourceDir)
+		sse.deleteAllClassesInOutputDirectory
 		sse.refresh
 		val tct: TestClassTrait = sse.newInstance("test.MyClass")
 		tct.result should be === "ok"
@@ -49,6 +52,7 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 
 	test("deleteAllClassesInOutputDirectory deletes all class files") {
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(sourceDir)
+		sse.deleteAllClassesInOutputDirectory
 		sse.refresh
 		sse.newInstance("test.MyClass")
 		sse.deleteAllClassesInOutputDirectory
