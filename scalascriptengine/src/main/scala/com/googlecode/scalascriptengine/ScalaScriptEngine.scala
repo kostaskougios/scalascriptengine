@@ -16,8 +16,9 @@ class ScalaScriptEngine private (
 		val outputDir: File) extends Logging {
 
 	private def compileManager = new CompilerManager(sourcePaths, compilationClassPaths, outputDir)
-	@volatile private var codeVersion: CodeVersion = null
-	@volatile private var currentVersion = 0
+	@volatile private var codeVersion = CodeVersion(0, Set(), null, Map())
+
+	def currentVersion = codeVersion
 
 	def refresh: CodeVersion = {
 		val allChangedFiles = sourcePaths.map(srcDir => refresh0(srcDir)).flatten
@@ -27,14 +28,17 @@ class ScalaScriptEngine private (
 		val sourceFiles = sourceFilesSet.map(s => (s.file, s)).toMap
 		val classLoader = new ScalaClassLoader(outputDir, classLoadingClassPaths)
 		debug("done refreshing")
-		currentVersion += 1
-		codeVersion = CodeVersion(currentVersion, sourceFilesSet, classLoader, sourceFiles)
+		codeVersion = CodeVersion(
+			codeVersion.version + 1,
+			sourceFilesSet,
+			classLoader,
+			sourceFiles)
 		codeVersion
 	}
 
 	private def refresh0(srcDir: File): Set[File] = {
 		val files = srcDir.listFiles
-		val scalaFiles = files.filter(_.getName.endsWith(".scala"))
+		val scalaFiles = files.filter(f => f.getName.endsWith(".scala") && codeVersion.isNewer(f))
 		val rest = files.filter(_.isDirectory).map(refresh0 _).flatten
 		(scalaFiles ++ rest).toSet
 	}

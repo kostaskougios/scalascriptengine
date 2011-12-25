@@ -9,6 +9,8 @@ import java.io.File
 case class CodeVersion(val version: Int, val files: Set[SourceFile], classLoader: ScalaClassLoader, val sourceFiles: Map[File, SourceFile]) {
 	def get[T](className: String): Class[T] = classLoader.get(className)
 	def newInstance[T](className: String): T = classLoader.newInstance(className)
+
+	def isNewer(f: File) = sourceFiles.get(f).map(_.lastModified).map(_ < f.lastModified).getOrElse(true)
 }
 
 case class SourceFile(file: File, lastModified: Long) {
