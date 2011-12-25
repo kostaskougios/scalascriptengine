@@ -18,6 +18,23 @@ class TimedRefreshPolicySuite extends FunSuite with ShouldMatchers {
 
 	val sourceDir = new File("testfiles/CompilationSuite")
 
+	test("after compilation error, valid version is used") {
+		val destDir = newTmpDir("dynamicsrc")
+		val sse = ScalaScriptEngine.timedRefresh(destDir, () => DateTime.now + 500.millis)
+		try {
+			copyFromSource(new File(sourceDir, "v1/reload"), destDir)
+			sse.refresh
+			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
+			copyFromSource(new File(sourceDir, "ve/reload"), destDir)
+			Thread.sleep(3000)
+			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
+			copyFromSource(new File(sourceDir, "v2/reload"), destDir)
+			Thread.sleep(3000)
+			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v2"
+		} finally {
+			sse.shutdown
+		}
+	}
 	test("code modifications are reloaded in time") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.timedRefresh(destDir, () => DateTime.now + 500.millis)
@@ -29,6 +46,9 @@ class TimedRefreshPolicySuite extends FunSuite with ShouldMatchers {
 			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
 			Thread.sleep(3000)
 			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v2"
+			copyFromSource(new File(sourceDir, "v1/reload"), destDir)
+			Thread.sleep(3000)
+			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
 		} finally {
 			sse.shutdown
 		}

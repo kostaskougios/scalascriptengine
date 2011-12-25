@@ -28,8 +28,22 @@ class ScalaScriptEngine(
 		else {
 			debug("refreshing changed files %s".format(allChangedFiles))
 			var sourceFilesSet = allChangedFiles.map(f => SourceFile(f, f.lastModified))
-			compileManager.compile(allChangedFiles.map(_.getAbsolutePath))
-			val sourceFiles = sourceFilesSet.map(s => (s.file, s)).toMap
+
+			def sourceFiles = sourceFilesSet.map(s => (s.file, s)).toMap
+
+			try {
+				compileManager.compile(allChangedFiles.map(_.getAbsolutePath))
+			} catch {
+				case e =>
+					// update fileset to this codeversion to avoid
+					// continuously compiling problematic code
+					codeVersion = CodeVersion(
+						codeVersion.version,
+						sourceFilesSet,
+						codeVersion.classLoader,
+						sourceFiles)
+					throw e
+			}
 			val classLoader = new ScalaClassLoader(outputDir, classLoadingClassPaths)
 			debug("done refreshing")
 			codeVersion = CodeVersion(

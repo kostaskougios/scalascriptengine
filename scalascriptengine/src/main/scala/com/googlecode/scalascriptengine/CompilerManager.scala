@@ -11,7 +11,7 @@ import tools.nsc.reporters.Reporter
  * 22 Dec 2011
  */
 protected class CompilerManager(sourcePaths: Set[File], classPaths: Set[File], destDir: File) extends Logging {
-	val settings = new Settings(s ⇒ error("errors report: " + s))
+	val settings = new Settings(s => error("errors report: " + s))
 	settings.sourcepath.tryToSet(sourcePaths.map(_.getAbsolutePath).toList)
 	settings.classpath.tryToSet(List(classPaths.map(_.getAbsolutePath).mkString(File.pathSeparator)))
 	settings.outdir.tryToSet(List(destDir.getAbsolutePath))
