@@ -17,7 +17,15 @@ class ScalaScriptEngine(
 		val outputDir: File) extends Logging {
 
 	private def compileManager = new CompilerManager(sourcePaths, compilationClassPaths, outputDir)
-	@volatile private var codeVersion = CodeVersion(0, Set(), null, Map())
+	@volatile private var codeVersion: CodeVersion = new CodeVersion {
+		override def version: Int = 0
+		override def classLoader: ScalaClassLoader = throw new IllegalStateException("CodeVersion not yet ready.")
+		override def files: Set[SourceFile] = Set()
+		override def sourceFiles = Map[File, SourceFile]()
+		override def get[T](className: String): Class[T] = throw new IllegalStateException("CodeVersion not yet ready.")
+		override def newInstance[T](className: String): T = throw new IllegalStateException("CodeVersion not yet ready.")
+		override def isModifiedOrNew(f: File) = true
+	}
 
 	def currentVersion = codeVersion
 	def versionNumber = codeVersion.version
@@ -38,7 +46,7 @@ class ScalaScriptEngine(
 				case e =>
 					// update fileset to this codeversion to avoid
 					// continuously compiling problematic code
-					codeVersion = CodeVersion(
+					codeVersion = CodeVersionImpl(
 						codeVersion.version,
 						sourceFilesSet,
 						codeVersion.classLoader,
@@ -47,7 +55,7 @@ class ScalaScriptEngine(
 			}
 			val classLoader = new ScalaClassLoader(outputDir, classLoadingClassPaths)
 			debug("done refreshing")
-			codeVersion = CodeVersion(
+			codeVersion = CodeVersionImpl(
 				codeVersion.version + 1,
 				sourceFilesSet,
 				classLoader,
@@ -109,15 +117,64 @@ object ScalaScriptEngine {
 		def rescheduleAt = refreshEvery()
 	}
 
-	def onChangeRefresh(sourcePath: File): ScalaScriptEngine with OnChangeRefresh with RefreshSynchronously =
+	/**
+	 * creates a ScalaScriptEngine with the following behaviour:
+	 *
+	 * if a change in a requested class source file is detected, the source path
+	 * will be recompiled (this includes all changed files that changed). For each
+	 * call to ScalaScriptEngine.get(className), the filesystem is checked for
+	 * modifications in the relevant scala file. For a more efficient way of
+	 * doing the same in production environments, please look at
+	 * #onChangeRefresh(sourcePath, recheckEveryInMillis)
+	 *
+	 * @param sourcePath	the path where the scala source files are.
+	 * @return				the ScalaScriptEngine
+	 */
+	def onChangeRefresh(sourcePath: File): ScalaScriptEngine with OnChangeRefresh =
 		onChangeRefresh(sourcePath, 0)
 
-	def onChangeRefresh(sourcePath: File, recheckEveryInMillis: Long): ScalaScriptEngine with OnChangeRefresh with RefreshSynchronously =
+	/**
+	 * creates a ScalaScriptEngine with the following behaviour:
+	 *
+	 * if a change in a requested class source file is detected, the source path
+	 * will be recompiled (this includes all changed files that changed). For each
+	 * call to ScalaScriptEngine.get(className), provided that recheckEveryInMillis
+	 * has passed between the call and the previous filesystem check,
+	 * the filesystem is checked for
+	 * modifications in the relevant scala file.
+	 *
+	 * @param sourcePath			the path where the scala source files are.
+	 * @param recheckEveryInMillis	each file will only be checked for changes
+	 * 								once per recheckEveryInMillis milliseconds.
+	 * @return						the ScalaScriptEngine
+	 */
+	def onChangeRefresh(sourcePath: File, recheckEveryInMillis: Long): ScalaScriptEngine with OnChangeRefresh =
 		new ScalaScriptEngine(
 			Set(sourcePath),
 			currentClassPath,
 			Set(),
 			tmpFolder) with OnChangeRefresh with RefreshSynchronously {
+			val recheckEveryMillis: Long = recheckEveryInMillis
+		}
+
+	/**
+	 * similar to onChangeRefresh, but the compilation occurs in the background.
+	 * While the compilation occurs, the ScalaScriptEngine.get(className)
+	 * returns the existing version of the class without blocking.
+	 */
+	def onChangeRefreshAsynchronously(sourcePath: File): ScalaScriptEngine with OnChangeRefresh = onChangeRefreshAsynchronously(sourcePath, 0)
+
+	/**
+	 * similar to onChangeRefresh, but the compilation occurs in the background.
+	 * While the compilation occurs, the ScalaScriptEngine.get(className)
+	 * returns the existing version of the class without blocking.
+	 */
+	def onChangeRefreshAsynchronously(sourcePath: File, recheckEveryInMillis: Long): ScalaScriptEngine with OnChangeRefresh =
+		new ScalaScriptEngine(
+			Set(sourcePath),
+			currentClassPath,
+			Set(),
+			tmpFolder) with OnChangeRefresh with RefreshAsynchronously {
 			val recheckEveryMillis: Long = recheckEveryInMillis
 		}
 }

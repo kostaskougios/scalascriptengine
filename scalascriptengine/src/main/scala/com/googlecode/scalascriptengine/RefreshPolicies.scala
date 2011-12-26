@@ -76,12 +76,18 @@ trait RefreshSynchronously extends ScalaScriptEngine with OnChangeRefresh {
  */
 trait RefreshAsynchronously extends ScalaScriptEngine with OnChangeRefresh {
 	private val isCompiling = new AtomicBoolean(false)
+	private val executor = ExecutorServiceManager.newSingleThreadExecutor
 	override def doRefresh: Unit = {
 		// refresh only if not already refreshing 
 		val c = isCompiling.getAndSet(true)
-		if (!c) {
-			refresh
-			isCompiling.set(false)
+		if (!c) executor.submit {
+			try {
+				refresh
+			} catch {
+				case e => error("error during refresh", e)
+			} finally {
+				isCompiling.set(false)
+			}
 		}
 	}
 }
