@@ -3,6 +3,12 @@ import com.googlecode.scalascriptengine.ScalaScriptEngine
 import java.io.File
 
 /**
+ * This example dynamically compiles and reloads changes from the sourceDir.
+ * When a change is detected, the script engine compiles the source files (blocking).
+ * When compilation is complete, the new version of the class is returned.
+ *
+ * This example demonstrates the on-change-refresh policy of the script engine.
+ *
  * @author kostantinos.kougios
  *
  * 26 Dec 2011
