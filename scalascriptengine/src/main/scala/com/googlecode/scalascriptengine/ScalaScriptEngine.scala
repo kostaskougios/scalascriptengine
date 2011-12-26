@@ -11,7 +11,7 @@ import org.scala_tools.time.Imports._
  * 22 Dec 2011
  */
 class ScalaScriptEngine(
-		sourcePaths: Set[File],
+		protected val sourcePaths: Set[File],
 		compilationClassPaths: Set[File],
 		classLoadingClassPaths: Set[File],
 		val outputDir: File) extends Logging {
@@ -63,7 +63,7 @@ class ScalaScriptEngine(
 	}
 
 	def get[T](className: String): Class[T] = codeVersion.get(className)
-	def newInstance[T](className: String): T = codeVersion.newInstance(className)
+	def newInstance[T](className: String): T = get[T](className).newInstance
 
 	/**
 	 * please make sure outputDir is valid!!!
@@ -107,4 +107,10 @@ object ScalaScriptEngine {
 	def timedRefresh(sourcePath: File, refreshEvery: () => DateTime): ScalaScriptEngine with TimedRefresh = new ScalaScriptEngine(Set(sourcePath), currentClassPath, Set(), tmpFolder) with TimedRefresh {
 		def rescheduleAt = refreshEvery()
 	}
+
+	def onChangeRefresh(sourcePath: File) = new ScalaScriptEngine(
+		Set(sourcePath),
+		currentClassPath,
+		Set(),
+		tmpFolder) with OnChangeRefresh with RefreshSynchronously
 }

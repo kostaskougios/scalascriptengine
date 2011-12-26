@@ -18,7 +18,7 @@ class OnChangeRefreshPolicySuite extends FunSuite with ShouldMatchers {
 
 	test("code modifications are reloaded immediatelly") {
 		val destDir = newTmpDir("dynamicsrc")
-		val sse = ScalaScriptEngine.withoutRefreshPolicy(destDir)
+		val sse = ScalaScriptEngine.onChangeRefresh(destDir)
 		copyFromSource(new File(sourceDir, "v1/reload"), destDir)
 		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
 		copyFromSource(new File(sourceDir, "v2/reload"), destDir)
