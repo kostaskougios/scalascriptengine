@@ -21,6 +21,7 @@ class TimedRefreshPolicySuite extends FunSuite with ShouldMatchers {
 	test("after compilation error, valid version is used") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.timedRefresh(destDir, () => DateTime.now + 500.millis)
+		sse.deleteAllClassesInOutputDirectory
 		try {
 			copyFromSource(new File(sourceDir, "v1/reload"), destDir)
 			sse.refresh
@@ -38,6 +39,7 @@ class TimedRefreshPolicySuite extends FunSuite with ShouldMatchers {
 	test("code modifications are reloaded in time") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.timedRefresh(destDir, () => DateTime.now + 500.millis)
+		sse.deleteAllClassesInOutputDirectory
 		try {
 			copyFromSource(new File(sourceDir, "v1/reload"), destDir)
 			sse.refresh

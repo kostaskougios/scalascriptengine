@@ -58,8 +58,12 @@ trait RefreshSynchronously extends ScalaScriptEngine with OnChangeRefresh {
 		// refresh only if not already refreshing
 		val time = System.currentTimeMillis
 		synchronized {
-			if (time > lastCompiled) {
+			if (time > lastCompiled) try {
 				refresh
+			} catch {
+				case e => error("error during compilation", e)
+			} finally {
+				// set lastCompile even in case of compilation errors
 				lastCompiled = System.currentTimeMillis
 			}
 		}

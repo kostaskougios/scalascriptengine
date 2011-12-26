@@ -19,6 +19,7 @@ class OnChangeRefreshPolicySuite extends FunSuite with ShouldMatchers {
 	test("code modifications are reloaded immediatelly") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.onChangeRefresh(destDir)
+		sse.deleteAllClassesInOutputDirectory
 		copyFromSource(new File(sourceDir, "v1/reload"), destDir)
 		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
 		sse.numberOfFilesChecked should be === 1
@@ -35,6 +36,7 @@ class OnChangeRefreshPolicySuite extends FunSuite with ShouldMatchers {
 	test("code modifications are reloaded according to recheckEveryMillis") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.onChangeRefresh(destDir, 2000)
+		sse.deleteAllClassesInOutputDirectory
 		copyFromSource(new File(sourceDir, "v1/reload"), destDir)
 		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
 		sse.numberOfFilesChecked should be === 1
@@ -49,5 +51,26 @@ class OnChangeRefreshPolicySuite extends FunSuite with ShouldMatchers {
 		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v2"
 		sse.versionNumber should be === 2
 		sse.numberOfFilesChecked should be === 2
+	}
+
+	test("code modifications are reloaded according to recheckEveryMillis even when errors") {
+		val destDir = newTmpDir("dynamicsrc")
+		val sse = ScalaScriptEngine.onChangeRefresh(destDir, 2000)
+		sse.deleteAllClassesInOutputDirectory
+		copyFromSource(new File(sourceDir, "v1/reload"), destDir)
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
+		sse.versionNumber should be === 1
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
+		sse.versionNumber should be === 1
+		copyFromSource(new File("testfiles/erroneous/ve/reload"), destDir)
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
+		Thread.sleep(2100)
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
+		sse.versionNumber should be === 1
+		copyFromSource(new File(sourceDir, "v2/reload"), destDir)
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
+		Thread.sleep(2100)
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v2"
+		sse.versionNumber should be === 2
 	}
 }
