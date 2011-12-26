@@ -90,4 +90,6 @@ trait RefreshAsynchronously extends ScalaScriptEngine with OnChangeRefresh {
 			}
 		}
 	}
+
+	def shutdown = executor.shutdown
 }

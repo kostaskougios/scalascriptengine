@@ -162,14 +162,14 @@ object ScalaScriptEngine {
 	 * While the compilation occurs, the ScalaScriptEngine.get(className)
 	 * returns the existing version of the class without blocking.
 	 */
-	def onChangeRefreshAsynchronously(sourcePath: File): ScalaScriptEngine with OnChangeRefresh = onChangeRefreshAsynchronously(sourcePath, 0)
+	def onChangeRefreshAsynchronously(sourcePath: File): ScalaScriptEngine with OnChangeRefresh with RefreshAsynchronously = onChangeRefreshAsynchronously(sourcePath, 0)
 
 	/**
 	 * similar to onChangeRefresh, but the compilation occurs in the background.
 	 * While the compilation occurs, the ScalaScriptEngine.get(className)
 	 * returns the existing version of the class without blocking.
 	 */
-	def onChangeRefreshAsynchronously(sourcePath: File, recheckEveryInMillis: Long): ScalaScriptEngine with OnChangeRefresh =
+	def onChangeRefreshAsynchronously(sourcePath: File, recheckEveryInMillis: Long): ScalaScriptEngine with OnChangeRefresh with RefreshAsynchronously =
 		new ScalaScriptEngine(
 			Set(sourcePath),
 			currentClassPath,

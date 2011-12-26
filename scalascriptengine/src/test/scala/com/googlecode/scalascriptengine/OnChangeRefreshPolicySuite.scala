@@ -16,7 +16,7 @@ class OnChangeRefreshPolicySuite extends FunSuite with ShouldMatchers {
 
 	val sourceDir = new File("testfiles/CompilationSuite")
 
-	test("code modifications are refreshed but control returns immediatelly") {
+	test("onChangeRefreshAsynchronously: code modifications are refreshed but control returns immediatelly") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.onChangeRefreshAsynchronously(destDir)
 		sse.deleteAllClassesInOutputDirectory
@@ -32,9 +32,10 @@ class OnChangeRefreshPolicySuite extends FunSuite with ShouldMatchers {
 		Thread.sleep(2000)
 		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v2"
 		sse.versionNumber should be === 2
+		sse.shutdown
 	}
 
-	test("code modifications are refreshed but control returns immediatelly even on errors") {
+	test("onChangeRefreshAsynchronously: code modifications are refreshed but control returns immediatelly even on errors") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.onChangeRefreshAsynchronously(destDir)
 		sse.deleteAllClassesInOutputDirectory
@@ -55,9 +56,10 @@ class OnChangeRefreshPolicySuite extends FunSuite with ShouldMatchers {
 		Thread.sleep(2000)
 		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v2"
 		sse.versionNumber should be === 2
+		sse.shutdown
 	}
 
-	test("code modifications are reloaded immediatelly") {
+	test("onChangeRefresh: code modifications are reloaded immediatelly") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.onChangeRefresh(destDir)
 		sse.deleteAllClassesInOutputDirectory
@@ -74,7 +76,7 @@ class OnChangeRefreshPolicySuite extends FunSuite with ShouldMatchers {
 		sse.versionNumber should be === 2
 	}
 
-	test("code modifications are reloaded according to recheckEveryMillis") {
+	test("onChangeRefresh: code modifications are reloaded according to recheckEveryMillis") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.onChangeRefresh(destDir, 2000)
 		sse.deleteAllClassesInOutputDirectory
@@ -94,7 +96,7 @@ class OnChangeRefreshPolicySuite extends FunSuite with ShouldMatchers {
 		sse.numberOfFilesChecked should be === 2
 	}
 
-	test("code modifications are reloaded according to recheckEveryMillis even when errors") {
+	test("onChangeRefresh: code modifications are reloaded according to recheckEveryMillis even when errors") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.onChangeRefresh(destDir, 2000)
 		sse.deleteAllClassesInOutputDirectory
