@@ -11,7 +11,9 @@ import tools.nsc.reporters.Reporter
  * 22 Dec 2011
  */
 protected class CompilerManager(sourcePaths: Set[File], classPaths: Set[File], destDir: File) extends Logging {
-	val settings = new Settings(s => error("errors report: " + s))
+	val settings = new Settings(s => {
+		error("errors report: " + s)
+	})
 	settings.sourcepath.tryToSet(sourcePaths.map(_.getAbsolutePath).toList)
 	settings.classpath.tryToSet(List(classPaths.map(_.getAbsolutePath).mkString(File.pathSeparator)))
 	settings.outdir.tryToSet(List(destDir.getAbsolutePath))
@@ -25,11 +27,14 @@ protected class CompilerManager(sourcePaths: Set[File], classPaths: Set[File], d
 
 }
 
+class CompilationError(msg: String) extends RuntimeException(msg)
+
 import scala.tools.nsc.util.Position
-private class CompilationReporter extends Reporter {
+private class CompilationReporter extends Reporter with Logging {
 	protected def info0(pos: Position, msg: String, severity: Severity, force: Boolean): Unit =
 		{
-			println(msg)
+			error(msg)
+			throw new CompilationError(msg)
 		}
 
 	override def hasErrors: Boolean = false
