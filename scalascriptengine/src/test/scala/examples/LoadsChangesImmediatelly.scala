@@ -6,6 +6,8 @@ import java.io.File
  * This example dynamically compiles and reloads changes from the sourceDir.
  * When a change is detected, the script engine compiles the source files (blocking).
  * When compilation is complete, the new version of the class is returned.
+ * If there is a compilation error, the script engine returns the previous
+ * valid version of my.TryMe
  *
  * This example demonstrates the on-change-refresh policy of the script engine.
  *
