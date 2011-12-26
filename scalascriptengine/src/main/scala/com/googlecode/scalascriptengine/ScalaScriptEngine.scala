@@ -109,11 +109,15 @@ object ScalaScriptEngine {
 		def rescheduleAt = refreshEvery()
 	}
 
-	def onChangeRefresh(sourcePath: File) = new ScalaScriptEngine(
-		Set(sourcePath),
-		currentClassPath,
-		Set(),
-		tmpFolder) with OnChangeRefresh with RefreshSynchronously {
-		val recheckEveryMillis: Long = 0
-	}
+	def onChangeRefresh(sourcePath: File): ScalaScriptEngine with OnChangeRefresh with RefreshSynchronously =
+		onChangeRefresh(sourcePath, 0)
+
+	def onChangeRefresh(sourcePath: File, recheckEveryInMillis: Long): ScalaScriptEngine with OnChangeRefresh with RefreshSynchronously =
+		new ScalaScriptEngine(
+			Set(sourcePath),
+			currentClassPath,
+			Set(),
+			tmpFolder) with OnChangeRefresh with RefreshSynchronously {
+			val recheckEveryMillis: Long = recheckEveryInMillis
+		}
 }
