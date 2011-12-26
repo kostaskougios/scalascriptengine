@@ -4,6 +4,7 @@ import org.scala_tools.time.Imports._
 import com.googlecode.concurrent.ExecutorServiceManager
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * periodically scans the source directories and if a file changed, it recompiles
@@ -30,12 +31,17 @@ trait TimedRefresh { this: ScalaScriptEngine =>
  * the changed sources.
  */
 trait OnChangeRefresh extends ScalaScriptEngine {
-
+	val recheckEveryMillis: Long
+	private val lastChecked = new ConcurrentHashMap[String, java.lang.Long]
 	abstract override def get[T](className: String): Class[T] = {
-		val fileName = className.replace('.', '/') + ".scala"
-		val srcFileOption = sourcePaths.find(dir => new File(dir, fileName).exists).map(dir => new File(dir, fileName))
-		val isMod = srcFileOption.map(f => currentVersion.isModifiedOrNew(f)).getOrElse(true)
-		if (isMod) doRefresh
+		val l = lastChecked.get(className)
+		if (l == null || recheckEveryMillis <= 0 || System.currentTimeMillis - l > recheckEveryMillis) {
+			lastChecked.put(className, System.currentTimeMillis)
+			val fileName = className.replace('.', '/') + ".scala"
+			val srcFileOption = sourcePaths.find(dir => new File(dir, fileName).exists).map(dir => new File(dir, fileName))
+			val isMod = srcFileOption.map(f => currentVersion.isModifiedOrNew(f)).getOrElse(true)
+			if (isMod) doRefresh
+		}
 		super.get(className)
 	}
 

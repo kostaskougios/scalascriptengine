@@ -20,6 +20,7 @@ class ScalaScriptEngine(
 	@volatile private var codeVersion = CodeVersion(0, Set(), null, Map())
 
 	def currentVersion = codeVersion
+	def versionNumber = codeVersion.version
 
 	def refresh: CodeVersion = {
 		val allChangedFiles = sourcePaths.map(srcDir => refresh0(srcDir)).flatten
@@ -112,5 +113,7 @@ object ScalaScriptEngine {
 		Set(sourcePath),
 		currentClassPath,
 		Set(),
-		tmpFolder) with OnChangeRefresh with RefreshSynchronously
+		tmpFolder) with OnChangeRefresh with RefreshSynchronously {
+		val recheckEveryMillis: Long = 0
+	}
 }
