@@ -44,13 +44,15 @@ class ScalaScriptEngine(
 				compileManager.compile(allChangedFiles.map(_.getAbsolutePath))
 			} catch {
 				case e =>
-					// update fileset to this codeversion to avoid
-					// continuously compiling problematic code
-					codeVersion = CodeVersionImpl(
-						codeVersion.version,
-						sourceFilesSet,
-						codeVersion.classLoader,
-						sourceFiles)
+					if (versionNumber > 0) {
+						// update fileset to this codeversion to avoid
+						// continuously compiling problematic code
+						codeVersion = CodeVersionImpl(
+							codeVersion.version,
+							sourceFilesSet,
+							codeVersion.classLoader,
+							sourceFiles)
+					}
 					throw e
 			}
 			val classLoader = new ScalaClassLoader(outputDir, classLoadingClassPaths)
