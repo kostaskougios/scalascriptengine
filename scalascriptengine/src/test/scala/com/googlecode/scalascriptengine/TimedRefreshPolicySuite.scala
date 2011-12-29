@@ -16,7 +16,7 @@ import org.scala_tools.time.Imports._
 @RunWith(classOf[JUnitRunner])
 class TimedRefreshPolicySuite extends FunSuite with ShouldMatchers {
 
-	val sourceDir = new File("testfiles/CompilationSuite")
+	val sourceDir = new File("testfiles/versions")
 
 	test("after compilation error, valid version is used") {
 		val destDir = newTmpDir("dynamicsrc")
