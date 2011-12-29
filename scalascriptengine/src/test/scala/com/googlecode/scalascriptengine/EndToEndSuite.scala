@@ -12,6 +12,7 @@ import org.apache.commons.io.FileUtils
 import scala.io.Source
 import org.apache.commons.io.IOUtils
 import java.io.FileWriter
+import java.util.concurrent.atomic.AtomicLong
 /**
  * @author kostantinos.kougios
  *
@@ -48,6 +49,7 @@ class Main extends TestClassTrait
 
 		val errors = new AtomicInteger
 		val done = new AtomicBoolean(false)
+		val iterations = new AtomicLong
 		val executor = ExecutorServiceManager.newSingleThreadExecutor
 		try {
 			executor.submit {
@@ -64,6 +66,7 @@ class Main extends TestClassTrait
 							// just to trigger a reload
 							sse.newInstance[TestClassTrait]("reload.Main")
 							Thread.sleep(1)
+							iterations.incrementAndGet
 						} catch {
 							case e =>
 								errors.incrementAndGet
@@ -74,9 +77,9 @@ class Main extends TestClassTrait
 				println("executor finished")
 			}
 			var currentVersion = 0
-			for (i <- 1 to 1000) {
+			for (i <- 1 to 100) {
 				if (currentVersion != sse.versionNumber) {
-					println("version is %d".format(sse.versionNumber))
+					println("version is %d , iterations so far : %d".format(sse.versionNumber, iterations.get))
 					currentVersion = sse.versionNumber
 					Thread.sleep(1100) // make sure filesystem marks  the file as modified
 					write(main, currentVersion + 1)
