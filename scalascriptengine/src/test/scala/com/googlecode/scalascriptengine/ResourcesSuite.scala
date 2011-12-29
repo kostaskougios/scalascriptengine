@@ -4,6 +4,7 @@ import org.scalatest.FunSuite
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import java.io.File
+import scalascriptengine._
 
 /**
  * @author kostantinos.kougios
@@ -16,10 +17,41 @@ class ResourcesSuite extends FunSuite with ShouldMatchers {
 
 	test("loads resources from classpath") {
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(new File(sourceDir, "v1"))
+		sse.deleteAllClassesInOutputDirectory
 		sse.refresh
 
 		val t: TestClassTrait = sse.newInstance[TestClassTrait]("reload.Main")
 		t.result should be === "v1"
+	}
 
+	test("loads changed resources from classpath without refreshing") {
+		val destDir = newTmpDir("dynamicsrc")
+		val sse = ScalaScriptEngine.withoutRefreshPolicy(destDir)
+		sse.deleteAllClassesInOutputDirectory
+		copyFromSource(new File(sourceDir, "v1/reload"), destDir)
+		sse.refresh
+
+		val t1: TestClassTrait = sse.newInstance[TestClassTrait]("reload.Main")
+		t1.result should be === "v1"
+
+		copyFromSource(new File(sourceDir, "v2/reload"), destDir)
+		val t2: TestClassTrait = sse.newInstance[TestClassTrait]("reload.Main")
+		t2.result should be === "v2"
+	}
+
+	test("loads changed resources from classpath with refreshing") {
+		val destDir = newTmpDir("dynamicsrc")
+		val sse = ScalaScriptEngine.withoutRefreshPolicy(destDir)
+		sse.deleteAllClassesInOutputDirectory
+		copyFromSource(new File(sourceDir, "v1/reload"), destDir)
+		sse.refresh
+
+		val t1: TestClassTrait = sse.newInstance[TestClassTrait]("reload.Main")
+		t1.result should be === "v1"
+
+		copyFromSource(new File(sourceDir, "v2/reload"), destDir)
+		sse.refresh
+		val t2: TestClassTrait = sse.newInstance[TestClassTrait]("reload.Main")
+		t2.result should be === "v2"
 	}
 }
