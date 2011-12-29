@@ -77,7 +77,7 @@ class Main extends TestClassTrait
 				println("executor finished")
 			}
 			var currentVersion = 0
-			for (i <- 1 to 100) {
+			for (i <- 1 to 10) {
 				if (currentVersion != sse.versionNumber) {
 					println("version is %d , iterations so far : %d".format(sse.versionNumber, iterations.get))
 					currentVersion = sse.versionNumber

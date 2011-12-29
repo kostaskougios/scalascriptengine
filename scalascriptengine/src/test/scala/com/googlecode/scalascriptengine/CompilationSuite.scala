@@ -15,6 +15,7 @@ import scalascriptengine._
 class CompilationSuite extends FunSuite with ShouldMatchers {
 
 	val sourceDir = new File("testfiles/CompilationSuite")
+	val versionsDir = new File("testfiles/versions")
 	//	val classPath = new File("testfiles/lib").listFiles.filter(_.getName.endsWith(".jar")).toSet + new File("target/test-classes")
 
 	test("code modifications are reloaded") {
@@ -22,11 +23,11 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(destDir)
 		sse.deleteAllClassesInOutputDirectory
 		for (i <- 1 to 5) {
-			copyFromSource(new File(sourceDir, "v1/reload"), destDir)
+			copyFromSource(new File(versionsDir, "v1/reload"), destDir)
 			sse.refresh
 			val v1: TestClassTrait = sse.newInstance("reload.Reload")
 			v1.result should be === "v1"
-			copyFromSource(new File(sourceDir, "v2/reload"), destDir)
+			copyFromSource(new File(versionsDir, "v2/reload"), destDir)
 			sse.refresh
 			val v2: TestClassTrait = sse.newInstance("reload.Reload")
 			v2.result should be === "v2"
