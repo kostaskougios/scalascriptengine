@@ -41,7 +41,7 @@ class Main extends TestClassTrait
 		}
 		val destDir = newTmpDir("dynamicsrc/reload")
 		val main = new File(destDir, "Main.scala")
-		write(main, 0)
+		write(main, 1)
 		val sse = ScalaScriptEngine.onChangeRefreshAsynchronously(destDir)
 		sse.deleteAllClassesInOutputDirectory
 		sse.refresh
@@ -53,16 +53,36 @@ class Main extends TestClassTrait
 			executor.submit {
 				ExecutorServiceManager.lifecycle(40, 40) { _ =>
 					while (!done.get) {
-						val t = sse.newInstance[TestClassTrait]("Main")
-						if (t.result != "v" + sse.versionNumber) errors.incrementAndGet
+						try {
+							val codeVersion = sse.currentVersion
+							val t = codeVersion.newInstance[TestClassTrait]("reload.Main")
+							if (t.result != "v" + codeVersion.version) {
+								errors.incrementAndGet
+								println(t.result)
+							}
+
+							// just to trigger a reload
+							sse.newInstance[TestClassTrait]("reload.Main")
+							Thread.sleep(1)
+						} catch {
+							case e =>
+								errors.incrementAndGet
+								e.printStackTrace
+						}
 					}
 				}
+				println("executor finished")
 			}
+			var currentVersion = 0
 			for (i <- 1 to 1000) {
-				write(main, i)
+				if (currentVersion != sse.versionNumber) {
+					println("version is %d".format(sse.versionNumber))
+					currentVersion = sse.versionNumber
+					Thread.sleep(1100) // make sure filesystem marks  the file as modified
+					write(main, currentVersion + 1)
+				}
 				Thread.sleep(500)
 				errors.get should be === 0
-				println(sse.versionNumber)
 			}
 			done.set(true)
 			errors.get should be === 0
