@@ -14,7 +14,7 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class OnChangeRefreshPolicySuite extends FunSuite with ShouldMatchers {
 
-	val sourceDir = new File("testfiles/CompilationSuite")
+	val sourceDir = new File("testfiles/versions")
 
 	test("onChangeRefreshAsynchronously: code modifications are refreshed but control returns immediatelly") {
 		val destDir = newTmpDir("dynamicsrc")
