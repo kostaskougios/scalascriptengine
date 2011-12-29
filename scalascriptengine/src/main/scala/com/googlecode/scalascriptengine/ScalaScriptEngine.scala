@@ -31,6 +31,14 @@ class ScalaScriptEngine(
 	def versionNumber = codeVersion.version
 
 	def refresh: CodeVersion = {
+
+		def refresh0(srcDir: File): Set[File] = {
+			val files = srcDir.listFiles
+			val scalaFiles = files.filter(f => f.getName.endsWith(".scala") && codeVersion.isModifiedOrNew(f))
+			val rest = files.filter(_.isDirectory).map(refresh0 _).flatten
+			(scalaFiles ++ rest).toSet
+		}
+
 		val allChangedFiles = sourcePaths.map(srcDir => refresh0(srcDir)).flatten
 		if (allChangedFiles.isEmpty)
 			codeVersion
@@ -55,7 +63,7 @@ class ScalaScriptEngine(
 					}
 					throw e
 			}
-			val classLoader = new ScalaClassLoader(outputDir, classLoadingClassPaths)
+			val classLoader = new ScalaClassLoader(outputDir, sourcePaths ++ classLoadingClassPaths)
 			debug("done refreshing")
 			codeVersion = CodeVersionImpl(
 				codeVersion.version + 1,
@@ -64,13 +72,6 @@ class ScalaScriptEngine(
 				sourceFiles)
 			codeVersion
 		}
-	}
-
-	private def refresh0(srcDir: File): Set[File] = {
-		val files = srcDir.listFiles
-		val scalaFiles = files.filter(f => f.getName.endsWith(".scala") && codeVersion.isModifiedOrNew(f))
-		val rest = files.filter(_.isDirectory).map(refresh0 _).flatten
-		(scalaFiles ++ rest).toSet
 	}
 
 	def get[T](className: String): Class[T] = codeVersion.get(className)
