@@ -4,6 +4,7 @@ import java.util.UUID
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.scala_tools.time.Imports._
+import java.net.URLClassLoader
 
 /**
  * @author kostantinos.kougios
@@ -97,7 +98,17 @@ object ScalaScriptEngine {
 		dir
 	}
 
-	def currentClassPath = System.getProperty("java.class.path").split(File.pathSeparator).map(p => new File(p)).toSet
+	def currentClassPath = {
+		// this tries to detect the classpath, if it doesn't work
+		// for you, please email me or open an issue explaining your
+		// usecase.
+		def cp(cl: ClassLoader): Set[File] = cl match {
+			case ucl: URLClassLoader => ucl.getURLs.map(u => new File(u.getFile)).toSet ++ cp(ucl.getParent)
+			case _: ClassLoader => Set()
+			case null => Set()
+		}
+		cp(Thread.currentThread.getContextClassLoader) ++ System.getProperty("java.class.path").split(File.pathSeparator).map(p => new File(p)).toSet
+	}
 
 	def withoutRefreshPolicy(sourcePaths: Set[File],
 		compilationClassPaths: Set[File],
