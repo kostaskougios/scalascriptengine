@@ -41,7 +41,7 @@ trait OnChangeRefresh extends ScalaScriptEngine {
 		if (l == null || recheckEveryMillis <= 0 || System.currentTimeMillis - l > recheckEveryMillis) {
 			lastChecked.put(className, System.currentTimeMillis)
 			val fileName = className.replace('.', '/') + ".scala"
-			val srcFileOption = sourcePaths.find(dir => new File(dir, fileName).exists).map(dir => new File(dir, fileName))
+			val srcFileOption = config.sourcePaths.find(dir => new File(dir, fileName).exists).map(dir => new File(dir, fileName))
 			val isMod = srcFileOption.map(f => currentVersion.isModifiedOrNew(f)).getOrElse(true)
 			filesCheched.incrementAndGet
 			if (isMod) doRefresh

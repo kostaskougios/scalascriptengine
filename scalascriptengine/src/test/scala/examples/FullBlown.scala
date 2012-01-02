@@ -1,7 +1,5 @@
 package examples
-import com.googlecode.scalascriptengine.OnChangeRefresh
-import com.googlecode.scalascriptengine.RefreshAsynchronously
-import com.googlecode.scalascriptengine.ScalaScriptEngine
+import com.googlecode.scalascriptengine._
 import java.io.File
 
 /**
@@ -20,11 +18,11 @@ object FullBlown extends App {
 	val outputDir = new File(System.getProperty("java.io.tmpdir"), "scala-script-engine-classes")
 	outputDir.mkdir
 
-	val sse = new ScalaScriptEngine(
+	val sse = new ScalaScriptEngine(Config(
 		Set(sourceDir),
 		compilationClassPath,
 		runtimeClasspath,
-		outputDir) with OnChangeRefresh with RefreshAsynchronously {
+		outputDir)) with OnChangeRefresh with RefreshAsynchronously {
 		val recheckEveryMillis: Long = 1000 // each file will only be checked once per second
 	}
 

@@ -39,8 +39,8 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 		sse.deleteAllClassesInOutputDirectory
 		sse.refresh
 		sse.newInstance("test.MyClass")
-		new File(sse.outputDir, "test/MyClass.class").exists should be(true)
-		new File(sse.outputDir, "test/Dep1.class").exists should be(true)
+		new File(sse.config.outputDir, "test/MyClass.class").exists should be(true)
+		new File(sse.config.outputDir, "test/Dep1.class").exists should be(true)
 	}
 
 	test("scala files correct") {
@@ -57,7 +57,7 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 		sse.refresh
 		sse.newInstance("test.MyClass")
 		sse.deleteAllClassesInOutputDirectory
-		new File(sse.outputDir, "test/MyClass.class").exists should be(false)
-		new File(sse.outputDir, "test/Dep1.class").exists should be(false)
+		new File(sse.config.outputDir, "test/MyClass.class").exists should be(false)
+		new File(sse.config.outputDir, "test/Dep1.class").exists should be(false)
 	}
 }

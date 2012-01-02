@@ -6,18 +6,23 @@ import org.slf4j.LoggerFactory
 import org.scala_tools.time.Imports._
 import java.net.URLClassLoader
 
+case class Config(
+		val sourcePaths: Set[File],
+		val compilationClassPaths: Set[File] = ScalaScriptEngine.currentClassPath,
+		val classLoadingClassPaths: Set[File] = Set(),
+		val outputDir: File = ScalaScriptEngine.tmpOutputFolder) {
+
+	def this(sourcePath: File) = this(Set(sourcePath))
+}
+
 /**
  * @author kostantinos.kougios
  *
  * 22 Dec 2011
  */
-class ScalaScriptEngine(
-		protected val sourcePaths: Set[File],
-		compilationClassPaths: Set[File],
-		classLoadingClassPaths: Set[File],
-		val outputDir: File) extends Logging {
+class ScalaScriptEngine(val config: Config) extends Logging {
 
-	private def compileManager = new CompilerManager(sourcePaths, compilationClassPaths, outputDir)
+	private def compileManager = new CompilerManager(config.sourcePaths, config.compilationClassPaths, config.outputDir)
 	@volatile private var codeVersion: CodeVersion = new CodeVersion {
 		override def version: Int = 0
 		override def classLoader: ScalaClassLoader = throw new IllegalStateException("CodeVersion not yet ready.")
@@ -40,7 +45,7 @@ class ScalaScriptEngine(
 			(scalaFiles ++ rest).toSet
 		}
 
-		val allChangedFiles = sourcePaths.map(srcDir => refresh0(srcDir)).flatten
+		val allChangedFiles = config.sourcePaths.map(srcDir => refresh0(srcDir)).flatten
 		if (allChangedFiles.isEmpty)
 			codeVersion
 		else {
@@ -64,7 +69,7 @@ class ScalaScriptEngine(
 					}
 					throw e
 			}
-			val classLoader = new ScalaClassLoader(outputDir, sourcePaths ++ classLoadingClassPaths)
+			val classLoader = new ScalaClassLoader(config.outputDir, config.sourcePaths ++ config.classLoadingClassPaths)
 			debug("done refreshing")
 			codeVersion = CodeVersionImpl(
 				codeVersion.version + 1,
@@ -86,13 +91,13 @@ class ScalaScriptEngine(
 			dir.listFiles.filter(_.getName.endsWith(".class")).foreach(_.delete)
 			dir.listFiles.filter(_.isDirectory).foreach(d => deleteAllClassesInOutputDirectory(d))
 		}
-		deleteAllClassesInOutputDirectory(outputDir)
+		deleteAllClassesInOutputDirectory(config.outputDir)
 	}
 
 }
 
 object ScalaScriptEngine {
-	private def tmpFolder = {
+	def tmpOutputFolder = {
 		val dir = new File(System.getProperty("java.io.tmpdir"), "scala-script-engine-classes")
 		dir.mkdir
 		dir
@@ -114,20 +119,20 @@ object ScalaScriptEngine {
 		compilationClassPaths: Set[File],
 		classLoadingClassPaths: Set[File],
 		outputDir: File): ScalaScriptEngine =
-		new ScalaScriptEngine(sourcePaths, compilationClassPaths, classLoadingClassPaths, outputDir)
+		new ScalaScriptEngine(Config(sourcePaths, compilationClassPaths, classLoadingClassPaths, outputDir))
 
 	def withoutRefreshPolicy(sourcePaths: Set[File], compilationClassPaths: Set[File]): ScalaScriptEngine =
-		new ScalaScriptEngine(sourcePaths, compilationClassPaths, Set(), tmpFolder)
+		new ScalaScriptEngine(Config(sourcePaths, compilationClassPaths, Set(), tmpOutputFolder))
 
 	def withoutRefreshPolicy(sourcePath: File, compilationClassPaths: Set[File]): ScalaScriptEngine =
-		new ScalaScriptEngine(Set(sourcePath), compilationClassPaths, Set(), tmpFolder)
+		new ScalaScriptEngine(Config(Set(sourcePath), compilationClassPaths, Set(), tmpOutputFolder))
 
 	def withoutRefreshPolicy(sourcePaths: Set[File]): ScalaScriptEngine = {
 		withoutRefreshPolicy(sourcePaths, currentClassPath)
 	}
 	def withoutRefreshPolicy(sourcePath: File): ScalaScriptEngine = withoutRefreshPolicy(Set(sourcePath))
 
-	def timedRefresh(sourcePath: File, refreshEvery: () => DateTime): ScalaScriptEngine with TimedRefresh = new ScalaScriptEngine(Set(sourcePath), currentClassPath, Set(), tmpFolder) with TimedRefresh {
+	def timedRefresh(sourcePath: File, refreshEvery: () => DateTime): ScalaScriptEngine with TimedRefresh = new ScalaScriptEngine(Config(Set(sourcePath), currentClassPath, Set(), tmpOutputFolder)) with TimedRefresh {
 		def rescheduleAt = refreshEvery()
 	}
 
@@ -163,11 +168,11 @@ object ScalaScriptEngine {
 	 * @return						the ScalaScriptEngine
 	 */
 	def onChangeRefresh(sourcePath: File, recheckEveryInMillis: Long): ScalaScriptEngine with OnChangeRefresh =
-		new ScalaScriptEngine(
+		new ScalaScriptEngine(Config(
 			Set(sourcePath),
 			currentClassPath,
 			Set(),
-			tmpFolder) with OnChangeRefresh with RefreshSynchronously {
+			tmpOutputFolder)) with OnChangeRefresh with RefreshSynchronously {
 			val recheckEveryMillis: Long = recheckEveryInMillis
 		}
 
@@ -184,11 +189,11 @@ object ScalaScriptEngine {
 	 * returns the existing version of the class without blocking.
 	 */
 	def onChangeRefreshAsynchronously(sourcePath: File, recheckEveryInMillis: Long): ScalaScriptEngine with OnChangeRefresh with RefreshAsynchronously =
-		new ScalaScriptEngine(
+		new ScalaScriptEngine(Config(
 			Set(sourcePath),
 			currentClassPath,
 			Set(),
-			tmpFolder) with OnChangeRefresh with RefreshAsynchronously {
+			tmpOutputFolder)) with OnChangeRefresh with RefreshAsynchronously {
 			val recheckEveryMillis: Long = recheckEveryInMillis
 		}
 }
