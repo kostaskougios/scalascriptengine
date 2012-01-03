@@ -29,9 +29,17 @@ trait TimedRefresh { this: ScalaScriptEngine =>
 
 /**
  * checks scala files for modification and if yes it recompiles
- * the changed sources.
+ * the changed sources. This is not to be used by client code but
+ * rather be used by the rest of the refresh policy traits.
+ *
+ * recheckEveryMillis should be provided. If <=0 then for every
+ * request for a class, the source file of the class is checked
+ * for modifications. If >0 then maximum 1 check will be performed
+ * every recheckEveryMillis milliseconds. A sensible value might be
+ * 1000 millis if code changes frequently (i.e. during dev) and
+ * 30000 millis if code doesn't change that often (i.e. production)
  */
-trait OnChangeRefresh extends ScalaScriptEngine {
+protected trait OnChangeRefresh extends ScalaScriptEngine {
 	val recheckEveryMillis: Long
 	private val lastChecked = new ConcurrentHashMap[String, java.lang.Long]
 	private val filesCheched = new AtomicLong
@@ -52,6 +60,14 @@ trait OnChangeRefresh extends ScalaScriptEngine {
 	def doRefresh: Unit
 }
 
+/**
+ * refresh as soon as a modification is detected. The first thread that actually
+ * does the refresh will do the compilation and the rest of the threads will
+ * wait. All threads will get an up to date compiled version of the source code.
+ *
+ * This is blocking during compilation and is not recommended to be used by
+ * web servers. RefreshAsynchronously offers a much better alternative.
+ */
 trait RefreshSynchronously extends ScalaScriptEngine with OnChangeRefresh {
 	private var lastCompiled: Long = 0
 	override def doRefresh: Unit = {
@@ -71,8 +87,11 @@ trait RefreshSynchronously extends ScalaScriptEngine with OnChangeRefresh {
 }
 
 /**
- * makes sure the refresh is run only once at a time. All other calls
- * to refresh return straight away with the current code version
+ * makes sure the refresh is run only once at a time. All calls
+ * to refresh return straight away with the current code version but
+ * a compilation will be triggered if the source code changed. The
+ * compilation will occur in the background and when done, the new
+ * compiled version of the code will be used.
  */
 trait RefreshAsynchronously extends ScalaScriptEngine with OnChangeRefresh {
 	private val isCompiling = new AtomicBoolean(false)

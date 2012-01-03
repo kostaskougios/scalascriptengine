@@ -6,6 +6,9 @@ import java.io.File
 import tools.nsc.reporters.Reporter
 
 /**
+ * manages the scala compiler, taking care of setting the correct compiler parameters
+ * and reporting errors.
+ *
  * @author kostantinos.kougios
  *
  * 22 Dec 2011

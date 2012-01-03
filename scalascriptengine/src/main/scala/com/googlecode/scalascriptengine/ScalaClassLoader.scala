@@ -5,6 +5,9 @@ import java.net.URL
 import java.net.URLClassLoader
 
 /**
+ * a throwaway classloader that keeps one version of the source code. For every code change/refresh,
+ * a new instance of this classloader is used.
+ *
  * @author kostantinos.kougios
  *
  * 22 Dec 2011

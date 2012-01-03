@@ -3,6 +3,8 @@ import org.slf4j.LoggerFactory
 import org.slf4j.Logger
 
 /**
+ * logging is done via slf4j
+ *
  * @author kostantinos.kougios
  *
  * 25 Dec 2011

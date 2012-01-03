@@ -6,7 +6,8 @@ package com.googlecode.scalascriptengine
  * from the source classpaths.
  *
  * This can come handy i.e. during development if your IDE compiles
- * the dynamic scala classes.
+ * the dynamic scala classes and you wouldn't like to wait for the
+ * classes to be recompiled.
  *
  * @author kostantinos.kougios
  *
