@@ -53,6 +53,7 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 		override def sourceFiles = Map[File, SourceFile]()
 		override def get[T](className: String): Class[T] = throw new IllegalStateException("CodeVersion not yet ready.")
 		override def newInstance[T](className: String): T = throw new IllegalStateException("CodeVersion not yet ready.")
+		override def constructors[T](className: String) = throw new IllegalStateException("CodeVersion not yet ready.")
 		override def isModifiedOrNew(f: File) = true
 	}
 
@@ -108,6 +109,11 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 	 */
 	def get[T](className: String): Class[T] = codeVersion.get(className)
 
+	/**
+	 * returns Constructors, this allows easy instantiation of the class
+	 * using up to 4 constructor arguments
+	 */
+	def constructors[T](className: String): Constructors[T] = codeVersion.constructors(className)
 	/**
 	 * returns a new instance of className
 	 */
