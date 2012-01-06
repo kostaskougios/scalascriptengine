@@ -10,7 +10,7 @@ import java.io.File
  *
  * 5 Jan 2012
  */
-object InsttantiatingWithConstructorArgs extends App {
+object InstantiatingWithConstructorArgs extends App {
 	val sourceDir = new File("examplefiles/constructors")
 	val sse = ScalaScriptEngine.onChangeRefresh(sourceDir)
 	sse.deleteAllClassesInOutputDirectory
@@ -18,6 +18,15 @@ object InsttantiatingWithConstructorArgs extends App {
 	val constructors = sse.constructors[UserTrait]("my.User")
 	val user = constructors.newInstance("Kostas Kougios", 10)
 	println(user) // prints User(Kostas Kougios,10)
+
+	// now assuming we want to construct multiple instances of
+	// my.User, we can get a function that will create instances
+	// every time it is called. This constructor always uses
+	// the current codeversion and if my.User changes then
+	// the change will *not* be reflected to the constructor.
+	val constructor = constructors.constructorWith2Args[String, Int]
+	println(constructor("Kostas", 5)) // prints User(Kostas,5)
+	println(constructor("Joe", 15)) // prints User(Joe,15)
 }
 
 trait UserTrait {

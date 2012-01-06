@@ -13,22 +13,22 @@ class Constructors[T](clz: Class[T]) {
 
 	def newInstance[P1](p1: P1)(implicit p1m: ClassManifest[P1]): T = {
 		val c = clz.getConstructor(p1m.erasure)
-		c.newInstance(Array(p1.asInstanceOf[Object]): _*)
+		c.newInstance(p1.asInstanceOf[Object])
 	}
 
 	def newInstance[P1, P2](p1: P1, p2: P2)(implicit p1m: ClassManifest[P1], p2m: ClassManifest[P2]): T = {
 		val c = clz.getConstructor(p1m.erasure, p2m.erasure)
-		c.newInstance(Array(p1.asInstanceOf[Object], p2.asInstanceOf[Object]): _*)
+		c.newInstance(p1.asInstanceOf[Object], p2.asInstanceOf[Object])
 	}
 
 	def newInstance[P1, P2, P3](p1: P1, p2: P2, p3: P3)(implicit p1m: ClassManifest[P1], p2m: ClassManifest[P2], p3m: ClassManifest[P3]): T = {
 		val c = clz.getConstructor(p1m.erasure, p2m.erasure, p3m.erasure)
-		c.newInstance(Array(p1.asInstanceOf[Object], p2.asInstanceOf[Object], p3.asInstanceOf[Object]): _*)
+		c.newInstance(p1.asInstanceOf[Object], p2.asInstanceOf[Object], p3.asInstanceOf[Object])
 	}
 
 	def newInstance[P1, P2, P3, P4](p1: P1, p2: P2, p3: P3, p4: P4)(implicit p1m: ClassManifest[P1], p2m: ClassManifest[P2], p3m: ClassManifest[P3], p4m: ClassManifest[P4]): T = {
 		val c = clz.getConstructor(p1m.erasure, p2m.erasure, p3m.erasure, p4m.erasure)
-		c.newInstance(Array(p1.asInstanceOf[Object], p2.asInstanceOf[Object], p3.asInstanceOf[Object], p4.asInstanceOf[Object]): _*)
+		c.newInstance(p1.asInstanceOf[Object], p2.asInstanceOf[Object], p3.asInstanceOf[Object], p4.asInstanceOf[Object])
 	}
 
 	/**
@@ -41,7 +41,7 @@ class Constructors[T](clz: Class[T]) {
 	 */
 	def constructorWith1Arg[P1](implicit p1m: ClassManifest[P1]): P1 => T = {
 		val c = clz.getConstructor(p1m.erasure)
-		(p1: P1) => c.newInstance(Array(p1.asInstanceOf[Object]): _*)
+		(p1: P1) => c.newInstance(p1.asInstanceOf[Object])
 	}
 
 	/**
@@ -49,7 +49,7 @@ class Constructors[T](clz: Class[T]) {
 	 */
 	def constructorWith2Args[P1, P2](implicit p1m: ClassManifest[P1], p2m: ClassManifest[P2]): (P1, P2) => T = {
 		val c = clz.getConstructor(p1m.erasure, p2m.erasure)
-		(p1: P1, p2: P2) => c.newInstance(Array(p1.asInstanceOf[Object], p2.asInstanceOf[Object]): _*)
+		(p1: P1, p2: P2) => c.newInstance(p1.asInstanceOf[Object], p2.asInstanceOf[Object])
 	}
 
 	/**
@@ -57,7 +57,7 @@ class Constructors[T](clz: Class[T]) {
 	 */
 	def constructorWith3Args[P1, P2, P3](implicit p1m: ClassManifest[P1], p2m: ClassManifest[P2], p3m: ClassManifest[P3]): (P1, P2, P3) => T = {
 		val c = clz.getConstructor(p1m.erasure, p2m.erasure, p3m.erasure)
-		(p1: P1, p2: P2, p3: P3) => c.newInstance(Array(p1.asInstanceOf[Object], p2.asInstanceOf[Object], p3.asInstanceOf[Object]): _*)
+		(p1: P1, p2: P2, p3: P3) => c.newInstance(p1.asInstanceOf[Object], p2.asInstanceOf[Object], p3.asInstanceOf[Object])
 	}
 
 	/**
@@ -65,6 +65,6 @@ class Constructors[T](clz: Class[T]) {
 	 */
 	def constructorWith4Args[P1, P2, P3, P4](implicit p1m: ClassManifest[P1], p2m: ClassManifest[P2], p3m: ClassManifest[P3], p4m: ClassManifest[P4]): (P1, P2, P3, P4) => T = {
 		val c = clz.getConstructor(p1m.erasure, p2m.erasure, p3m.erasure, p4m.erasure)
-		(p1: P1, p2: P2, p3: P3, p4: P4) => c.newInstance(Array(p1.asInstanceOf[Object], p2.asInstanceOf[Object], p3.asInstanceOf[Object], p4.asInstanceOf[Object]): _*)
+		(p1: P1, p2: P2, p3: P3, p4: P4) => c.newInstance(p1.asInstanceOf[Object], p2.asInstanceOf[Object], p3.asInstanceOf[Object], p4.asInstanceOf[Object])
 	}
 }

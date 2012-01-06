@@ -19,7 +19,7 @@ class EnhancersSuite extends FunSuite with ShouldMatchers {
 		val sse = new ScalaScriptEngine(new Config(sourceDir)) with FromClasspathFirst
 		sse.deleteAllClassesInOutputDirectory
 		val t = sse.newInstance[TestClassTrait]("test.FromClasspathFirst")
-		t.result should be === "fcf"
+		t.result should be === "fcf:5"
 	}
 
 	test("from classpath first loads the script version") {
@@ -29,5 +29,13 @@ class EnhancersSuite extends FunSuite with ShouldMatchers {
 		sse.deleteAllClassesInOutputDirectory
 		val t = sse.newInstance[TestClassTrait]("test.FCF")
 		t.result should be === "not from classpath"
+	}
+
+	test("constructors use classpath class") {
+		val sse = new ScalaScriptEngine(new Config(sourceDir)) with FromClasspathFirst
+		sse.deleteAllClassesInOutputDirectory
+		val constructors = sse.constructors[TestClassTrait]("test.FromClasspathFirst")
+		val t = constructors.newInstance(8)
+		t.result should be === "fcf:8"
 	}
 }

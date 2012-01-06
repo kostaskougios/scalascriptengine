@@ -113,7 +113,7 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 	 * returns Constructors, this allows easy instantiation of the class
 	 * using up to 4 constructor arguments
 	 */
-	def constructors[T](className: String): Constructors[T] = codeVersion.constructors(className)
+	def constructors[T](className: String): Constructors[T] = new Constructors(get(className))
 	/**
 	 * returns a new instance of className
 	 */
