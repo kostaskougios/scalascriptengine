@@ -15,6 +15,12 @@ object InstantiatingWithConstructorArgs extends App {
 	val sse = ScalaScriptEngine.onChangeRefresh(sourceDir)
 	sse.deleteAllClassesInOutputDirectory
 	sse.refresh
+	// get constructors for the current codeversion.
+	// please note that in order to always get a new instance
+	// of the latest version of the class you will need
+	// to always get the constructor from sse before using
+	// it to instantiate a class
+
 	val constructors = sse.constructors[UserTrait]("my.User")
 	val user = constructors.newInstance("Kostas Kougios", 10)
 	println(user) // prints User(Kostas Kougios,10)
