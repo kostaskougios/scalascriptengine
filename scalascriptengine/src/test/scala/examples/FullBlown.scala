@@ -1,6 +1,10 @@
 package examples
-import com.googlecode.scalascriptengine._
+
 import java.io.File
+import com.googlecode.scalascriptengine.RefreshAsynchronously
+import com.googlecode.scalascriptengine.ScalaScriptEngine
+import com.googlecode.scalascriptengine.Config
+import com.googlecode.scalascriptengine.FromClasspathFirst
 
 /**
  * This example shows how to instantiate the script engine without using the factory

@@ -16,7 +16,6 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 
 	val sourceDir = new File("testfiles/CompilationSuite")
 	val versionsDir = new File("testfiles/versions")
-	//	val classPath = new File("testfiles/lib").listFiles.filter(_.getName.endsWith(".jar")).toSet + new File("target/test-classes")
 
 	test("code modifications are reloaded") {
 		val destDir = newTmpDir("dynamicsrc")
@@ -25,11 +24,11 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 		for (i <- 1 to 5) {
 			copyFromSource(new File(versionsDir, "v1/reload"), destDir)
 			sse.refresh
-			val v1: TestClassTrait = sse.newInstance("reload.Reload")
+			val v1 = sse.newInstance[TestClassTrait]("reload.Reload")
 			v1.result should be === "v1"
 			copyFromSource(new File(versionsDir, "v2/reload"), destDir)
 			sse.refresh
-			val v2: TestClassTrait = sse.newInstance("reload.Reload")
+			val v2 = sse.newInstance[TestClassTrait]("reload.Reload")
 			v2.result should be === "v2"
 		}
 	}
@@ -47,7 +46,7 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(sourceDir)
 		sse.deleteAllClassesInOutputDirectory
 		sse.refresh
-		val tct: TestClassTrait = sse.newInstance("test.MyClass")
+		val tct = sse.newInstance[TestClassTrait]("test.MyClass")
 		tct.result should be === "ok"
 	}
 

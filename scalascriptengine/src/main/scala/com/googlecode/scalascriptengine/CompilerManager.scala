@@ -21,10 +21,13 @@ protected class CompilerManager(sourcePaths: Set[File], classPaths: Set[File], d
 	settings.classpath.tryToSet(List(classPaths.map(_.getAbsolutePath).mkString(File.pathSeparator)))
 	settings.outdir.tryToSet(List(destDir.getAbsolutePath))
 
-	private val g = new Global(settings, new CompilationReporter);
+	private val g = new Global(settings, new CompilationReporter)
 	private lazy val run = new g.Run
 
 	def compile(files: Set[String]) = {
+		val phase = run.phaseNamed("typer")
+		val cps = new CompilationPlugins(g)
+		cps.Component.newPhase(phase)
 		run.compile(files.toList)
 	}
 

@@ -1,8 +1,8 @@
 package com.googlecode.scalascriptengine
 
 import java.io.File
+
 import org.apache.commons.io.FileUtils
-import java.util.UUID
 
 /**
  * @author kostantinos.kougios
