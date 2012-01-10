@@ -4,6 +4,9 @@ import scala.tools.nsc.Global
 import scala.tools.nsc.Phase
 
 /**
+ * compiler plugins to keep track of dependencies, to log and also
+ * provide a stop policy
+ *
  * @author kostantinos.kougios
  *
  * 8 Jan 2012
@@ -15,6 +18,10 @@ class CompilationPlugins(global: Global) {
 	val description = "scalascriptengine compilation plugins"
 	val components = List[PluginComponent](Component)
 
+	/**
+	 * this wrapping code is not really necessary for our purposes, as we could use
+	 * the Phases straight away
+	 */
 	object Component extends PluginComponent {
 		val global: CompilationPlugins.this.global.type = CompilationPlugins.this.global
 		val runsAfter = List("typer")

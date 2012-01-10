@@ -13,11 +13,22 @@ import java.net.URLClassLoader
  * settings, error reporters and so on.
  */
 case class Config(
-		val sourcePaths: Set[File],
+		val sourcePaths: Set[File], // this  is where the source files are located
+		// this is the classpath for compilation and must be provided. i.e.
+		// ScalaScriptEngine.currentClassPath
 		val compilationClassPaths: Set[File] = ScalaScriptEngine.currentClassPath,
+		// this is an extra class loading classpath. I.e. the script folder might
+		// utilize extra jars. If empty then the parent classloader will be used
+		// to find any unresolved classes. This means that all classes visible to
+		// your application will also be visible to the scripts even if the 
+		// classLoadingClassPaths is empty
 		val classLoadingClassPaths: Set[File] = Set(),
+		// the outputDir, this is where all compiled classes will be stored. Please
+		// use with care! A folder in the temp directory will usually do.
 		val outputDir: File = ScalaScriptEngine.tmpOutputFolder) {
 
+	// a convenient constructor to create a config with the default options
+	// and one only source folder.
 	def this(sourcePath: File) = this(Set(sourcePath))
 }
 
@@ -31,13 +42,24 @@ case class Config(
  *
  * This can be initialized standalone or by mixing in a refresh policy trait. If
  * standalone, then refresh() should be manually invoked every time a change
- * occured in the source code.
+ * occurs in the source code.
  *
  * If mixed in with a refresh policy, then the policy takes care of scanning the
- * source code for changes and refreshing.
+ * source code for changes and refreshing. Please check RefreshPolicies.scala
  *
  * Typically this class will not be instantiated using 'new' but rather using one
- * of the factory methods of the companion object.
+ * of the factory methods of the companion object. Instantiation offers the full
+ * amount of options that can be used by mixing in the various refresh policies
+ * and enhancers.
+ *
+ * 	val sse = new ScalaScriptEngine(Config(
+ * 		Set(sourceDir),
+ * 		compilationClassPath,
+ * 		runtimeClasspath,
+ * 		outputDir)) with RefreshAsynchronously with FromClasspathFirst {
+ * 		val recheckEveryMillis: Long = 1000 // each file will only be checked maximum once per second
+ * }))
+ *
  *
  * @author kostantinos.kougios
  *
@@ -46,6 +68,8 @@ case class Config(
 class ScalaScriptEngine(val config: Config) extends Logging {
 
 	private def compileManager = new CompilerManager(config.sourcePaths, config.compilationClassPaths, config.outputDir)
+
+	// codeversion is initialy to version 0 which is not usable. 
 	@volatile private var codeVersion: CodeVersion = new CodeVersion {
 		override def version: Int = 0
 		override def classLoader: ScalaClassLoader = throw new IllegalStateException("CodeVersion not yet ready.")
@@ -60,6 +84,12 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 	def currentVersion = codeVersion
 	def versionNumber = codeVersion.version
 
+	/*
+	 * refreshes the codeversion by scanning the source folders for changed source files. If any are
+	 * found, then a compilation is triggered.
+	 * 
+	 * This method is not thread safe (but refresh policies ensure calling this only once at each time)
+	 */
 	def refresh: CodeVersion = {
 
 		def refresh0(srcDir: File): Set[File] = {
@@ -106,21 +136,36 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 
 	/**
 	 * returns the Class[T] for className
+	 *
+	 * Can throw ClassNotFoundException if the class is not present.
+	 * Can throw ClassCastException if the class is not of T
+	 * Can trigger a compilation in the background or foreground,
+	 * 		depending on the refresh policy.
 	 */
 	def get[T](className: String): Class[T] = codeVersion.get(className)
 
 	/**
 	 * returns Constructors, this allows easy instantiation of the class
-	 * using up to 4 constructor arguments
+	 * using up to 4 constructor arguments.
+	 *
+	 * Constructors returned by this method are linked to the current codeversion.
+	 * This means that, if codeversion is refreshed, a call to this will return
+	 * an up to date Constructors instance. But also it means that the returned
+	 * constructor will always create instances of that codeversion and will not
+	 * reflect updates to the codeversion.
 	 */
 	def constructors[T](className: String): Constructors[T] = new Constructors(get(className))
+
 	/**
-	 * returns a new instance of className
+	 * returns a new instance of className. The new instance is always of the
+	 * latest codeversion.
 	 */
 	def newInstance[T](className: String): T = get[T](className).newInstance
 
 	/**
-	 * please make sure outputDir is valid!!!
+	 * please make sure outputDir is valid!!! If you used one of the factory
+	 * methods to create an instance of the script engine, the output dir will
+	 * be in the tmp directory.
 	 */
 	def deleteAllClassesInOutputDirectory {
 		def deleteAllClassesInOutputDirectory(dir: File) {
@@ -129,7 +174,6 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 		}
 		deleteAllClassesInOutputDirectory(config.outputDir)
 	}
-
 }
 
 /**
@@ -155,21 +199,36 @@ object ScalaScriptEngine {
 		cp(Thread.currentThread.getContextClassLoader) ++ System.getProperty("java.class.path").split(File.pathSeparator).map(p => new File(p)).toSet
 	}
 
+	/**
+	 * returns an instance of the engine. Refreshes must be done manually
+	 */
 	def withoutRefreshPolicy(sourcePaths: Set[File],
 		compilationClassPaths: Set[File],
 		classLoadingClassPaths: Set[File],
 		outputDir: File): ScalaScriptEngine =
 		new ScalaScriptEngine(Config(sourcePaths, compilationClassPaths, classLoadingClassPaths, outputDir))
 
+	/**
+	 * returns an instance of the engine. Refreshes must be done manually
+	 */
 	def withoutRefreshPolicy(sourcePaths: Set[File], compilationClassPaths: Set[File]): ScalaScriptEngine =
 		new ScalaScriptEngine(Config(sourcePaths, compilationClassPaths, Set(), tmpOutputFolder))
 
+	/**
+	 * returns an instance of the engine. Refreshes must be done manually
+	 */
 	def withoutRefreshPolicy(sourcePath: File, compilationClassPaths: Set[File]): ScalaScriptEngine =
 		new ScalaScriptEngine(Config(Set(sourcePath), compilationClassPaths, Set(), tmpOutputFolder))
 
+	/**
+	 * returns an instance of the engine. Refreshes must be done manually
+	 */
 	def withoutRefreshPolicy(sourcePaths: Set[File]): ScalaScriptEngine =
 		withoutRefreshPolicy(sourcePaths, currentClassPath)
 
+	/**
+	 * returns an instance of the engine. Refreshes must be done manually
+	 */
 	def withoutRefreshPolicy(sourcePath: File): ScalaScriptEngine = withoutRefreshPolicy(Set(sourcePath))
 
 	/**
