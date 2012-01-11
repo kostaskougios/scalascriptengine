@@ -94,9 +94,9 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 
 		def refresh0(srcDir: File): Set[File] = {
 			val files = srcDir.listFiles
-			val scalaFiles = files.filter(f => f.getName.endsWith(".scala") && codeVersion.isModifiedOrNew(f))
-			val rest = files.filter(_.isDirectory).map(refresh0 _).flatten
-			(scalaFiles ++ rest).toSet
+			val scalaFilesOnCurrentDir = files.filter(f => f.getName.endsWith(".scala") && codeVersion.isModifiedOrNew(f))
+			val scalaFilesOnSubDirs = files.filter(_.isDirectory).map(refresh0 _).flatten
+			(scalaFilesOnCurrentDir ++ scalaFilesOnSubDirs).toSet
 		}
 
 		val allChangedFiles = config.sourcePaths.map(srcDir => refresh0(srcDir)).flatten
