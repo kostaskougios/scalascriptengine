@@ -28,13 +28,13 @@ class ResourcesSuite extends FunSuite with ShouldMatchers {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(destDir)
 		sse.deleteAllClassesInOutputDirectory
-		copyFromSource(new File(sourceDir, "v1/reload"), destDir)
+		copyFromSource(new File(sourceDir, "v1"), destDir)
 		sse.refresh
 
 		val t1: TestClassTrait = sse.newInstance[TestClassTrait]("reload.Main")
 		t1.result should be === "v1"
 
-		copyFromSource(new File(sourceDir, "v2/reload"), destDir)
+		copyFromSource(new File(sourceDir, "v2"), destDir)
 		val t2: TestClassTrait = sse.newInstance[TestClassTrait]("reload.Main")
 		t2.result should be === "v2"
 	}
@@ -43,13 +43,13 @@ class ResourcesSuite extends FunSuite with ShouldMatchers {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(destDir)
 		sse.deleteAllClassesInOutputDirectory
-		copyFromSource(new File(sourceDir, "v1/reload"), destDir)
+		copyFromSource(new File(sourceDir, "v1"), destDir)
 		sse.refresh
 
 		val t1: TestClassTrait = sse.newInstance[TestClassTrait]("reload.Main")
 		t1.result should be === "v1"
 
-		copyFromSource(new File(sourceDir, "v2/reload"), destDir)
+		copyFromSource(new File(sourceDir, "v2"), destDir)
 		sse.refresh
 		val t2: TestClassTrait = sse.newInstance[TestClassTrait]("reload.Main")
 		t2.result should be === "v2"
