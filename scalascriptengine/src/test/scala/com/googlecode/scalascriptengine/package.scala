@@ -27,5 +27,17 @@ package object scalascriptengine {
 		copyFromSource(src, dest)
 	}
 
-	def copyFromSource(src: File, dest: File) = FileUtils.copyDirectoryToDirectory(src, dest)
+	var time = System.currentTimeMillis
+	def copyFromSource(src: File, dest: File) = {
+
+		def replaceTime(dir: File) {
+			val files = dir.listFiles
+			files.filter(_.isDirectory).foreach(d => replaceTime(d))
+			files.filter(!_.isDirectory).foreach(_.setLastModified(time))
+		}
+
+		FileUtils.copyDirectory(src, dest, false)
+		replaceTime(dest)
+		time -= 5000
+	}
 }

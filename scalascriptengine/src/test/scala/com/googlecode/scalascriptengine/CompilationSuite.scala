@@ -22,11 +22,11 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(destDir)
 		sse.deleteAllClassesInOutputDirectory
 		for (i <- 1 to 5) {
-			copyFromSource(new File(versionsDir, "v1/reload"), destDir)
+			copyFromSource(new File(versionsDir, "v1"), destDir)
 			sse.refresh
 			val v1 = sse.newInstance[TestClassTrait]("reload.Reload")
 			v1.result should be === "v1"
-			copyFromSource(new File(versionsDir, "v2/reload"), destDir)
+			copyFromSource(new File(versionsDir, "v2"), destDir)
 			sse.refresh
 			val v2 = sse.newInstance[TestClassTrait]("reload.Reload")
 			v2.result should be === "v2"
