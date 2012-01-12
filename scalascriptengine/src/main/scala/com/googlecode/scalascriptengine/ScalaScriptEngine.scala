@@ -13,19 +13,19 @@ import java.net.URLClassLoader
  * settings, error reporters and so on.
  */
 case class Config(
-	val sourcePaths: Set[File], // this  is where the source files are located
-	// this is the classpath for compilation and must be provided. i.e.
-	// ScalaScriptEngine.currentClassPath
-	val compilationClassPaths: Set[File] = ScalaScriptEngine.currentClassPath,
-	// this is an extra class loading classpath. I.e. the script folder might
-	// utilize extra jars. If empty then the parent classloader will be used
-	// to find any unresolved classes. This means that all classes visible to
-	// your application will also be visible to the scripts even if the 
-	// classLoadingClassPaths is empty
-	val classLoadingClassPaths: Set[File] = Set(),
-	// the outputDir, this is where all compiled classes will be stored. Please
-	// use with care! A folder in the temp directory will usually do.
-	val outputDir: File = ScalaScriptEngine.tmpOutputFolder) {
+		val sourcePaths: Set[File], // this  is where the source files are located
+		// this is the classpath for compilation and must be provided. i.e.
+		// ScalaScriptEngine.currentClassPath
+		val compilationClassPaths: Set[File] = ScalaScriptEngine.currentClassPath,
+		// this is an extra class loading classpath. I.e. the script folder might
+		// utilize extra jars. If empty then the parent classloader will be used
+		// to find any unresolved classes. This means that all classes visible to
+		// your application will also be visible to the scripts even if the 
+		// classLoadingClassPaths is empty
+		val classLoadingClassPaths: Set[File] = Set(),
+		// the outputDir, this is where all compiled classes will be stored. Please
+		// use with care! A folder in the temp directory will usually do.
+		val outputDir: File = ScalaScriptEngine.tmpOutputFolder) {
 
 	// a convenient constructor to create a config with the default options
 	// and one only source folder.
@@ -67,7 +67,7 @@ case class Config(
  */
 class ScalaScriptEngine(val config: Config) extends Logging {
 
-	private def compileManager = new CompilerManager(config.sourcePaths, config.compilationClassPaths, config.outputDir)
+	private def compileManager = new CompilerManager(config.sourcePaths, config.compilationClassPaths, config.outputDir, this)
 
 	// codeversion is initialy to version 0 which is not usable. 
 	@volatile private var codeVersion: CodeVersion = new CodeVersion {
@@ -81,8 +81,11 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 		override def isModifiedOrNew(f: File) = true
 	}
 
+	@volatile private var _compilationStatus = CompilationStatus.notYetReady
+
 	def currentVersion = codeVersion
 	def versionNumber = codeVersion.version
+	def compilationStatus = _compilationStatus
 
 	/*
 	 * refreshes the codeversion by scanning the source folders for changed source files. If any are
@@ -99,16 +102,21 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 			(scalaFilesOnCurrentDir ++ scalaFilesOnSubDirs).toSet
 		}
 
+		_compilationStatus = CompilationStatus.started
+
 		val allChangedFiles = config.sourcePaths.map(srcDir => refresh0(srcDir)).flatten
-		if (allChangedFiles.isEmpty)
+		_compilationStatus.checkStop
+		val result = if (allChangedFiles.isEmpty)
 			codeVersion
 		else {
 			debug("refreshing changed files %s".format(allChangedFiles))
 			var sourceFilesSet = allChangedFiles.map(f => SourceFile(f, f.lastModified))
+			_compilationStatus.checkStop
 
 			def sourceFiles = sourceFilesSet.map(s => (s.file, s)).toMap
 
 			try {
+				_compilationStatus.checkStop
 				compileManager.compile(allChangedFiles.map(_.getAbsolutePath))
 			} catch {
 				case e =>
@@ -121,8 +129,10 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 							codeVersion.classLoader,
 							sourceFiles)
 					}
+					_compilationStatus = CompilationStatus.failed(_compilationStatus)
 					throw e
 			}
+			_compilationStatus.checkStop
 			val classLoader = new ScalaClassLoader(config.outputDir, config.sourcePaths ++ config.classLoadingClassPaths)
 			debug("done refreshing")
 			codeVersion = CodeVersionImpl(
@@ -132,6 +142,9 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 				sourceFiles)
 			codeVersion
 		}
+
+		_compilationStatus = CompilationStatus.completed(_compilationStatus)
+		result
 	}
 
 	/**

@@ -13,7 +13,7 @@ import tools.nsc.reporters.Reporter
  *
  * 22 Dec 2011
  */
-protected class CompilerManager(sourcePaths: Set[File], classPaths: Set[File], destDir: File) extends Logging {
+protected class CompilerManager(sourcePaths: Set[File], classPaths: Set[File], destDir: File, sse: ScalaScriptEngine) extends Logging {
 	val settings = new Settings(s => {
 		error("errors report: " + s)
 	})
@@ -26,7 +26,7 @@ protected class CompilerManager(sourcePaths: Set[File], classPaths: Set[File], d
 
 	def compile(files: Set[String]) = {
 		val phase = run.phaseNamed("typer")
-		val cps = new CompilationPlugins(g)
+		val cps = new CompilationPlugins(g, sse)
 		cps.Component.newPhase(phase)
 		run.compile(files.toList)
 	}

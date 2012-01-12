@@ -11,7 +11,7 @@ import scala.tools.nsc.Phase
  *
  * 8 Jan 2012
  */
-class CompilationPlugins(global: Global) {
+class CompilationPlugins(global: Global, sse: ScalaScriptEngine) {
 	import global._
 
 	val name = "compilation-plugins"
@@ -33,6 +33,7 @@ class CompilationPlugins(global: Global) {
 			override def next = nxt
 			def apply(unit: CompilationUnit) {
 				info("compiling unit " + unit)
+				sse.compilationStatus.checkStop
 			}
 		}
 	}
