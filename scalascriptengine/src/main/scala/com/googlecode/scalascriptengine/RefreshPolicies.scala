@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicLong
 trait TimedRefresh { this: ScalaScriptEngine =>
 	def rescheduleAt: DateTime
 
-	private val executor = ExecutorServiceManager.newScheduledThreadPool(1, e => error("error during recompilation of %s".format(this), e))
+	private val executor = ExecutorServiceManager.newScheduledThreadPool(1, e => error("error during recompilation of a source file", e))
 	executor.runPeriodically(rescheduleAt, Some(rescheduleAt)) {
 		refresh
 	}

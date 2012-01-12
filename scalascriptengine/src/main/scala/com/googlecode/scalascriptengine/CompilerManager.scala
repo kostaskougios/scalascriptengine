@@ -40,7 +40,7 @@ private class CompilationReporter extends Reporter with Logging {
 	protected def info0(pos: Position, msg: String, severity: Severity, force: Boolean): Unit =
 		{
 			error(msg)
-			if (severity == ERROR) throw new CompilationError(msg)
+			if (severity == ERROR) throw new CompilationError("error during compilation of %s : %s".format(pos.source.path, msg))
 		}
 
 	override def hasErrors: Boolean = false
