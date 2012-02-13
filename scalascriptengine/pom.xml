@@ -1,8 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.googlecode.scalascriptengine</groupId>
 	<artifactId>scalascriptengine</artifactId>
-	<version>0.6.3</version>
+	<version>0.6.4</version>
 	<name>scalascriptengine</name>
 	<description>A ScriptEngine for Scala</description>
 	<url>https://code.google.com/p/scalascriptengine/</url>
@@ -21,6 +26,12 @@
 		<system>Google Code</system>
 		<url>https://code.google.com/p/scalascriptengine/issues/list</url>
 	</issueManagement>
+	<developers>
+		<developer>
+			<name>Konstantinos Kougios</name>
+			<email>kostas.kougios@googlemail.com</email>
+		</developer>
+	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<scala.version>2.9.1</scala.version>
@@ -142,6 +153,20 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.2.1</version>
 			</plugin>
@@ -151,35 +176,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<repositories>
-		<repository>
-			<id>scala-tools.releases</id>
-			<name>Scala-Tools Dependencies Repository for Releases</name>
-			<url>http://scala-tools.org/repo-releases</url>
-		</repository>
-		<repository>
-			<id>scala-tools.org.snapshots</id>
-			<name>Scala Tools Maven2 Repository</name>
-			<url>http://scala-tools.org/repo-snapshots</url>
-			<snapshots />
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>scala-tools.releases</id>
-			<name>Scala-Tools Plugins Repository for Releases</name>
-			<url>http://scala-tools.org/repo-releases</url>
-		</pluginRepository>
-	</pluginRepositories>
-	<profiles>
-		<profile>
-			<id>release</id>
-			<distributionManagement>
-				<repository>
-					<id>scala-tools.org</id>
-					<url>http://nexus.scala-tools.org/content/repositories/releases</url>
-				</repository>
-			</distributionManagement>
-		</profile>
-	</profiles>
 </project>
