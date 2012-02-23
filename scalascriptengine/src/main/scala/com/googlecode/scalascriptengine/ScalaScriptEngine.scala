@@ -96,6 +96,7 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 	def refresh: CodeVersion = {
 
 		def refresh0(srcDir: File): Set[File] = {
+			if (!srcDir.isDirectory) throw new IllegalArgumentException("Not a directory : %s".format(srcDir))
 			val files = srcDir.listFiles
 			val scalaFilesOnCurrentDir = files.filter(f => f.getName.endsWith(".scala") && codeVersion.isModifiedOrNew(f))
 			val scalaFilesOnSubDirs = files.filter(_.isDirectory).map(refresh0 _).flatten
