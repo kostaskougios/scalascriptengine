@@ -18,8 +18,8 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:https://scalascriptengine.googlecode.com/svn/trunk/</connection>
-		<developerConnection>scm:svn:https://scalascriptengine.googlecode.com/svn/trunk/</developerConnection>
+		<connection>scm:git:https://code.google.com/p/scalascriptengine/</connection>
+		<developerConnection>scm:git:https://code.google.com/p/scalascriptengine/</developerConnection>
 		<url>https://code.google.com/p/scalascriptengine/source/browse/</url>
 	</scm>
 	<issueManagement>
@@ -34,7 +34,7 @@
 	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<scala.version>2.9.1</scala.version>
+		<scala.version>2.9.2</scala.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -56,8 +56,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.scalatest</groupId>
-			<artifactId>scalatest_2.9.1</artifactId>
-			<version>1.6.1</version>
+			<artifactId>scalatest_2.9.2</artifactId>
+			<version>1.8</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
