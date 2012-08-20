@@ -12,8 +12,8 @@ import java.io.FileWriter
  * 20 Aug 2012
  */
 
-class EvalCode[T](clz: Class[T], argNames: Iterable[String], body: String) {
-	def this(argNames: Iterable[String], body: String)(implicit m: ClassManifest[T]) = this(m.erasure.asInstanceOf[Class[T]], argNames, body)
+class EvalCode[T](clz: Class[T], typeArgs: List[ClassManifest[_]], argNames: Iterable[String], body: String) {
+	def this(argNames: Iterable[String], body: String)(implicit m: ClassManifest[T]) = this(m.erasure.asInstanceOf[Class[T]], m.typeArguments.asInstanceOf[List[ClassManifest[_]]], argNames, body)
 
 	import EvalCode._
 
@@ -22,24 +22,31 @@ class EvalCode[T](clz: Class[T], argNames: Iterable[String], body: String) {
 	if (!srcFolder.mkdir) throw new IllegalStateException("can't create temp folder %s".format(srcFolder))
 	private val sse = ScalaScriptEngine.onChangeRefresh(srcFolder)
 
-	private val applyMethod = reflectionManager.method(clz, "apply").getOrElse(throw new IllegalArgumentException("class %s doesn't have an apply method".format(clz)))
-
-	if (argNames.size != applyMethod.getParameterTypes.length) throw new IllegalArgumentException("argNames " + argNames + " not equal to the number of parameters of " + applyMethod)
-
 	private val templateTop = """
 		package eval
 		
-		class Eval extends %s {
+		class Eval extends %s%s {
 			override def apply(%s):%s = { %s }
 		}
 		""".format(
+		// super class name
 		clz.getName,
-		(argNames zip applyMethod.getParameterTypes).map {
-			case (pName, pt) =>
-				val typeName = typesToName.getOrElse(pt, pt.getName)
+		// type args
+		if (typeArgs.isEmpty) "" else "[" + typeArgs.map { ta =>
+			val e = ta.erasure
+			typesToName.getOrElse(e, e.getName)
+
+		}.mkString(",") + "]",
+		// params
+		(argNames zip typeArgs).map {
+			case (pName, cm) =>
+				val e = cm.erasure
+				val typeName = typesToName.getOrElse(e, e.getName)
 				pName + " : " + typeName
 		}.mkString(","),
-		typesToName.getOrElse(applyMethod.getReturnType, applyMethod.getReturnType.getName),
+		// return type
+		typesToName.getOrElse(typeArgs.last.erasure, typeArgs.last.erasure.getName),
+		// body
 		body
 	)
 
@@ -58,6 +65,13 @@ class EvalCode[T](clz: Class[T], argNames: Iterable[String], body: String) {
 
 object EvalCode {
 	val typesToName = Map[Class[_], String](
-		classOf[Int] -> "Int"
+		classOf[Int] -> "Int",
+		classOf[Float] -> "Float",
+		classOf[Double] -> "Double",
+		classOf[Boolean] -> "Boolean",
+		classOf[Short] -> "Short",
+		classOf[Byte] -> "Byte",
+		classOf[Char] -> "Char",
+		classOf[Long] -> "Long"
 	)
 }

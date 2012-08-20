@@ -13,13 +13,23 @@ import org.scalatest.matchers.ShouldMatchers
 @RunWith(classOf[JUnitRunner])
 class EvalCodeTemplateSuite extends FunSuite with ShouldMatchers {
 
-	test("constructs src code correctly") {
-		trait X { def apply(s: String): Int }
-
-		val ect = new EvalCode[X]("s" :: Nil, "s.toInt")
+	test("using functions") {
+		val ect = new EvalCode[String => Int]("s" :: Nil, "s.toInt")
 
 		val x = ect.newInstance
 		x("17") should be === 17
+	}
+
+	test("constructs src code correctly, 2 args") {
+		val ect = new EvalCode[(Float, Double) => Double]("i1" :: "i2" :: Nil, "i1 + i2")
+		val x = ect.newInstance
+		x(12.5f, 2.5) should be === 15.0
+	}
+
+	test("return type string") {
+		val ect = new EvalCode[(Float, Double) => String]("i1" :: "i2" :: Nil, "(i1 + i2).toString")
+		val x = ect.newInstance
+		x(12.5f, 2.5) should be === "15.0"
 	}
 }
 
