@@ -11,7 +11,7 @@ import org.scalatest.matchers.ShouldMatchers
  * 20 Aug 2012
  */
 @RunWith(classOf[JUnitRunner])
-class EvalCodeTemplateSuite extends FunSuite with ShouldMatchers {
+class EvalCodeSuite extends FunSuite with ShouldMatchers {
 
 	test("using functions") {
 		val ect = new EvalCode[String => Int]("s" :: Nil, "s.toInt")
