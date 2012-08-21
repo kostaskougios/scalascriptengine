@@ -12,10 +12,9 @@ import java.io.FileWriter
  * 20 Aug 2012
  */
 
-class EvalCode[T](clz: Class[T], typeArgs: List[ClassManifest[_]], argNames: Iterable[String], body: String) {
-	def this(argNames: Iterable[String], body: String)(implicit m: ClassManifest[T]) = this(m.erasure.asInstanceOf[Class[T]], m.typeArguments.asInstanceOf[List[ClassManifest[_]]], argNames, body)
+private class EvalCodeImpl[T](clz: Class[T], typeArgs: List[ClassManifest[_]], argNames: Iterable[String], body: String) extends EvalCode[T] {
 
-	import EvalCode._
+	import EvalCode.typesToName
 
 	private val reflectionManager = new ReflectionManager
 	private val srcFolder = new File(System.getProperty("java.io.tmpdir"), UUID.randomUUID.toString)
@@ -63,8 +62,18 @@ class EvalCode[T](clz: Class[T], typeArgs: List[ClassManifest[_]], argNames: Ite
 	def newInstance: T = generatedClass.newInstance
 }
 
+/**
+ * a scala-code evaluator
+ */
+trait EvalCode[T] {
+	// the Class[T]
+	val generatedClass: Class[T]
+	// creates a new instance of the evaluated class
+	def newInstance: T
+}
+
 object EvalCode {
-	val typesToName = Map[Class[_], String](
+	private[scalascriptengine] val typesToName = Map[Class[_], String](
 		classOf[Int] -> "Int",
 		classOf[Float] -> "Float",
 		classOf[Double] -> "Double",
@@ -74,4 +83,10 @@ object EvalCode {
 		classOf[Char] -> "Char",
 		classOf[Long] -> "Long"
 	)
+
+	def apply[T](clz: Class[T], typeArgs: List[ClassManifest[_]], argNames: Iterable[String], body: String): EvalCode[T] =
+		new EvalCodeImpl(clz, typeArgs, argNames, body)
+
+	def apply[T](argNames: Iterable[String], body: String)(implicit m: ClassManifest[T]): EvalCode[T] =
+		apply(m.erasure.asInstanceOf[Class[T]], m.typeArguments.asInstanceOf[List[ClassManifest[_]]], argNames, body)
 }
