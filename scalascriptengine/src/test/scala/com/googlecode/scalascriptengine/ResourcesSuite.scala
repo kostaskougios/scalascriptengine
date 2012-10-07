@@ -15,6 +15,9 @@ import scalascriptengine._
 class ResourcesSuite extends FunSuite with ShouldMatchers {
 	val sourceDir = new File("testfiles/ResourcesSuite")
 
+	val in = getClass.getResourceAsStream("version.txt")
+	val src = scala.io.Source.fromInputStream(in)
+
 	test("loads resources from classpath") {
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(new File(sourceDir, "v1"))
 		sse.deleteAllClassesInOutputDirectory

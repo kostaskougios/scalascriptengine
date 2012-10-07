@@ -7,6 +7,6 @@ class Main extends TestClassTrait
 	def result= {
 		val in=getClass.getResourceAsStream("version.txt")
 		val src=Source.fromInputStream(in)
-		src.getLine(0)
+		src.getLines().next
 	}
 } 
