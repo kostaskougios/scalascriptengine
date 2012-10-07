@@ -3,6 +3,8 @@ package com.googlecode.scalascriptengine
 import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
+import java.security.CodeSource
+import java.io.FilePermission
 
 /**
  * a throwaway classloader that keeps one version of the source code. For every code change/refresh,
@@ -20,4 +22,8 @@ class ScalaClassLoader(sourceDirs: Set[File], classPath: Set[File], parentClassL
 
 	def get[T](className: String): Class[T] = loadClass(className).asInstanceOf[Class[T]]
 	def newInstance[T](className: String): T = get[T](className).newInstance
+
+	//	override protected def getPermissions(codeSource: CodeSource) = {
+	//		super.getPermissions(codeSource)
+	//	}
 }
