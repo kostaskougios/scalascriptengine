@@ -13,11 +13,11 @@ import java.net.URLClassLoader
  * 22 Dec 2011
  */
 class ScalaClassLoader(sourceDirs: Set[File], classPath: Set[File], parentClassLoader: ClassLoader)
-	extends URLClassLoader((classPath ++ sourceDirs).toArray.map(_.toURI.toURL), parentClassLoader) {
+		extends URLClassLoader((classPath ++ sourceDirs).toArray.map(_.toURI.toURL), parentClassLoader) {
 
 	def this(sourceDirs: Set[File], classPath: Set[File]) = this(sourceDirs, classPath, Thread.currentThread.getContextClassLoader)
 	def this(sourceDir: File, classPath: Set[File]) = this(Set(sourceDir), classPath)
 
 	def get[T](className: String): Class[T] = loadClass(className).asInstanceOf[Class[T]]
-	def newInstance[T](className: String): T = get(className).newInstance.asInstanceOf[T]
+	def newInstance[T](className: String): T = get[T](className).newInstance
 }

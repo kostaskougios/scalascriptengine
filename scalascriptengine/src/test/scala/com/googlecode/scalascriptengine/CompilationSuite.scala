@@ -37,7 +37,7 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(sourceDir)
 		sse.deleteAllClassesInOutputDirectory
 		sse.refresh
-		sse.newInstance("test.MyClass")
+		sse.newInstance[Any]("test.MyClass")
 		new File(sse.config.outputDir, "test/MyClass.class").exists should be(true)
 		new File(sse.config.outputDir, "test/Dep1.class").exists should be(true)
 	}
@@ -54,7 +54,7 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(sourceDir)
 		sse.deleteAllClassesInOutputDirectory
 		sse.refresh
-		sse.newInstance("test.MyClass")
+		sse.newInstance[Any]("test.MyClass")
 		sse.deleteAllClassesInOutputDirectory
 		new File(sse.config.outputDir, "test/MyClass.class").exists should be(false)
 		new File(sse.config.outputDir, "test/Dep1.class").exists should be(false)
