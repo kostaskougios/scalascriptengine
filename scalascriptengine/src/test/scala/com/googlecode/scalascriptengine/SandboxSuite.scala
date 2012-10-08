@@ -17,21 +17,29 @@ import java.security.AccessControlException
 class SandboxSuite extends FunSuite with ShouldMatchers {
 	val sourceDir = new File("testfiles/SandboxSuite")
 	System.setProperty("java.security.policy", new File("testfiles/SandboxSuite/test.policy").toURI.toString)
+
+	val safeClasspath = new File(".").toURI.toString
+	System.setProperty("safe.classpath", safeClasspath)
 	val sseSM = new SSESecurityManager(Some(new SecurityManager))
 	System.setSecurityManager(sseSM)
 
-	test("will prevent access to a file") {
-		val sse = ScalaScriptEngine.withoutRefreshPolicy(sourceDir)
+	test("will prevent access to a file, positive") {
+		val sse = ScalaScriptEngine.onChangeRefresh(sourceDir)
 		sse.deleteAllClassesInOutputDirectory
-		sse.refresh
-		val tct = sse.newInstance[TestClassTrait]("test.TryFile")
+		val constructors = sse.constructors[TestClassTrait]("test.TryFile")
 		try {
 			sseSM.secured {
+				val tct = constructors.newInstance
 				tct.result should be === "directory"
 				fail()
 			}
 		} catch {
-			case e: AccessControlException => // ok
+			case e: AccessControlException =>
+				e.getPermission match {
+					case fp: java.io.FilePermission =>
+					// ok
+					case _ => throw e
+				}
 		}
 	}
 
