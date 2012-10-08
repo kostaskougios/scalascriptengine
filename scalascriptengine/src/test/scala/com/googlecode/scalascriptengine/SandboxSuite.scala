@@ -27,20 +27,17 @@ class SandboxSuite extends FunSuite with ShouldMatchers {
 		val sse = ScalaScriptEngine.onChangeRefresh(sourceDir)
 		sse.deleteAllClassesInOutputDirectory
 		val constructors = sse.constructors[TestClassTrait]("test.TryFile")
-		try {
+
+		val ex = intercept[AccessControlException] {
 			sseSM.secured {
 				val tct = constructors.newInstance
 				tct.result should be === "directory"
-				fail()
 			}
-		} catch {
-			case e: AccessControlException =>
-				e.getPermission match {
-					case fp: java.io.FilePermission =>
-					// ok
-					case _ => throw e
-				}
+		}
+		ex.getPermission match {
+			case fp: java.io.FilePermission if (fp.getActions == "read") =>
+			// ok
+			case _ => throw ex
 		}
 	}
-
 }
