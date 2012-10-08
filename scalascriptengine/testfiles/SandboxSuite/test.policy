@@ -1,6 +1,3 @@
-grant codeBase "${safe.classpath}/target/classes/" {
-        permission java.security.AllPermission;
-};
-grant codeBase "${safe.classpath}/target/test-classes/" {
-        permission java.security.AllPermission;
+grant codeBase "file:${user.home}/-" {
+	permission java.security.AllPermission;
 };

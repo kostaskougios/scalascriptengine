@@ -1,6 +1,8 @@
 package com.googlecode.scalascriptengine
 
 import java.security.Permission
+import java.security.AccessController
+import java.security.PrivilegedAction
 
 /**
  * @author kostantinos.kougios
@@ -14,8 +16,9 @@ class SSESecurityManager(securityManager: SecurityManager) extends SecurityManag
 	private var enabled = new InheritableThreadLocal[Boolean]
 
 	override def checkPermission(perm: Permission) {
-		if (enabled.get)
+		if (enabled.get) {
 			securityManager.checkPermission(perm)
+		}
 	}
 
 	def secured[R](f: => R) = {
