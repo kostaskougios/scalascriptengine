@@ -20,7 +20,7 @@ class SandboxSuite extends FunSuite with ShouldMatchers {
 
 	val safeClasspath = new File(".").toURI.toString
 	System.setProperty("safe.classpath", safeClasspath)
-	val sseSM = new SSESecurityManager(Some(new SecurityManager))
+	val sseSM = new SSESecurityManager(new SecurityManager)
 	System.setSecurityManager(sseSM)
 
 	test("will prevent access to a file, positive") {
@@ -35,7 +35,7 @@ class SandboxSuite extends FunSuite with ShouldMatchers {
 			}
 		}
 		ex.getPermission match {
-			case fp: java.io.FilePermission if (fp.getActions == "read") =>
+			case fp: java.io.FilePermission if (fp.getActions == "read" && fp.getName == "/tmp") =>
 			// ok
 			case _ => throw ex
 		}

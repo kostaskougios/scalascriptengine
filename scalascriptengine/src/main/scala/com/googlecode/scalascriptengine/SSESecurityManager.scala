@@ -7,17 +7,16 @@ import java.security.Permission
  *
  * 7 Oct 2012
  */
-class SSESecurityManager(securityManager: Option[SecurityManager]) extends SecurityManager {
+class SSESecurityManager(securityManager: SecurityManager) extends SecurityManager {
 
-	// we can't do securityManager.foreach within checkPermission cause it causes an infinite loop
-	// while trying to load resources. But the below method works:
-	private val sm = if (securityManager.isDefined) securityManager.get else null
+	if (securityManager == null) throw new NullPointerException("securityManager shouldn't be null")
 
 	private var enabled = new InheritableThreadLocal[Boolean]
+
 	override def checkPermission(perm: Permission) {
 		val e = enabled.get
-		if (enabled.get && sm != null)
-			sm.checkPermission(perm)
+		if (enabled.get)
+			securityManager.checkPermission(perm)
 	}
 
 	def secured[R](f: => R) = {
