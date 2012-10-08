@@ -1,3 +1,7 @@
 grant codeBase "file:${user.home}/-" {
 	permission java.security.AllPermission;
 };
+
+grant codeBase "${script.classes}/-" {
+	permission java.io.FilePermission	"/home","read";
+};

@@ -15,21 +15,21 @@ import java.security.AccessControlException
  */
 @RunWith(classOf[JUnitRunner])
 class SandboxSuite extends FunSuite with ShouldMatchers {
+	val sourceDir = new File("testfiles/SandboxSuite")
+	val config = ScalaScriptEngine.defaultConfig(sourceDir)
+	System.setProperty("script.classes", config.outputDir.toURI.toString)
 	System.setProperty("java.security.policy", new File("testfiles/SandboxSuite/test.policy").toURI.toString)
-	val safeClasspath = new File(".").toURI.toString
-	System.setProperty("safe.classpath", safeClasspath)
 	val sseSM = new SSESecurityManager(new SecurityManager)
 	System.setSecurityManager(sseSM)
 
-	val sourceDir = new File("testfiles/SandboxSuite")
-	val sse = ScalaScriptEngine.onChangeRefresh(sourceDir)
+	val sse = ScalaScriptEngine.onChangeRefresh(config, 5)
 	sse.deleteAllClassesInOutputDirectory
+	sse.refresh
 
-	test("will prevent access to a file, positive") {
+	test("will prevent access to a file") {
 		val ex = intercept[AccessControlException] {
 			sseSM.secured {
-				val constructors = sse.constructors[TestClassTrait]("test.TryFile")
-				val tct = constructors.newInstance
+				val tct = sse.newInstance[TestClassTrait]("test.TryFile")
 				tct.result should be === "directory"
 			}
 		}
@@ -37,6 +37,13 @@ class SandboxSuite extends FunSuite with ShouldMatchers {
 			case fp: java.io.FilePermission if (fp.getActions == "read" && fp.getName == "/tmp") =>
 			// ok
 			case _ => throw ex
+		}
+	}
+
+	test("will allow access to a file") {
+		sseSM.secured {
+			val tct = sse.newInstance[TestClassTrait]("test.TryHome")
+			tct.result should be === "directory"
 		}
 	}
 }

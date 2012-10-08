@@ -188,6 +188,8 @@ object ScalaScriptEngine {
 		cp(Thread.currentThread.getContextClassLoader) ++ System.getProperty("java.class.path").split(File.pathSeparator).map(p => new File(p)).toSet
 	}
 
+	def defaultConfig(sourcePath: File) = Config(Set(sourcePath), currentClassPath, Set(), tmpOutputFolder)
+
 	/**
 	 * returns an instance of the engine. Refreshes must be done manually
 	 */
@@ -207,7 +209,10 @@ object ScalaScriptEngine {
 	 * returns an instance of the engine. Refreshes must be done manually
 	 */
 	def withoutRefreshPolicy(sourcePath: File, compilationClassPaths: Set[File]): ScalaScriptEngine =
-		new ScalaScriptEngine(Config(Set(sourcePath), compilationClassPaths, Set(), tmpOutputFolder))
+		withoutRefreshPolicy(Config(Set(sourcePath), compilationClassPaths, Set(), tmpOutputFolder), compilationClassPaths)
+
+	def withoutRefreshPolicy(config: Config, compilationClassPaths: Set[File]): ScalaScriptEngine =
+		new ScalaScriptEngine(config)
 
 	/**
 	 * returns an instance of the engine. Refreshes must be done manually
@@ -226,9 +231,13 @@ object ScalaScriptEngine {
 	 *
 	 * Please call refresh before using the engine for the first time.
 	 */
-	def timedRefresh(sourcePath: File, refreshEvery: () => DateTime): ScalaScriptEngine with TimedRefresh = new ScalaScriptEngine(Config(Set(sourcePath), currentClassPath, Set(), tmpOutputFolder)) with TimedRefresh {
-		def rescheduleAt = refreshEvery()
-	}
+	def timedRefresh(sourcePath: File, refreshEvery: () => DateTime): ScalaScriptEngine with TimedRefresh =
+		timedRefresh(defaultConfig(sourcePath), refreshEvery)
+
+	def timedRefresh(config: Config, refreshEvery: () => DateTime): ScalaScriptEngine with TimedRefresh =
+		new ScalaScriptEngine(config) with TimedRefresh {
+			def rescheduleAt = refreshEvery()
+		}
 
 	/**
 	 * creates a ScalaScriptEngine with the following behaviour:
@@ -262,11 +271,10 @@ object ScalaScriptEngine {
 	 * @return								the ScalaScriptEngine
 	 */
 	def onChangeRefresh(sourcePath: File, recheckSourceEveryDtInMillis: Long): ScalaScriptEngine with OnChangeRefresh =
-		new ScalaScriptEngine(Config(
-			Set(sourcePath),
-			currentClassPath,
-			Set(),
-			tmpOutputFolder)) with OnChangeRefresh with RefreshSynchronously {
+		onChangeRefresh(defaultConfig(sourcePath), recheckSourceEveryDtInMillis)
+
+	def onChangeRefresh(config: Config, recheckSourceEveryDtInMillis: Long): ScalaScriptEngine with OnChangeRefresh =
+		new ScalaScriptEngine(config) with OnChangeRefresh with RefreshSynchronously {
 			val recheckEveryMillis = recheckSourceEveryDtInMillis
 		}
 
@@ -279,7 +287,8 @@ object ScalaScriptEngine {
 	 *
 	 * Before exiting, please call shutdown to shutdown the compilation thread
 	 */
-	def onChangeRefreshAsynchronously(sourcePath: File): ScalaScriptEngine with OnChangeRefresh with RefreshAsynchronously = onChangeRefreshAsynchronously(sourcePath, 0)
+	def onChangeRefreshAsynchronously(sourcePath: File): ScalaScriptEngine with OnChangeRefresh with RefreshAsynchronously =
+		onChangeRefreshAsynchronously(sourcePath, 0)
 
 	/**
 	 * similar to onChangeRefresh, but the compilation occurs in the background.
@@ -291,11 +300,10 @@ object ScalaScriptEngine {
 	 * Before exiting, please call shutdown to shutdown the compilation thread
 	 */
 	def onChangeRefreshAsynchronously(sourcePath: File, recheckEveryInMillis: Long): ScalaScriptEngine with OnChangeRefresh with RefreshAsynchronously =
-		new ScalaScriptEngine(Config(
-			Set(sourcePath),
-			currentClassPath,
-			Set(),
-			tmpOutputFolder)) with OnChangeRefresh with RefreshAsynchronously {
+		onChangeRefreshAsynchronously(defaultConfig(sourcePath), recheckEveryInMillis)
+
+	def onChangeRefreshAsynchronously(config: Config, recheckEveryInMillis: Long): ScalaScriptEngine with OnChangeRefresh with RefreshAsynchronously =
+		new ScalaScriptEngine(config) with OnChangeRefresh with RefreshAsynchronously {
 			val recheckEveryMillis: Long = recheckEveryInMillis
 		}
 }
