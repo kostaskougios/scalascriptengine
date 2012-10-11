@@ -18,10 +18,13 @@ class ScalaClassLoaderSuite extends FunSuite with ShouldMatchers {
 	// parent classloader will contain scala-lib and all test-compiled classes
 	val classPath = Set[File]()
 
+	def classLoader(sourceDir: File, classPath: Set[File]) =
+		new ScalaClassLoader(Set(sourceDir), classPath, Thread.currentThread.getContextClassLoader, ClassLoaderConfig.default)
+
 	test("will load a class") {
 		val destDir = newTmpDir("dynamicclass")
 		cleanDestinationAndCopyFromSource(new File(sourceDir, "v1"), destDir)
-		val scl = new ScalaClassLoader(destDir, classPath)
+		val scl = classLoader(destDir, classPath)
 		val tct = scl.newInstance[TestClassTrait]("test.Test")
 		tct.result should be === "v1"
 	}
@@ -29,7 +32,7 @@ class ScalaClassLoaderSuite extends FunSuite with ShouldMatchers {
 	test("loads dependent classes") {
 		val destDir = newTmpDir("dynamicclass")
 		cleanDestinationAndCopyFromSource(new File(sourceDir, "v1"), destDir)
-		val scl = new ScalaClassLoader(destDir, classPath)
+		val scl = classLoader(destDir, classPath)
 		val tctV1 = scl.newInstance[TestClassTrait]("test.TestDep")
 		tctV1.result should be === "TestDep:v1"
 	}
@@ -37,14 +40,14 @@ class ScalaClassLoaderSuite extends FunSuite with ShouldMatchers {
 	test("using both v1 and v2 classes") {
 		val destDir = newTmpDir("dynamicclass")
 		cleanDestinationAndCopyFromSource(new File(sourceDir, "v1"), destDir)
-		val scl1 = new ScalaClassLoader(destDir, classPath)
+		val scl1 = classLoader(destDir, classPath)
 
 		val tctV1 = scl1.newInstance[TestClassTrait]("test.Test")
 		val tcpV1 = scl1.newInstance[TestParamTrait]("test.TestParam")
 		tcpV1.result(tctV1) should be === "TP:v1"
 
 		cleanDestinationAndCopyFromSource(new File(sourceDir, "v2"), destDir)
-		val scl2 = new ScalaClassLoader(destDir, classPath)
+		val scl2 = classLoader(destDir, classPath)
 
 		val tcpV2 = scl2.newInstance[TestParamTrait]("test.TestParam")
 		tcpV2.result(tctV1) should be === "TP:v1"

@@ -26,6 +26,12 @@ class SandboxSuite extends FunSuite with ShouldMatchers {
 	sse.deleteAllClassesInOutputDirectory
 	sse.refresh
 
+	test("will prevent creating a thread") {
+		sseSM.secured {
+			sse.newInstance[TestClassTrait]("test.TryThread").result
+		}
+	}
+
 	test("will prevent access to a file") {
 		val ex = intercept[AccessControlException] {
 			sseSM.secured {

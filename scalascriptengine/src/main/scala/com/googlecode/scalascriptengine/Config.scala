@@ -21,7 +21,8 @@ case class Config(
 		val classLoadingClassPaths: Set[File] = Set(),
 		// the outputDir, this is where all compiled classes will be stored. Please
 		// use with care! A folder in the temp directory will usually do.
-		val outputDir: File = ScalaScriptEngine.tmpOutputFolder) {
+		val outputDir: File = ScalaScriptEngine.tmpOutputFolder,
+		classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.default) {
 
 	// a convenient constructor to create a config with the default options
 	// and one only source folder.

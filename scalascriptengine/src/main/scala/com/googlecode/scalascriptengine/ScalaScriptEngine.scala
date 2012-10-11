@@ -109,7 +109,11 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 					throw e
 			}
 			_compilationStatus.checkStop
-			val classLoader = new ScalaClassLoader(config.outputDir, config.sourcePaths ++ config.classLoadingClassPaths)
+			val classLoader = new ScalaClassLoader(
+				Set(config.outputDir),
+				config.sourcePaths ++ config.classLoadingClassPaths,
+				Thread.currentThread.getContextClassLoader,
+				config.classLoaderConfig)
 			debug("done refreshing")
 			codeVersion = CodeVersionImpl(
 				codeVersion.version + 1,
