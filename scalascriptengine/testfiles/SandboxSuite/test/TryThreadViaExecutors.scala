@@ -9,11 +9,10 @@ class TryThreadViaExecutors extends TestClassTrait {
 		e.submit(
 			new Runnable {
 				override def run = {
-					println("hacked!")
+					println("TryThreadViaExecutors>thread>hacked!")
 				}
 			}
 		)
-		Thread.sleep(100)
-		"hacked!"
+		"TryThreadViaExecutors>hacked!"
 	}
 }

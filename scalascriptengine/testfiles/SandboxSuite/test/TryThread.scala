@@ -6,10 +6,10 @@ class TryThread extends TestClassTrait {
 	def result = {
 		new Thread {
 			override def run = {
-				println("hacked!")
+				println("TryThread>thread>hacked!")
 			}
 		}.start()
 		Thread.sleep(100)
-		"hacked!"
+		"TryThread>hacked!"
 	}
 }

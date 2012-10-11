@@ -69,4 +69,12 @@ class SandboxSuite extends FunSuite with ShouldMatchers {
 			tct.result should be === "directory"
 		}
 	}
+
+	test("sandbox eval") {
+		intercept[AccessControlException] {
+			val ect = EvalCode.with1Arg[String, String]("s", "s+classOf[java.lang.Thread].getName", config.classLoaderConfig)
+			val f = ect.newInstance
+			f("hi")
+		}
+	}
 }
