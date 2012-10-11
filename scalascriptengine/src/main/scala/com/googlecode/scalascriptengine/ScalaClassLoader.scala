@@ -29,9 +29,8 @@ class ScalaClassLoader(
 
 	override def loadClass(name: String) = {
 		if (!config.protectPackages.isEmpty) {
-			val pckg = name.substring(name.lastIndexOf("."))
-			config.protectPackages.find(_ == pckg).map { _ =>
-				throw new AccessControlException("access to package " + pckg + " not allowed")
+			config.protectClassesSuffixed.find(name.startsWith(_)).map { _ =>
+				throw new AccessControlException("access to class " + name + " not allowed")
 			}
 		}
 		if (!config.protectClasses.isEmpty) {

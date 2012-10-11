@@ -17,7 +17,10 @@ import java.security.AccessControlException
 class SandboxSuite extends FunSuite with ShouldMatchers {
 	val sourceDir = new File("testfiles/SandboxSuite")
 	val config = ScalaScriptEngine.defaultConfig(sourceDir).copy(
-		classLoaderConfig = ClassLoaderConfig.default.copy(protectClasses = Set("java.lang.Thread"))
+		classLoaderConfig = ClassLoaderConfig.default.copy(
+			protectPackages = Set("javax.swing"),
+			protectClasses = Set("java.lang.Thread")
+		)
 	)
 	System.setProperty("script.classes", config.outputDir.toURI.toString)
 	System.setProperty("java.security.policy", new File("testfiles/SandboxSuite/test.policy").toURI.toString)
@@ -27,6 +30,22 @@ class SandboxSuite extends FunSuite with ShouldMatchers {
 	val sse = ScalaScriptEngine.onChangeRefresh(config, 5)
 	sse.deleteAllClassesInOutputDirectory
 	sse.refresh
+
+	test("will prevent access of a package") {
+		intercept[AccessControlException] {
+			sseSM.secured {
+				sse.newInstance[TestClassTrait]("test.TryPackage").result
+			}
+		}
+	}
+
+	test("will prevent creating a thread even if not directly instantiating it") {
+		intercept[AccessControlException] {
+			sseSM.secured {
+				sse.newInstance[TestClassTrait]("test.TryThreadViaExecutors").result
+			}
+		}
+	}
 
 	test("will prevent creating a thread") {
 		intercept[AccessControlException] {
