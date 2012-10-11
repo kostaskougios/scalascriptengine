@@ -33,25 +33,19 @@ class SandboxSuite extends FunSuite with ShouldMatchers {
 
 	test("will prevent access of a package") {
 		intercept[AccessControlException] {
-			sseSM.secured {
-				sse.newInstance[TestClassTrait]("test.TryPackage").result
-			}
+			sse.newInstance[TestClassTrait]("test.TryPackage").result
 		}
 	}
 
 	test("will prevent creating a thread even if not directly instantiating it") {
 		intercept[AccessControlException] {
-			sseSM.secured {
-				sse.newInstance[TestClassTrait]("test.TryThreadViaExecutors").result
-			}
+			sse.newInstance[TestClassTrait]("test.TryThreadViaExecutors").result
 		}
 	}
 
 	test("will prevent creating a thread") {
 		intercept[AccessControlException] {
-			sseSM.secured {
-				sse.newInstance[TestClassTrait]("test.TryThread").result
-			}
+			sse.newInstance[TestClassTrait]("test.TryThread").result
 		}
 	}
 
