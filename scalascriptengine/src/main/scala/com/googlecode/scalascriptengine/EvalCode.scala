@@ -12,7 +12,7 @@ import java.io.FileWriter
  * 20 Aug 2012
  */
 
-private class EvalCodeImpl[T](clz: Class[T], typeArgs: List[ClassManifest[_]], argNames: Iterable[String], body: String) extends EvalCode[T] {
+private class EvalCodeImpl[T](clz: Class[T], typeArgs: List[Class[_]], argNames: Iterable[String], body: String) extends EvalCode[T] {
 
 	import EvalCode.typesToName
 
@@ -31,20 +31,20 @@ private class EvalCodeImpl[T](clz: Class[T], typeArgs: List[ClassManifest[_]], a
 		// super class name
 		clz.getName,
 		// type args
-		if (typeArgs.isEmpty) "" else "[" + typeArgs.map { ta =>
-			val e = ta.erasure
+		if (typeArgs.isEmpty) "" else "[" + typeArgs.map { e =>
 			typesToName.getOrElse(e, e.getName)
-
 		}.mkString(",") + "]",
 		// params
 		(argNames zip typeArgs).map {
-			case (pName, cm) =>
-				val e = cm.erasure
+			case (pName, e) =>
 				val typeName = typesToName.getOrElse(e, e.getName)
 				pName + " : " + typeName
 		}.mkString(","),
 		// return type
-		typesToName.getOrElse(typeArgs.last.erasure, typeArgs.last.erasure.getName),
+		{
+			val last = typeArgs.last
+			typesToName.getOrElse(last, last.getName)
+		},
 		// body
 		body
 	)
@@ -85,7 +85,7 @@ object EvalCode {
 	)
 
 	def apply[T](clz: Class[T], typeArgs: List[ClassManifest[_]], argNames: Iterable[String], body: String): EvalCode[T] =
-		new EvalCodeImpl(clz, typeArgs, argNames, body)
+		new EvalCodeImpl(clz, typeArgs.map(_.erasure), argNames, body)
 
 	def apply[T](argNames: Iterable[String], body: String)(implicit m: ClassManifest[T]): EvalCode[T] =
 		apply(m.erasure.asInstanceOf[Class[T]], m.typeArguments.asInstanceOf[List[ClassManifest[_]]], argNames, body)
