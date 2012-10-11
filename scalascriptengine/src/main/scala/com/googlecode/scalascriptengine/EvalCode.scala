@@ -84,9 +84,36 @@ object EvalCode {
 		classOf[Long] -> "Long"
 	)
 
-	def apply[T](clz: Class[T], typeArgs: List[ClassManifest[_]], argNames: Iterable[String], body: String): EvalCode[T] =
-		new EvalCodeImpl(clz, typeArgs.map(_.erasure), argNames, body)
+	def apply[T](clz: Class[T], typeArgs: List[Class[_]], argNames: Iterable[String], body: String): EvalCode[T] =
+		new EvalCodeImpl(clz, typeArgs, argNames, body)
 
-	def apply[T](argNames: Iterable[String], body: String)(implicit m: ClassManifest[T]): EvalCode[T] =
-		apply(m.erasure.asInstanceOf[Class[T]], m.typeArguments.asInstanceOf[List[ClassManifest[_]]], argNames, body)
+	def apply[R](body: String): EvalCode[() => R] =
+		apply(classOf[() => R], Nil, Nil, body)
+
+	def apply[A1, R](
+		arg1Var: String,
+		body: String)(
+			implicit m1: ClassManifest[A1],
+			r: ClassManifest[R]): EvalCode[A1 => R] =
+		apply(classOf[A1 => R], List(m1.erasure, r.erasure), List(arg1Var), body)
+
+	def apply[A1, A2, R](
+		arg1Var: String,
+		arg2Var: String,
+		body: String)(
+			implicit m1: ClassManifest[A1],
+			m2: ClassManifest[A2],
+			r: ClassManifest[R]): EvalCode[(A1, A2) => R] =
+		apply(classOf[(A1, A2) => R], List(m1.erasure, m2.erasure, r.erasure), List(arg1Var, arg2Var), body)
+
+	def apply[A1, A2, A3, R](
+		arg1Var: String,
+		arg2Var: String,
+		arg3Var: String,
+		body: String)(
+			implicit m1: ClassManifest[A1],
+			m2: ClassManifest[A2],
+			m3: ClassManifest[A3],
+			r: ClassManifest[R]): EvalCode[(A1, A2, A3) => R] =
+		apply(classOf[(A1, A2, A3) => R], List(m1.erasure, m2.erasure, m3.erasure, r.erasure), List(arg1Var, arg2Var, arg3Var), body)
 }
