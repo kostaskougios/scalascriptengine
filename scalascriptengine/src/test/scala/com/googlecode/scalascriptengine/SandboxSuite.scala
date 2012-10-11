@@ -27,8 +27,10 @@ class SandboxSuite extends FunSuite with ShouldMatchers {
 	sse.refresh
 
 	test("will prevent creating a thread") {
-		sseSM.secured {
-			sse.newInstance[TestClassTrait]("test.TryThread").result
+		intercept[AccessControlException] {
+			sseSM.secured {
+				sse.newInstance[TestClassTrait]("test.TryThread").result
+			}
 		}
 	}
 
