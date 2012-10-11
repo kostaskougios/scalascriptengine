@@ -16,7 +16,9 @@ import java.security.AccessControlException
 @RunWith(classOf[JUnitRunner])
 class SandboxSuite extends FunSuite with ShouldMatchers {
 	val sourceDir = new File("testfiles/SandboxSuite")
-	val config = ScalaScriptEngine.defaultConfig(sourceDir)
+	val config = ScalaScriptEngine.defaultConfig(sourceDir).copy(
+		classLoaderConfig = ClassLoaderConfig.default.copy(protectClasses = Set("java.lang.Thread"))
+	)
 	System.setProperty("script.classes", config.outputDir.toURI.toString)
 	System.setProperty("java.security.policy", new File("testfiles/SandboxSuite/test.policy").toURI.toString)
 	val sseSM = new SSESecurityManager(new SecurityManager)

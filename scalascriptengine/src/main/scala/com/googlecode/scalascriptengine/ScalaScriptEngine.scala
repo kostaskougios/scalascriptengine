@@ -192,7 +192,12 @@ object ScalaScriptEngine {
 		cp(Thread.currentThread.getContextClassLoader) ++ System.getProperty("java.class.path").split(File.pathSeparator).map(p => new File(p)).toSet
 	}
 
-	def defaultConfig(sourcePath: File) = Config(Set(sourcePath), currentClassPath, Set(), tmpOutputFolder)
+	def defaultConfig(sourcePath: File) = Config(
+		Set(sourcePath),
+		currentClassPath,
+		Set(),
+		tmpOutputFolder
+	)
 
 	/**
 	 * returns an instance of the engine. Refreshes must be done manually

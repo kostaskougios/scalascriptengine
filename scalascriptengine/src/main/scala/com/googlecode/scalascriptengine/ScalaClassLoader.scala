@@ -5,6 +5,7 @@ import java.net.URL
 import java.net.URLClassLoader
 import java.security.CodeSource
 import java.io.FilePermission
+import java.security.AccessControlException
 
 /**
  * a throwaway classloader that keeps one version of the source code. For every code change/refresh,
@@ -29,8 +30,13 @@ class ScalaClassLoader(
 	override def loadClass(name: String) = {
 		if (!config.protectPackages.isEmpty) {
 			val pckg = name.substring(name.lastIndexOf("."))
-			config.protectPackages.find(_ == pckg).map {
-				throw new IllegalAccessException("access to package " + pckg + " not allowed")
+			config.protectPackages.find(_ == pckg).map { _ =>
+				throw new AccessControlException("access to package " + pckg + " not allowed")
+			}
+		}
+		if (!config.protectClasses.isEmpty) {
+			config.protectClasses.find(_ == name).map { _ =>
+				throw new AccessControlException("access to class " + name + " not allowed")
 			}
 		}
 		super.loadClass(name)
