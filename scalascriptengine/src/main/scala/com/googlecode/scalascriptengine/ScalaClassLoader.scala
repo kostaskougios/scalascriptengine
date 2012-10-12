@@ -28,15 +28,26 @@ class ScalaClassLoader(
 	def newInstance[T](className: String): T = get[T](className).newInstance
 
 	override def loadClass(name: String) = {
+
+		def accessForbidden() = throw new AccessControlException("access to class " + name + " not allowed")
+
 		if (!config.protectPackages.isEmpty) {
-			config.protectClassesSuffixed.find(name.startsWith(_)).map { _ =>
-				throw new AccessControlException("access to class " + name + " not allowed")
+			config.protectPackagesSuffixed.find(name.startsWith(_)).map { _ =>
+				accessForbidden()
 			}
 		}
 		if (!config.protectClasses.isEmpty) {
 			config.protectClasses.find(_ == name).map { _ =>
-				throw new AccessControlException("access to class " + name + " not allowed")
+				accessForbidden()
 			}
+		}
+		if (!config.allowedPackages.isEmpty) {
+			if (!config.allowedPackagesSuffixed.find(name.startsWith(_)).isDefined)
+				accessForbidden()
+		}
+		if (!config.allowedClasses.isEmpty) {
+			if (!config.allowedClasses(name))
+				accessForbidden()
 		}
 		super.loadClass(name)
 	}
