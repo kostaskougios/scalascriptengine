@@ -5,6 +5,7 @@ import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import java.io.File
+import java.security.AccessControlException
 
 /**
  * @author kostantinos.kougios
@@ -16,10 +17,27 @@ class SandboxAllowOnlySuite extends FunSuite with ShouldMatchers {
 	val sourceDir = new File("testfiles/SandboxAllowOnlySuite")
 	val config = ScalaScriptEngine.defaultConfig(sourceDir).copy(
 		classLoaderConfig = ClassLoaderConfig.default.copy(
-			allowedPackages = Set("java.lang", "scala.lang")
+			allowedPackages = Set(
+				"java.lang",
+				"scala",
+				"test",
+				"com.googlecode")
 		)
 	)
+	val sse = ScalaScriptEngine.onChangeRefresh(config, 5)
+	sse.deleteAllClassesInOutputDirectory
+	sse.refresh
 
-	test("allow only specific classes, positive") {
+	test("allow only specific packages, positive") {
+		val ex = intercept[AccessControlException] {
+			val t = sse.newInstance[TestClassTrait]("test.TryPackage")
+			t.result
+		}
+		ex.getMessage should be === "access to class javax.swing.Icon not allowed"
+	}
+
+	test("allow only specific packages, negative") {
+		val t = sse.newInstance[TestClassTrait]("test.TryPackageAllow")
+		t.result should be === "allowed"
 	}
 }
