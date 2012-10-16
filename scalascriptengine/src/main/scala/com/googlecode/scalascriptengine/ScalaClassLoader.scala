@@ -41,14 +41,8 @@ class ScalaClassLoader(
 				accessForbidden()
 			}
 		}
-		if (!config.allowedPackages.isEmpty) {
-			if (!config.allowedPackagesSuffixed.find(name.startsWith(_)).isDefined)
-				accessForbidden()
-		}
-		if (!config.allowedClasses.isEmpty) {
-			if (!config.allowedClasses(name))
-				accessForbidden()
-		}
+		if (!config.allowed(name))
+			accessForbidden()
 		super.loadClass(name)
 	}
 }

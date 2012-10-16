@@ -15,13 +15,14 @@ import java.security.AccessControlException
 @RunWith(classOf[JUnitRunner])
 class SandboxAllowOnlySuite extends FunSuite with ShouldMatchers {
 	val sourceDir = new File("testfiles/SandboxAllowOnlySuite")
+	val allowedPackages = Set(
+		"java.lang",
+		"scala",
+		"test",
+		"com.googlecode")
 	val config = ScalaScriptEngine.defaultConfig(sourceDir).copy(
 		classLoaderConfig = ClassLoaderConfig.default.copy(
-			allowedPackages = Set(
-				"java.lang",
-				"scala",
-				"test",
-				"com.googlecode")
+			allowed = s => allowedPackages(s) || s.startsWith("test.")
 		)
 	)
 	val sse = ScalaScriptEngine.onChangeRefresh(config, 5)
