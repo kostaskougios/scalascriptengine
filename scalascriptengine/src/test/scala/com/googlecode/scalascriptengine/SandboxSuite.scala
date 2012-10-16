@@ -19,7 +19,7 @@ class SandboxSuite extends FunSuite with ShouldMatchers {
 	val config = ScalaScriptEngine.defaultConfig(sourceDir).copy(
 		classLoaderConfig = ClassLoaderConfig.default.copy(
 			protectPackages = Set("javax.swing"),
-			protectClasses = Set("java.lang.Thread")
+			protectClasses = Set("java.lang.Thread") // note: still threads can be created via i.e. Executors
 		)
 	)
 	System.setProperty("script.classes", config.outputDir.toURI.toString)
