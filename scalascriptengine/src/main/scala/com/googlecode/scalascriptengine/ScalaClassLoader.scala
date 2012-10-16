@@ -32,16 +32,17 @@ class ScalaClassLoader(
 		def accessForbidden() = throw new AccessControlException("access to class " + name + " not allowed")
 
 		if (!config.protectPackages.isEmpty) {
-			config.protectPackagesSuffixed.find(name.startsWith(_)).map { _ =>
+			config.protectPackagesSuffixed.find(name.startsWith(_)).foreach { _ =>
 				accessForbidden()
 			}
 		}
 		if (!config.protectClasses.isEmpty) {
-			config.protectClasses.find(_ == name).map { _ =>
+			config.protectClasses.find(_ == name).foreach { _ =>
 				accessForbidden()
 			}
 		}
-		if (!config.allowed(name))
+		val pckg = name.substring(0, name.lastIndexOf('.'))
+		if (!config.allowed(pckg, name))
 			accessForbidden()
 		super.loadClass(name)
 	}

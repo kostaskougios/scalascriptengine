@@ -8,11 +8,12 @@ package com.googlecode.scalascriptengine
 case class ClassLoaderConfig(
 		protectPackages: Set[String],
 		protectClasses: Set[String],
-		allowed: String => Boolean) {
+		// a function of (packageName , fullClassName)=> allow access?
+		allowed: (String, String) => Boolean) {
 	val protectPackagesSuffixed = protectPackages.map(_ + ".")
 }
 
 object ClassLoaderConfig {
-	def default = ClassLoaderConfig(Set(), Set(), s => true)
+	def default = ClassLoaderConfig(Set(), Set(), (_, _) => true)
 }
 

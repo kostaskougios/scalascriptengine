@@ -19,10 +19,12 @@ class SandboxAllowOnlySuite extends FunSuite with ShouldMatchers {
 		"java.lang",
 		"scala",
 		"test",
-		"com.googlecode")
+		"com.googlecode.scalascriptengine")
 	val config = ScalaScriptEngine.defaultConfig(sourceDir).copy(
 		classLoaderConfig = ClassLoaderConfig.default.copy(
-			allowed = s => allowedPackages(s) || s.startsWith("test.")
+			allowed = { (pckg, name) =>
+				allowedPackages(pckg) || pckg == "test"
+			}
 		)
 	)
 	val sse = ScalaScriptEngine.onChangeRefresh(config, 5)
