@@ -156,6 +156,7 @@
 						<include>**/*Spec.class</include>
 						<include>**/*Suite.class</include>
 					</includes>
+					<forkMode>always</forkMode>
 				</configuration>
 			</plugin>
 			<plugin>

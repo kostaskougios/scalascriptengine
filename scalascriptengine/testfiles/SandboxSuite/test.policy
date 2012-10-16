@@ -1,6 +1,5 @@
 grant codeBase "file:${user.home}/-" {
 	permission java.security.AllPermission;
-	permission java.util.PropertyPermission "user.dir", "read,write";
 };
 
 grant codeBase "${script.classes}/-" {

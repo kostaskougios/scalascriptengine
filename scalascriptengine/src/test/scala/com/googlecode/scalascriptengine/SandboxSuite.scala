@@ -7,6 +7,7 @@ import org.scalatest.matchers.ShouldMatchers
 import java.io.File
 import scalascriptengine._
 import java.security.AccessControlException
+import org.scalatest.BeforeAndAfterAll
 
 /**
  * @author		konstantinos.kougios
@@ -14,7 +15,7 @@ import java.security.AccessControlException
  * 7 Oct 2012
  */
 @RunWith(classOf[JUnitRunner])
-class SandboxSuite extends FunSuite with ShouldMatchers {
+class SandboxSuite extends FunSuite with ShouldMatchers with BeforeAndAfterAll {
 	val sourceDir = new File("testfiles/SandboxSuite")
 	val config = ScalaScriptEngine.defaultConfig(sourceDir).copy(
 		classLoaderConfig = ClassLoaderConfig.default.copy(
@@ -71,4 +72,7 @@ class SandboxSuite extends FunSuite with ShouldMatchers {
 			f("hi")
 		}
 	}
+
+	override def afterAll =
+		System.setSecurityManager(null)
 }
