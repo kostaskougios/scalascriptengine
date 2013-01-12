@@ -27,18 +27,18 @@ import java.net.URLClassLoader
  * amount of options that can be used by mixing in the various refresh policies
  * and enhancers.
  *
- * 	val sse = new ScalaScriptEngine(Config(
- * 		Set(sourceDir),
- * 		compilationClassPath,
- * 		runtimeClasspath,
- * 		outputDir)) with RefreshAsynchronously with FromClasspathFirst {
- * 		val recheckEveryMillis: Long = 1000 // each file will only be checked maximum once per second
+ * val sse = new ScalaScriptEngine(Config(
+ * Set(sourceDir),
+ * compilationClassPath,
+ * runtimeClasspath,
+ * outputDir)) with RefreshAsynchronously with FromClasspathFirst {
+ * val recheckEveryMillis: Long = 1000 // each file will only be checked maximum once per second
  * }))
  *
  *
  * @author kostantinos.kougios
  *
- * 22 Dec 2011
+ *         22 Dec 2011
  */
 class ScalaScriptEngine(val config: Config) extends Logging {
 
@@ -47,19 +47,28 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 	// codeversion is initialy to version 0 which is not usable. 
 	@volatile private var codeVersion: CodeVersion = new CodeVersion {
 		override def version: Int = 0
+
 		override def classLoader: ScalaClassLoader = throw new IllegalStateException("CodeVersion not yet ready.")
+
 		override def files: Set[SourceFile] = Set()
+
 		override def sourceFiles = Map[File, SourceFile]()
+
 		override def get[T](className: String): Class[T] = throw new IllegalStateException("CodeVersion not yet ready.")
+
 		override def newInstance[T](className: String): T = throw new IllegalStateException("CodeVersion not yet ready.")
+
 		override def constructors[T](className: String) = throw new IllegalStateException("CodeVersion not yet ready.")
+
 		override def isModifiedOrNew(f: File) = true
 	}
 
 	@volatile private var _compilationStatus = CompilationStatus.notYetReady
 
 	def currentVersion = codeVersion
+
 	def versionNumber = codeVersion.version
+
 	def compilationStatus = _compilationStatus
 
 	/*
@@ -95,7 +104,7 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 				_compilationStatus.checkStop
 				compileManager.compile(allChangedFiles.map(_.getAbsolutePath))
 			} catch {
-				case e =>
+				case e: Throwable =>
 					if (versionNumber > 0) {
 						// update fileset to this codeversion to avoid
 						// continuously compiling problematic code
@@ -133,7 +142,7 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 	 * Can throw ClassNotFoundException if the class is not present.
 	 * Can throw ClassCastException if the class is not of T
 	 * Can trigger a compilation in the background or foreground,
-	 * 		depending on the refresh policy.
+	 * depending on the refresh policy.
 	 */
 	def get[T](className: String): Class[T] = codeVersion.get(className)
 
@@ -202,10 +211,12 @@ object ScalaScriptEngine {
 	/**
 	 * returns an instance of the engine. Refreshes must be done manually
 	 */
-	def withoutRefreshPolicy(sourcePaths: Set[File],
+	def withoutRefreshPolicy(
+		sourcePaths: Set[File],
 		compilationClassPaths: Set[File],
 		classLoadingClassPaths: Set[File],
-		outputDir: File): ScalaScriptEngine =
+		outputDir: File
+	): ScalaScriptEngine =
 		new ScalaScriptEngine(Config(sourcePaths, compilationClassPaths, classLoadingClassPaths, outputDir))
 
 	/**
@@ -276,7 +287,7 @@ object ScalaScriptEngine {
 	 *
 	 * @param sourcePath					the path where the scala source files are.
 	 * @param recheckSourceEveryDtInMillis	each file will only be checked for changes
-	 * 										once per recheckEveryInMillis milliseconds.
+	 *                                        once per recheckEveryInMillis milliseconds.
 	 * @return								the ScalaScriptEngine
 	 */
 	def onChangeRefresh(sourcePath: File, recheckSourceEveryDtInMillis: Long): ScalaScriptEngine with OnChangeRefresh =

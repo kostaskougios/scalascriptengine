@@ -84,7 +84,7 @@
 		<dependency>
 			<groupId>com.googlecode.classgenerator</groupId>
 			<artifactId>classgenerator</artifactId>
-			<version>0.6.5-${scala.version}</version>
+			<version>0.6.7-${scala.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -206,7 +206,7 @@
 		<profile>
 			<id>scala2.10</id>
 			<properties>
-				<scala.version>2.10.0-M7</scala.version>
+				<scala.version>2.10.0</scala.version>
 			</properties>
 			<activation>
 				<property>
@@ -214,12 +214,12 @@
 				</property>
 			</activation>
 			<dependencies>
-				<dependency>
-					<groupId>org.scalatest</groupId>
-					<artifactId>scalatest_2.10.0-M7</artifactId>
-					<version>2.0.M4-2.10.0-M7-B1</version>
-					<scope>test</scope>
-				</dependency>
+                <dependency>
+                    <groupId>org.scalatest</groupId>
+                    <artifactId>scalatest_2.10.0-RC5</artifactId>
+                    <version>2.0.M5-B1</version>
+                    <scope>test</scope>
+                </dependency>
 			</dependencies>
 		</profile>
 	</profiles>

@@ -77,7 +77,7 @@ trait RefreshSynchronously extends ScalaScriptEngine with OnChangeRefresh {
 			if (time > lastCompiled) try {
 				refresh
 			} catch {
-				case e => error("error during compilation", e)
+				case e : Throwable => error("error during compilation", e)
 			} finally {
 				// set lastCompile even in case of compilation errors
 				lastCompiled = System.currentTimeMillis
