@@ -21,6 +21,14 @@ class ScalaClassLoaderSuite extends FunSuite with ShouldMatchers {
 	def classLoader(sourceDir: File, classPath: Set[File]) =
 		new ScalaClassLoader(Set(sourceDir), classPath, Thread.currentThread.getContextClassLoader, ClassLoaderConfig.default)
 
+	test("load a class on the default package") {
+		val destDir = newTmpDir("defaultpackage")
+		cleanDestinationAndCopyFromSource(new File(sourceDir, "default"), destDir)
+		val scl = classLoader(destDir, classPath)
+		val tct = scl.newInstance[TestClassTrait]("Test")
+		tct.result should be === "v2"
+	}
+
 	test("will load a class") {
 		val destDir = newTmpDir("dynamicclass")
 		cleanDestinationAndCopyFromSource(new File(sourceDir, "v1"), destDir)
