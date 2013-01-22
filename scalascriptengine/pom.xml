@@ -7,7 +7,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.googlecode.scalascriptengine</groupId>
 	<artifactId>scalascriptengine</artifactId>
-	<version>1.2.0-${scala.version}</version>
+	<version>1.2.1-${scala.version}-SNAPSHOT</version>
 	<name>scalascriptengine</name>
 	<description>A ScriptEngine for Scala</description>
 	<url>https://code.google.com/p/scalascriptengine/</url>
@@ -191,7 +191,7 @@
 			</properties>
 			<activation>
 				<property>
-					<name>!exclude</name>
+					<name>exclude</name>
 				</property>
 			</activation>
 			<dependencies>
@@ -210,14 +210,14 @@
 			</properties>
 			<activation>
 				<property>
-					<name>exclude</name>
+					<name>!exclude</name>
 				</property>
 			</activation>
 			<dependencies>
                 <dependency>
                     <groupId>org.scalatest</groupId>
-                    <artifactId>scalatest_2.10.0-RC5</artifactId>
-                    <version>2.0.M5-B1</version>
+                    <artifactId>scalatest_2.10.0</artifactId>
+                    <version>2.0.M5</version>
                     <scope>test</scope>
                 </dependency>
 			</dependencies>
