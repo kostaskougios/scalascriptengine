@@ -79,7 +79,7 @@
 		<dependency>
 			<groupId>com.googlecode.scalaconcurrency</groupId>
 			<artifactId>scalaconcurrency</artifactId>
-			<version>0.8.0-${scala.version}</version>
+			<version>0.8.1-${scala.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.classgenerator</groupId>
@@ -93,7 +93,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
+				<version>3.0</version>
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<source>1.7</source>
@@ -136,7 +136,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.2</version>
+				<version>2.2.1</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -175,7 +175,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.2.1</version>
+				<version>2.4</version>
 			</plugin>
 			<plugin>
 				<artifactId>maven-repository-plugin</artifactId>
@@ -198,7 +198,7 @@
 				<dependency>
 					<groupId>org.scalatest</groupId>
 					<artifactId>scalatest_2.9.2</artifactId>
-					<version>2.0.M4</version>
+					<version>2.0.M5b</version>
 					<scope>test</scope>
 				</dependency>
 			</dependencies>

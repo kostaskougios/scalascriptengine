@@ -1,9 +1,7 @@
 package com.googlecode.scalascriptengine
 
-import com.googlecode.classgenerator.ReflectionManager
 import java.io.File
 import java.util.UUID
-import scala.io.Source
 import java.io.FileWriter
 
 /**
@@ -21,7 +19,6 @@ private class EvalCodeImpl[T](
 
 	import EvalCode.typesToName
 
-	private val reflectionManager = new ReflectionManager
 	private val srcFolder = new File(System.getProperty("java.io.tmpdir"), UUID.randomUUID.toString)
 	if (!srcFolder.mkdir) throw new IllegalStateException("can't create temp folder %s".format(srcFolder))
 
