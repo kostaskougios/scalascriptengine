@@ -1,2 +1,6 @@
 /.cache
 /target
+.idea
+*.iml
+tmp.pom
+*~
