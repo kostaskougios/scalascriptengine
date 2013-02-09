@@ -64,17 +64,20 @@ class OnChangeRefreshPolicySuite extends FunSuite with ShouldMatchers {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.onChangeRefresh(destDir)
 		sse.deleteAllClassesInOutputDirectory
-		copyFromSource(new File(sourceDir, "v1/reload"), destDir)
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-		sse.numberOfFilesChecked should be === 1
-		sse.versionNumber should be === 1
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-		sse.numberOfFilesChecked should be === 2
-		sse.versionNumber should be === 1
-		copyFromSource(new File(sourceDir, "v2/reload"), destDir)
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v2"
-		sse.numberOfFilesChecked should be === 3
-		sse.versionNumber should be === 2
+		for (i <- 1 to 10) {
+			copyFromSource(new File(sourceDir, "v1/reload"), destDir)
+			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
+			if (i == 1) sse.numberOfFilesChecked should be === 1
+			sse.versionNumber should be === i * 2 - 1
+			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
+			if (i == 1) sse.numberOfFilesChecked should be === 2
+			sse.versionNumber should be === i * 2 - 1
+			Thread.sleep(10)
+			copyFromSource(new File(sourceDir, "v2/reload"), destDir)
+			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v2"
+			if (i == 1) sse.numberOfFilesChecked should be === 3
+			sse.versionNumber should be === i * 2
+		}
 	}
 
 	test("onChangeRefresh: code modifications are reloaded according to recheckEveryMillis") {
