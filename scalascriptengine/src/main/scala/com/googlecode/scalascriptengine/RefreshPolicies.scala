@@ -14,9 +14,10 @@ import java.util.concurrent.atomic.AtomicLong
  *
  * @author kostantinos.kougios
  *
- * 25 Dec 2011
+ *         25 Dec 2011
  */
-trait TimedRefresh { this: ScalaScriptEngine =>
+trait TimedRefresh {
+	this: ScalaScriptEngine =>
 	def rescheduleAt: DateTime
 
 	private val executor = ExecutorServiceManager.newScheduledThreadPool(1, e => error("error during recompilation of a source file", e))
@@ -43,7 +44,9 @@ protected trait OnChangeRefresh extends ScalaScriptEngine {
 	val recheckEveryMillis: Long
 	private val lastChecked = new ConcurrentHashMap[String, java.lang.Long]
 	private val filesCheched = new AtomicLong
+
 	def numberOfFilesChecked = filesCheched.get
+
 	abstract override def get[T](className: String): Class[T] = {
 		val l = lastChecked.get(className)
 		if (l == null || recheckEveryMillis <= 0 || System.currentTimeMillis - l > recheckEveryMillis) {
@@ -70,14 +73,13 @@ protected trait OnChangeRefresh extends ScalaScriptEngine {
  */
 trait RefreshSynchronously extends ScalaScriptEngine with OnChangeRefresh {
 	private var lastCompiled: Long = 0
+
 	override def doRefresh: Unit = {
 		// refresh only if not already refreshing
 		val time = System.currentTimeMillis
 		synchronized {
 			if (time > lastCompiled) try {
 				refresh
-			} catch {
-				case e : Throwable => error("error during compilation", e)
 			} finally {
 				// set lastCompile even in case of compilation errors
 				lastCompiled = System.currentTimeMillis
@@ -96,6 +98,7 @@ trait RefreshSynchronously extends ScalaScriptEngine with OnChangeRefresh {
 trait RefreshAsynchronously extends ScalaScriptEngine with OnChangeRefresh {
 	private val isCompiling = new AtomicBoolean(false)
 	private val executor = ExecutorServiceManager.newSingleThreadExecutor
+
 	override def doRefresh: Unit = {
 		// refresh only if not already refreshing 
 		val c = isCompiling.getAndSet(true)

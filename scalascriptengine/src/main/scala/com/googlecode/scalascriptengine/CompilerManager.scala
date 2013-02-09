@@ -11,7 +11,7 @@ import tools.nsc.reporters.Reporter
  *
  * @author kostantinos.kougios
  *
- * 22 Dec 2011
+ *         22 Dec 2011
  */
 protected class CompilerManager(sourcePaths: Set[File], classPaths: Set[File], destDir: File, sse: ScalaScriptEngine) extends Logging {
 	val settings = new Settings(s => {
@@ -36,13 +36,13 @@ protected class CompilerManager(sourcePaths: Set[File], classPaths: Set[File], d
 class CompilationError(msg: String) extends RuntimeException(msg)
 
 import scala.tools.nsc.util.Position
+
 private class CompilationReporter extends Reporter with Logging {
-	protected def info0(pos: Position, msg: String, severity: Severity, force: Boolean): Unit =
-		{
-			error(msg)
-			if (severity == ERROR)
-				throw new CompilationError("error during compilation of %s : %s".format(pos.source.path, msg))
-		}
+	protected def info0(pos: Position, msg: String, severity: Severity, force: Boolean): Unit = {
+		error(msg)
+		if (severity == ERROR)
+			throw new CompilationError("error during compilation : %s".format(msg))
+	}
 
 	override def hasErrors: Boolean = false
 }

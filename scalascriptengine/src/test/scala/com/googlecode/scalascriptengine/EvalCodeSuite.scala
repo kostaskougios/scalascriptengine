@@ -8,7 +8,7 @@ import org.scalatest.matchers.ShouldMatchers
 /**
  * @author kostantinos.kougios
  *
- * 20 Aug 2012
+ *         20 Aug 2012
  */
 @RunWith(classOf[JUnitRunner])
 class EvalCodeSuite extends FunSuite with ShouldMatchers {
@@ -55,6 +55,24 @@ class EvalCodeSuite extends FunSuite with ShouldMatchers {
 		val ect = EvalCode.with2Args[Float, Double, String]("i1", "i2", "(i1 + i2).toString")
 		val x = ect.newInstance
 		x(12.5f, 2.5) should be === "15.0"
+	}
+
+	test("use case 1") {
+		val sourceDir = new java.io.File("./src/main/scala")
+		val config = ScalaScriptEngine.defaultConfig(sourceDir).copy(
+			classLoaderConfig = ClassLoaderConfig.default.copy(
+				protectPackages = Set("javax.swing"),
+				protectClasses = Set("java.lang.Thread") // note: still threads can be created via i.e. Executors
+			)
+		)
+
+		def eval(code: String) {
+			val ect = EvalCode.with1Arg[Int, AnyRef]("world", code, config.classLoaderConfig)
+			val f = ect.newInstance
+			f(1)
+		}
+
+		eval("world.asInstanceOf[Object]")
 	}
 }
 
