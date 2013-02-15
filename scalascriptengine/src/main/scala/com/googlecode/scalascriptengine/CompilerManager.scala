@@ -13,13 +13,13 @@ import tools.nsc.reporters.Reporter
  *
  *         22 Dec 2011
  */
-protected class CompilerManager(sourcePaths: Set[File], classPaths: Set[File], destDir: File, sse: ScalaScriptEngine) extends Logging {
+protected class CompilerManager(sourcePaths: Set[SourcePath], classPaths: Set[File], sse: ScalaScriptEngine) extends Logging {
 	val settings = new Settings(s => {
 		error("errors report: " + s)
 	})
-	settings.sourcepath.tryToSet(sourcePaths.map(_.getAbsolutePath).toList)
+	settings.sourcepath.tryToSet(sourcePaths.map(_.sourceDir.getAbsolutePath).toList)
 	settings.classpath.tryToSet(List(classPaths.map(_.getAbsolutePath).mkString(File.pathSeparator)))
-	settings.outdir.tryToSet(List(destDir.getAbsolutePath))
+	settings.outdir.tryToSet(sourcePaths.map(_.targetDir.getAbsolutePath).toList)
 
 	private val g = new Global(settings, new CompilationReporter)
 	private lazy val run = new g.Run

@@ -49,10 +49,11 @@ protected trait OnChangeRefresh extends ScalaScriptEngine {
 
 	abstract override def get[T](className: String): Class[T] = {
 		val l = lastChecked.get(className)
-		if (l == null || recheckEveryMillis <= 0 || System.currentTimeMillis - l > recheckEveryMillis) {
-			lastChecked.put(className, System.currentTimeMillis)
+		val now = System.currentTimeMillis
+		if (l == null || recheckEveryMillis <= 0 || now - l > recheckEveryMillis) {
+			lastChecked.put(className, now)
 			val fileName = className.replace('.', '/') + ".scala"
-			val srcFileOption = config.sourcePaths.find(dir => new File(dir, fileName).exists).map(dir => new File(dir, fileName))
+			val srcFileOption = config.sourcePaths.find(paths => new File(paths.sourceDir, fileName).exists).map(paths => new File(paths.sourceDir, fileName))
 			val isMod = srcFileOption.map(f => currentVersion.isModifiedOrNew(f)).getOrElse(true)
 			filesCheched.incrementAndGet
 			if (isMod) doRefresh

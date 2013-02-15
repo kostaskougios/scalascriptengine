@@ -1,9 +1,6 @@
 package com.googlecode.scalascriptengine
 
 import java.io.File
-import java.util.UUID
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.scala_tools.time.Imports._
 import java.net.URLClassLoader
 
@@ -42,7 +39,7 @@ import java.net.URLClassLoader
  */
 class ScalaScriptEngine(val config: Config) extends Logging {
 
-	private def compileManager = new CompilerManager(config.sourcePaths, config.compilationClassPaths, config.outputDir, this)
+	private def compileManager = new CompilerManager(config.sourcePaths, config.compilationClassPaths, this)
 
 	// codeversion is initialy to version 0 which is not usable. 
 	@volatile private var codeVersion: CodeVersion = new CodeVersion {
@@ -89,13 +86,13 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 
 		_compilationStatus = CompilationStatus.started
 
-		val allChangedFiles = config.sourcePaths.map(srcDir => refresh0(srcDir)).flatten
+		val allChangedFiles = config.sourcePaths.map(paths => refresh0(paths.sourceDir)).flatten
 		_compilationStatus.checkStop
 		val result = if (allChangedFiles.isEmpty)
 			codeVersion
 		else {
 			debug("refreshing changed files %s".format(allChangedFiles))
-			var sourceFilesSet = allChangedFiles.map(f => SourceFile(f, f.lastModified))
+			val sourceFilesSet = allChangedFiles.map(f => SourceFile(f, f.lastModified))
 			_compilationStatus.checkStop
 
 			def sourceFiles = sourceFilesSet.map(s => (s.file, s)).toMap
@@ -119,8 +116,8 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 			}
 			_compilationStatus.checkStop
 			val classLoader = new ScalaClassLoader(
-				Set(config.outputDir),
-				config.sourcePaths ++ config.classLoadingClassPaths,
+				config.sourcePaths.map(_.targetDir),
+				config.scalaSourceDirs ++ config.classLoadingClassPaths,
 				Thread.currentThread.getContextClassLoader,
 				config.classLoaderConfig)
 			debug("done refreshing")
@@ -169,12 +166,15 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 	 * methods to create an instance of the script engine, the output dir will
 	 * be in the tmp directory.
 	 */
-	def deleteAllClassesInOutputDirectory {
+	def deleteAllClassesInOutputDirectory() {
 		def deleteAllClassesInOutputDirectory(dir: File) {
 			dir.listFiles.filter(_.getName.endsWith(".class")).foreach(_.delete)
 			dir.listFiles.filter(_.isDirectory).foreach(d => deleteAllClassesInOutputDirectory(d))
 		}
-		deleteAllClassesInOutputDirectory(config.outputDir)
+		config.targetDirs.foreach {
+			d =>
+				deleteAllClassesInOutputDirectory(d)
+		}
 	}
 }
 
@@ -202,34 +202,32 @@ object ScalaScriptEngine {
 	}
 
 	def defaultConfig(sourcePath: File) = Config(
-		Set(sourcePath),
+		Set(SourcePath(sourcePath)),
 		currentClassPath,
-		Set(),
-		tmpOutputFolder
+		Set()
 	)
 
 	/**
 	 * returns an instance of the engine. Refreshes must be done manually
 	 */
 	def withoutRefreshPolicy(
-		sourcePaths: Set[File],
-		compilationClassPaths: Set[File],
-		classLoadingClassPaths: Set[File],
-		outputDir: File
-	): ScalaScriptEngine =
-		new ScalaScriptEngine(Config(sourcePaths, compilationClassPaths, classLoadingClassPaths, outputDir))
+		                        sourcePaths: Set[SourcePath],
+		                        compilationClassPaths: Set[File],
+		                        classLoadingClassPaths: Set[File]
+		                        ): ScalaScriptEngine =
+		new ScalaScriptEngine(Config(sourcePaths, compilationClassPaths, classLoadingClassPaths))
 
 	/**
 	 * returns an instance of the engine. Refreshes must be done manually
 	 */
-	def withoutRefreshPolicy(sourcePaths: Set[File], compilationClassPaths: Set[File]): ScalaScriptEngine =
-		new ScalaScriptEngine(Config(sourcePaths, compilationClassPaths, Set(), tmpOutputFolder))
+	def withoutRefreshPolicy(sourcePaths: Set[SourcePath], compilationClassPaths: Set[File]): ScalaScriptEngine =
+		new ScalaScriptEngine(Config(sourcePaths, compilationClassPaths, Set()))
 
 	/**
 	 * returns an instance of the engine. Refreshes must be done manually
 	 */
-	def withoutRefreshPolicy(sourcePath: File, compilationClassPaths: Set[File]): ScalaScriptEngine =
-		withoutRefreshPolicy(Config(Set(sourcePath), compilationClassPaths, Set(), tmpOutputFolder), compilationClassPaths)
+	def withoutRefreshPolicy(sourcePath: SourcePath, compilationClassPaths: Set[File]): ScalaScriptEngine =
+		withoutRefreshPolicy(Config(Set(sourcePath), compilationClassPaths, Set()), compilationClassPaths)
 
 	def withoutRefreshPolicy(config: Config, compilationClassPaths: Set[File]): ScalaScriptEngine =
 		new ScalaScriptEngine(config)
@@ -237,13 +235,13 @@ object ScalaScriptEngine {
 	/**
 	 * returns an instance of the engine. Refreshes must be done manually
 	 */
-	def withoutRefreshPolicy(sourcePaths: Set[File]): ScalaScriptEngine =
+	def withoutRefreshPolicy(sourcePaths: Set[SourcePath]): ScalaScriptEngine =
 		withoutRefreshPolicy(sourcePaths, currentClassPath)
 
 	/**
 	 * returns an instance of the engine. Refreshes must be done manually
 	 */
-	def withoutRefreshPolicy(sourcePath: File): ScalaScriptEngine = withoutRefreshPolicy(Set(sourcePath))
+	def withoutRefreshPolicy(sourcePath: SourcePath): ScalaScriptEngine = withoutRefreshPolicy(Set(sourcePath))
 
 	/**
 	 * periodically scans the source folders for changes. If a change is detected, a recompilation is

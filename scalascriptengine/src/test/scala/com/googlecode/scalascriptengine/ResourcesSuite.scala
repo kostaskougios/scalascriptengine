@@ -1,4 +1,5 @@
 package com.googlecode.scalascriptengine
+
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
 import org.junit.runner.RunWith
@@ -9,7 +10,7 @@ import scalascriptengine._
 /**
  * @author kostantinos.kougios
  *
- * 29 Dec 2011
+ *         29 Dec 2011
  */
 @RunWith(classOf[JUnitRunner])
 class ResourcesSuite extends FunSuite with ShouldMatchers {
@@ -19,7 +20,7 @@ class ResourcesSuite extends FunSuite with ShouldMatchers {
 	val src = scala.io.Source.fromInputStream(in)
 
 	test("loads resources from classpath") {
-		val sse = ScalaScriptEngine.withoutRefreshPolicy(new File(sourceDir, "v1"))
+		val sse = ScalaScriptEngine.withoutRefreshPolicy(SourcePath(new File(sourceDir, "v1")))
 		sse.deleteAllClassesInOutputDirectory
 		sse.refresh
 
@@ -29,7 +30,7 @@ class ResourcesSuite extends FunSuite with ShouldMatchers {
 
 	test("loads changed resources from classpath without refreshing") {
 		val destDir = newTmpDir("dynamicsrc")
-		val sse = ScalaScriptEngine.withoutRefreshPolicy(destDir)
+		val sse = ScalaScriptEngine.withoutRefreshPolicy(SourcePath(destDir))
 		sse.deleteAllClassesInOutputDirectory
 		copyFromSource(new File(sourceDir, "v1"), destDir)
 		sse.refresh
@@ -44,7 +45,7 @@ class ResourcesSuite extends FunSuite with ShouldMatchers {
 
 	test("loads changed resources from classpath with refreshing") {
 		val destDir = newTmpDir("dynamicsrc")
-		val sse = ScalaScriptEngine.withoutRefreshPolicy(destDir)
+		val sse = ScalaScriptEngine.withoutRefreshPolicy(SourcePath(destDir))
 		sse.deleteAllClassesInOutputDirectory
 		copyFromSource(new File(sourceDir, "v1"), destDir)
 		sse.refresh

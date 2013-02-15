@@ -8,7 +8,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.googlecode.scalascriptengine</groupId>
     <artifactId>scalascriptengine</artifactId>
-    <version>1.2.1-${scala.version}</version>
+    <version>1.3.0-${scala.version}</version>
     <name>scalascriptengine</name>
     <description>A ScriptEngine for Scala</description>
     <url>https://code.google.com/p/scalascriptengine/</url>

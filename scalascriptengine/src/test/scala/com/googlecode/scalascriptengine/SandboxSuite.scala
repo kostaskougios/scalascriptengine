@@ -5,14 +5,13 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
 import java.io.File
-import scalascriptengine._
 import java.security.AccessControlException
 import org.scalatest.BeforeAndAfterAll
 
 /**
  * @author		konstantinos.kougios
  *
- * 7 Oct 2012
+ *                7 Oct 2012
  */
 @RunWith(classOf[JUnitRunner])
 class SandboxSuite extends FunSuite with ShouldMatchers with BeforeAndAfterAll {
@@ -23,7 +22,7 @@ class SandboxSuite extends FunSuite with ShouldMatchers with BeforeAndAfterAll {
 			protectClasses = Set("java.lang.Thread") // note: still threads can be created via i.e. Executors
 		)
 	)
-	System.setProperty("script.classes", config.outputDir.toURI.toString)
+	System.setProperty("script.classes", config.targetDirs.head.toURI.toString)
 	System.setProperty("java.security.policy", new File("testfiles/SandboxSuite/test.policy").toURI.toString)
 	val sseSM = new SSESecurityManager(new SecurityManager)
 	System.setSecurityManager(sseSM)

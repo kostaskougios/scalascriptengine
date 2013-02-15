@@ -1,10 +1,8 @@
 package examples
 
 import java.io.File
-import com.googlecode.scalascriptengine.RefreshAsynchronously
-import com.googlecode.scalascriptengine.ScalaScriptEngine
+import com.googlecode.scalascriptengine._
 import com.googlecode.scalascriptengine.Config
-import com.googlecode.scalascriptengine.FromClasspathFirst
 
 /**
  * This example shows how to instantiate the script engine without using the factory
@@ -23,7 +21,7 @@ import com.googlecode.scalascriptengine.FromClasspathFirst
  *
  * @author kostantinos.kougios
  *
- * 27 Dec 2011
+ *         27 Dec 2011
  */
 object FullBlown extends App {
 	// the source directory
@@ -37,10 +35,10 @@ object FullBlown extends App {
 	outputDir.mkdir
 
 	val sse = new ScalaScriptEngine(Config(
-		Set(sourceDir),
+		Set(SourcePath(sourceDir, outputDir)),
 		compilationClassPath,
-		runtimeClasspath,
-		outputDir)) with RefreshAsynchronously with FromClasspathFirst {
+		runtimeClasspath
+	)) with RefreshAsynchronously with FromClasspathFirst {
 		val recheckEveryMillis: Long = 1000 // each file will only be checked maximum once per second
 	}
 
