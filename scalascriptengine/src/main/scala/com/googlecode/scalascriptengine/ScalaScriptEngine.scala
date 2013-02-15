@@ -47,7 +47,7 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 
 		override def classLoader: ScalaClassLoader = throw new IllegalStateException("CodeVersion not yet ready.")
 
-		override def files: Set[SourceFile] = Set()
+		override def files: List[SourceFile] = Nil
 
 		override def sourceFiles = Map[File, SourceFile]()
 
@@ -116,8 +116,8 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 			}
 			_compilationStatus.checkStop
 			val classLoader = new ScalaClassLoader(
-				config.sourcePaths.map(_.targetDir),
-				config.scalaSourceDirs ++ config.classLoadingClassPaths,
+				config.sourcePaths.map(_.targetDir).toSet,
+				config.scalaSourceDirs.toSet ++ config.classLoadingClassPaths,
 				Thread.currentThread.getContextClassLoader,
 				config.classLoaderConfig)
 			debug("done refreshing")
@@ -202,7 +202,7 @@ object ScalaScriptEngine {
 	}
 
 	def defaultConfig(sourcePath: File) = Config(
-		Set(SourcePath(sourcePath)),
+		List(SourcePath(sourcePath)),
 		currentClassPath,
 		Set()
 	)
@@ -211,7 +211,7 @@ object ScalaScriptEngine {
 	 * returns an instance of the engine. Refreshes must be done manually
 	 */
 	def withoutRefreshPolicy(
-		                        sourcePaths: Set[SourcePath],
+		                        sourcePaths: List[SourcePath],
 		                        compilationClassPaths: Set[File],
 		                        classLoadingClassPaths: Set[File]
 		                        ): ScalaScriptEngine =
@@ -220,14 +220,14 @@ object ScalaScriptEngine {
 	/**
 	 * returns an instance of the engine. Refreshes must be done manually
 	 */
-	def withoutRefreshPolicy(sourcePaths: Set[SourcePath], compilationClassPaths: Set[File]): ScalaScriptEngine =
+	def withoutRefreshPolicy(sourcePaths: List[SourcePath], compilationClassPaths: Set[File]): ScalaScriptEngine =
 		new ScalaScriptEngine(Config(sourcePaths, compilationClassPaths, Set()))
 
 	/**
 	 * returns an instance of the engine. Refreshes must be done manually
 	 */
 	def withoutRefreshPolicy(sourcePath: SourcePath, compilationClassPaths: Set[File]): ScalaScriptEngine =
-		withoutRefreshPolicy(Config(Set(sourcePath), compilationClassPaths, Set()), compilationClassPaths)
+		withoutRefreshPolicy(Config(List(sourcePath), compilationClassPaths, Set()), compilationClassPaths)
 
 	def withoutRefreshPolicy(config: Config, compilationClassPaths: Set[File]): ScalaScriptEngine =
 		new ScalaScriptEngine(config)
@@ -235,13 +235,13 @@ object ScalaScriptEngine {
 	/**
 	 * returns an instance of the engine. Refreshes must be done manually
 	 */
-	def withoutRefreshPolicy(sourcePaths: Set[SourcePath]): ScalaScriptEngine =
+	def withoutRefreshPolicy(sourcePaths: List[SourcePath]): ScalaScriptEngine =
 		withoutRefreshPolicy(sourcePaths, currentClassPath)
 
 	/**
 	 * returns an instance of the engine. Refreshes must be done manually
 	 */
-	def withoutRefreshPolicy(sourcePath: SourcePath): ScalaScriptEngine = withoutRefreshPolicy(Set(sourcePath))
+	def withoutRefreshPolicy(sourcePath: SourcePath): ScalaScriptEngine = withoutRefreshPolicy(List(sourcePath))
 
 	/**
 	 * periodically scans the source folders for changes. If a change is detected, a recompilation is

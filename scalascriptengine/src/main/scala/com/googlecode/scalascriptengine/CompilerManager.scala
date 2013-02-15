@@ -13,22 +13,41 @@ import tools.nsc.reporters.Reporter
  *
  *         22 Dec 2011
  */
-protected class CompilerManager(sourcePaths: Set[SourcePath], classPaths: Set[File], sse: ScalaScriptEngine) extends Logging {
-	val settings = new Settings(s => {
-		error("errors report: " + s)
-	})
-	settings.sourcepath.tryToSet(sourcePaths.map(_.sourceDir.getAbsolutePath).toList)
-	settings.classpath.tryToSet(List(classPaths.map(_.getAbsolutePath).mkString(File.pathSeparator)))
-	settings.outdir.tryToSet(sourcePaths.map(_.targetDir.getAbsolutePath).toList)
+protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[File], sse: ScalaScriptEngine) extends Logging {
 
-	private val g = new Global(settings, new CompilationReporter)
-	private lazy val run = new g.Run
+	def compile(allFiles: List[String]) = {
 
-	def compile(files: Set[String]) = {
-		val phase = run.phaseNamed("typer")
-		val cps = new CompilationPlugins(g, sse)
-		cps.Component.newPhase(phase)
-		run.compile(files.toList)
+		def doCompile(sp: SourcePath, cp: Set[File]) {
+			val settings = new Settings(s => {
+				error("errors report: " + s)
+			})
+			settings.sourcepath.tryToSet(sp.sourceDir.getAbsolutePath :: Nil)
+			settings.classpath.tryToSet(List(cp.map(_.getAbsolutePath).mkString(File.pathSeparator)))
+			settings.outdir.tryToSet(sp.targetDir.getAbsolutePath :: Nil)
+
+			val g = new Global(settings, new CompilationReporter)
+			val run = new g.Run
+
+			val phase = run.phaseNamed("typer")
+			val cps = new CompilationPlugins(g, sse)
+			cps.Component.newPhase(phase)
+
+			val rootPath = sp.sourceDir.getAbsolutePath
+			val files = allFiles.filter(_.startsWith(rootPath))
+			run.compile(files)
+		}
+
+		def all(todo: List[SourcePath], done: List[SourcePath]) {
+			todo match {
+				case Nil =>
+				// nop
+				case h :: t =>
+					doCompile(h, classPaths ++ done.map(_.targetDir))
+					all(t, h :: done)
+			}
+		}
+
+		all(sourcePaths, Nil)
 	}
 
 }

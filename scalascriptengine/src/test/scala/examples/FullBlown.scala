@@ -35,7 +35,7 @@ object FullBlown extends App {
 	outputDir.mkdir
 
 	val sse = new ScalaScriptEngine(Config(
-		Set(SourcePath(sourceDir, outputDir)),
+		List(SourcePath(sourceDir, outputDir)),
 		compilationClassPath,
 		runtimeClasspath
 	)) with RefreshAsynchronously with FromClasspathFirst {

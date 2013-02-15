@@ -16,7 +16,7 @@ trait CodeVersion {
 
 	def classLoader: ScalaClassLoader
 
-	def files: Set[SourceFile]
+	def files: List[SourceFile]
 
 	def sourceFiles: Map[File, SourceFile]
 
@@ -31,7 +31,7 @@ trait CodeVersion {
 
 protected case class CodeVersionImpl(
 	                                    val version: Int,
-	                                    val files: Set[SourceFile],
+	                                    val files: List[SourceFile],
 	                                    classLoader: ScalaClassLoader,
 	                                    val sourceFiles: Map[File, SourceFile]
 	                                    ) extends CodeVersion {

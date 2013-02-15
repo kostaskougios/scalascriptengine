@@ -9,7 +9,7 @@ import java.io.File
  * settings, error reporters and so on.
  */
 case class Config(
-	                 val sourcePaths: Set[SourcePath], // this  is where the source files and target class directories are located
+	                 val sourcePaths: List[SourcePath], // this  is where the source files and target class directories are located
 	                 // this is the classpath for compilation and must be provided. i.e.
 	                 // ScalaScriptEngine.currentClassPath
 	                 val compilationClassPaths: Set[File] = ScalaScriptEngine.currentClassPath,
@@ -24,7 +24,7 @@ case class Config(
 
 	// a convenient constructor to create a config with the default options
 	// and one only source folder.
-	def this(sourcePath: File) = this(Set(SourcePath(sourcePath)))
+	def this(sourcePath: File) = this(List(SourcePath(sourcePath)))
 
 	val scalaSourceDirs = sourcePaths.map(_.sourceDir)
 	val targetDirs = sourcePaths.map(_.targetDir)

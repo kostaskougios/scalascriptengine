@@ -23,7 +23,7 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 		val sourceDir2 = new File("testfiles/CompilationSuite2")
 		val target1 = tmpOutputFolder(1)
 		val target2 = tmpOutputFolder(2)
-		val sse = ScalaScriptEngine.withoutRefreshPolicy(Set(SourcePath(sourceDir1, target1), SourcePath(sourceDir2, target2)))
+		val sse = ScalaScriptEngine.withoutRefreshPolicy(List(SourcePath(sourceDir1, target1), SourcePath(sourceDir2, target2)))
 		sse.deleteAllClassesInOutputDirectory
 
 		sse.refresh
