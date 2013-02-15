@@ -9,7 +9,11 @@ import java.io.File
  * settings, error reporters and so on.
  */
 case class Config(
-	                 val sourcePaths: List[SourcePath], // this  is where the source files and target class directories are located
+	                 // this  is where the source files and target class directories are located
+	                 // each source folder is compiled and in turn is used as classpath for the next source folder.
+	                 // hence source folders must be in order of dependency, with the root classes been the
+	                 // first element of the list
+	                 val sourcePaths: List[SourcePath],
 	                 // this is the classpath for compilation and must be provided. i.e.
 	                 // ScalaScriptEngine.currentClassPath
 	                 val compilationClassPaths: Set[File] = ScalaScriptEngine.currentClassPath,
