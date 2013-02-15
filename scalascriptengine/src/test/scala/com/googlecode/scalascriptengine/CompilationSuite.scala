@@ -18,6 +18,20 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 	val sourceDir = new File("testfiles/CompilationSuite")
 	val versionsDir = new File("testfiles/versions")
 
+	test("multiple source and target dirs") {
+		val sourceDir1 = new File("testfiles/CompilationSuite1")
+		val sourceDir2 = new File("testfiles/CompilationSuite2")
+		val target1 = tmpOutputFolder(1)
+		val target2 = tmpOutputFolder(2)
+		val sse = ScalaScriptEngine.withoutRefreshPolicy(Set(SourcePath(sourceDir1, target1), SourcePath(sourceDir2, target2)))
+		sse.deleteAllClassesInOutputDirectory
+
+		sse.refresh
+
+		new File(target1, "A.class").exists should be(true)
+		new File(target2, "B.class").exists should be(true)
+	}
+
 	test("code modifications are reloaded") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(SourcePath(destDir))
@@ -60,4 +74,11 @@ class CompilationSuite extends FunSuite with ShouldMatchers {
 		new File(sse.config.targetDirs.head, "test/MyClass.class").exists should be(false)
 		new File(sse.config.targetDirs.head, "test/Dep1.class").exists should be(false)
 	}
+
+	private def tmpOutputFolder(i: Int) = {
+		val dir = new File(System.getProperty("java.io.tmpdir"), "scala-script-engine-classes" + i)
+		dir.mkdir
+		dir
+	}
+
 }
