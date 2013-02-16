@@ -15,7 +15,9 @@ private class EvalCodeImpl[T](
 	                             typeArgs: List[Class[_]],
 	                             argNames: Iterable[String],
 	                             body: String,
-	                             classLoaderConfig: ClassLoaderConfig) extends EvalCode[T] {
+	                             classLoaderConfig: ClassLoaderConfig
+	                             )
+	extends EvalCode[T] {
 
 	import EvalCode.typesToName
 
@@ -43,8 +45,7 @@ private class EvalCodeImpl[T](
 		case (pName, e) =>
 			val typeName = typesToName.getOrElse(e, e.getName)
 			pName + " : " + typeName
-	}.mkString(","),
-	// return type {
+	}.mkString(","), {
 		val last = typeArgs.last
 		typesToName.getOrElse(last, last.getName)
 	},

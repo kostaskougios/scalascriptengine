@@ -15,6 +15,25 @@ import tools.nsc.reporters.Reporter
  */
 protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[File], sse: ScalaScriptEngine) extends Logging {
 
+	private def acc(todo: List[SourcePath], done: List[SourcePath]): List[(SourcePath, Global#Run)] = todo match {
+		case Nil => Nil
+		case h :: t =>
+			val settings = new Settings(s => {
+				error("errors report: " + s)
+			})
+			settings.sourcepath.tryToSet(h.sourceDir.getAbsolutePath :: Nil)
+			val cp = classPaths ++ done.map(_.targetDir)
+			settings.classpath.tryToSet(List(cp.map(_.getAbsolutePath).mkString(File.pathSeparator)))
+			settings.outdir.tryToSet(h.targetDir.getAbsolutePath :: Nil)
+
+			val g = new Global(settings, new CompilationReporter)
+			val run = new g.Run
+			(h, run) :: acc(t, h :: done)
+
+	}
+
+	val runMap = acc(sourcePaths, Nil).toMap
+
 	def compile(allFiles: List[String]) = {
 
 		def doCompile(sp: SourcePath, cp: Set[File]) {
