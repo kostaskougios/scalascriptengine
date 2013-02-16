@@ -31,19 +31,19 @@ package object scalascriptengine {
 		copyFromSource(src, dest)
 	}
 
-	//	var time = System.currentTimeMillis
+	var time = System.currentTimeMillis - 50000
 
 	def copyFromSource(src: File, dest: File) = {
 
-		//		def replaceTime(dir: File) {
-		//			val files = dir.listFiles
-		//			files.filter(_.isDirectory).foreach(d => replaceTime(d))
-		//			files.filter(!_.isDirectory).foreach(_.setLastModified(time))
-		//		}
+		def replaceTime(dir: File) {
+			val files = dir.listFiles
+			files.filter(_.isDirectory).foreach(d => replaceTime(d))
+			files.filter(!_.isDirectory).foreach(_.setLastModified(time))
+		}
 
 		FileUtils.copyDirectory(src, dest, false)
-		//replaceTime(dest)
-		//		time -= 5000
+		replaceTime(dest)
+		time += 2000
 	}
 
 	def makeDummyFile(dir: File, name: String, time: Option[Long] = None) = {
