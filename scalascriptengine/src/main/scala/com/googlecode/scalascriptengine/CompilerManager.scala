@@ -15,7 +15,7 @@ import tools.nsc.reporters.Reporter
  */
 protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[File], sse: ScalaScriptEngine) extends Logging {
 
-	private def acc(todo: List[SourcePath], done: List[SourcePath]): List[(SourcePath, Global#Run)] = todo match {
+	private def acc(todo: List[SourcePath], done: List[SourcePath]): List[(SourcePath, (Global, Global#Run))] = todo match {
 		case Nil => Nil
 		case h :: t =>
 			val settings = new Settings(s => {
@@ -28,7 +28,7 @@ protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[F
 
 			val g = new Global(settings, new CompilationReporter)
 			val run = new g.Run
-			(h, run) :: acc(t, h :: done)
+			(h, (g, run)) :: acc(t, h :: done)
 
 	}
 
@@ -37,15 +37,7 @@ protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[F
 	def compile(allFiles: List[String]) = {
 
 		def doCompile(sp: SourcePath, cp: Set[File]) {
-			val settings = new Settings(s => {
-				error("errors report: " + s)
-			})
-			settings.sourcepath.tryToSet(sp.sourceDir.getAbsolutePath :: Nil)
-			settings.classpath.tryToSet(List(cp.map(_.getAbsolutePath).mkString(File.pathSeparator)))
-			settings.outdir.tryToSet(sp.targetDir.getAbsolutePath :: Nil)
-
-			val g = new Global(settings, new CompilationReporter)
-			val run = new g.Run
+			val (g, run) = runMap(sp)
 
 			val phase = run.phaseNamed("typer")
 			val cps = new CompilationPlugins(g, sse)
