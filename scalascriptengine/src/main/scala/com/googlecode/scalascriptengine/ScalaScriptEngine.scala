@@ -56,8 +56,6 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 		override def newInstance[T](className: String): T = throw new IllegalStateException("CodeVersion not yet ready.")
 
 		override def constructors[T](className: String) = throw new IllegalStateException("CodeVersion not yet ready.")
-
-		override def isModifiedOrNew(f: File) = true
 	}
 
 	@volatile private var _compilationStatus = CompilationStatus.notYetReady
@@ -76,23 +74,15 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 	 */
 	def refresh: CodeVersion = {
 
-		def refresh0(srcDir: File): Set[File] = {
-			if (!srcDir.isDirectory) throw new IllegalArgumentException("Not a directory : %s".format(srcDir))
-			val files = srcDir.listFiles
-			val scalaFilesOnCurrentDir = files.filter(f => f.getName.endsWith(".scala") && codeVersion.isModifiedOrNew(f))
-			val scalaFilesOnSubDirs = files.filter(_.isDirectory).map(refresh0 _).flatten
-			(scalaFilesOnCurrentDir ++ scalaFilesOnSubDirs).toSet
-		}
-
 		_compilationStatus = CompilationStatus.started
 
-		val allChangedFiles = config.sourcePaths.map(paths => refresh0(paths.sourceDir)).flatten
+		val allChangedFiles = config.sourcePaths.map(paths => paths.allChanged).flatten
 		_compilationStatus.checkStop
 		val result = if (allChangedFiles.isEmpty)
 			codeVersion
 		else {
 			debug("refreshing changed files %s".format(allChangedFiles))
-			val sourceFilesSet = allChangedFiles.map(f => SourceFile(f, f.lastModified))
+			val sourceFilesSet = allChangedFiles.map(f => SourceFile(f))
 			_compilationStatus.checkStop
 
 			def sourceFiles = sourceFilesSet.map(s => (s.file, s)).toMap

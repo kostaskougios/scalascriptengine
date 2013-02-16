@@ -53,16 +53,15 @@ protected trait OnChangeRefresh extends ScalaScriptEngine {
 		if (l == null || recheckEveryMillis <= 0 || now - l > recheckEveryMillis) {
 			lastChecked.put(className, now)
 			val fileName = className.replace('.', '/') + ".scala"
-			val srcFileOption = config.sourcePaths.find {
+			val isModO = config.sourcePaths.find {
 				paths =>
 					new File(paths.sourceDir, fileName).exists
 			}.map {
 				paths =>
-					new File(paths.sourceDir, fileName)
+					paths.isModified(className)
 			}
-			val isMod = srcFileOption.map(f => currentVersion.isModifiedOrNew(f)).getOrElse(false)
 			filesCheched.incrementAndGet
-			if (isMod) doRefresh
+			if (isModO.isDefined && isModO.get) doRefresh
 		}
 		super.get(className)
 	}

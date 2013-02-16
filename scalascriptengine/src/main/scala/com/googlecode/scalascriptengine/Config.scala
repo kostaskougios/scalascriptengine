@@ -45,4 +45,47 @@ case class SourcePath(
 	                     // the outputDir, this is where all compiled classes will be stored. Please
 	                     // use with care! A folder in the temp directory will usually do.
 	                     targetDir: File = ScalaScriptEngine.tmpOutputFolder
-	                     )
+	                     ) {
+	val sourceDirPath = sourceDir.getAbsolutePath
+
+	def isModified(clz: String) = {
+		val f = clz.replace('.', '/')
+		val scalaName = f + ".scala"
+		val clzName = f + ".class"
+
+		val clzFile = new File(targetDir, clzName)
+		if (!clzFile.exists)
+			true
+		else {
+			val scalaFile = new File(sourceDir, scalaName)
+			scalaFile.lastModified > clzFile.lastModified
+		}
+	}
+
+	def allChanged: Set[File] = {
+
+		def scan(srcDir: File, clzDir: File): Set[File] = {
+			val all = srcDir.listFiles
+			val mod = all.filter(_.getName.endsWith(".scala"))
+				.filter {
+				scalaFile =>
+					val clzName = scalaFile.getName.substring(0, scalaFile.getName.length - 5) + "class"
+					val clzFile = new File(clzDir, clzName)
+					if (!clzFile.exists)
+						true
+					else {
+						scalaFile.lastModified > clzFile.lastModified
+					}
+			}.toSet
+
+			val sub = all.filter(_.isDirectory).map {
+				dir =>
+					scan(dir, new File(clzDir, dir.getName))
+			}.flatten
+
+			mod ++ sub
+		}
+
+		scan(sourceDir, targetDir)
+	}
+}

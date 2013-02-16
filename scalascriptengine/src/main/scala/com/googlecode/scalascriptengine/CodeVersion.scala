@@ -25,8 +25,6 @@ trait CodeVersion {
 	def newInstance[T](className: String): T
 
 	def constructors[T](className: String): Constructors[T]
-
-	def isModifiedOrNew(f: File): Boolean
 }
 
 protected case class CodeVersionImpl(
@@ -40,8 +38,6 @@ protected case class CodeVersionImpl(
 	override def newInstance[T](className: String): T = classLoader.newInstance(className)
 
 	override def constructors[T](className: String) = new Constructors(get(className))
-
-	override def isModifiedOrNew(f: File) = sourceFiles.get(f).map(_.lastModified).map(_ > f.lastModified).getOrElse(true)
 }
 
-case class SourceFile(file: File, lastModified: Long)
+case class SourceFile(file: File)
