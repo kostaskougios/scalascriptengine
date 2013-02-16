@@ -1,6 +1,7 @@
 package com.googlecode.scalascriptengine
 
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * this holds the configuration for the script engine. Source and output paths,
@@ -47,18 +48,23 @@ case class SourcePath(
 	                     ) {
 	val sourceDirPath = sourceDir.getAbsolutePath
 
+	private val modified = new ConcurrentHashMap[File, java.lang.Long]
+
+	private def isMod(f: File) = {
+		val lm = f.lastModified
+		val r = modified.get(f) match {
+			case null => true
+			case l => l < lm
+		}
+		modified.put(f, lm)
+		r
+	}
+
 	def isModified(clz: String) = {
 		val f = clz.replace('.', '/')
 		val scalaName = f + ".scala"
-		val clzName = f + ".class"
-
-		val clzFile = new File(targetDir, clzName)
-		if (!clzFile.exists)
-			true
-		else {
-			val scalaFile = new File(sourceDir, scalaName)
-			scalaFile.lastModified > clzFile.lastModified
-		}
+		val scalaFile = new File(sourceDir, scalaName)
+		isMod(scalaFile)
 	}
 
 	def allChanged: Set[File] = {
@@ -68,13 +74,7 @@ case class SourcePath(
 			val mod = all.filter(_.getName.endsWith(".scala"))
 				.filter {
 				scalaFile =>
-					val clzName = scalaFile.getName.substring(0, scalaFile.getName.length - 5) + "class"
-					val clzFile = new File(clzDir, clzName)
-					if (!clzFile.exists)
-						true
-					else {
-						scalaFile.lastModified > clzFile.lastModified
-					}
+					isMod(scalaFile)
 			}.toSet
 
 			val sub = all.filter(_.isDirectory).map {
