@@ -67,15 +67,15 @@ class OnChangeRefreshPolicySuite extends FunSuite with ShouldMatchers {
 		for (i <- 1 to 10) {
 			copyFromSource(new File(sourceDir, "v1"), destDir)
 			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-			if (i == 1) sse.numberOfFilesChecked should be === 1
+			if (i == 1) sse.numberOfTimesSourcesTestedForModifications should be === 1
 			sse.versionNumber should be === i * 2 - 1
 			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-			if (i == 1) sse.numberOfFilesChecked should be === 2
+			if (i == 1) sse.numberOfTimesSourcesTestedForModifications should be === 2
 			sse.versionNumber should be === i * 2 - 1
 			Thread.sleep(10)
 			copyFromSource(new File(sourceDir, "v2"), destDir)
 			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v2"
-			if (i == 1) sse.numberOfFilesChecked should be === 3
+			if (i == 1) sse.numberOfTimesSourcesTestedForModifications should be === 3
 			sse.versionNumber should be === i * 2
 		}
 	}
@@ -86,18 +86,18 @@ class OnChangeRefreshPolicySuite extends FunSuite with ShouldMatchers {
 		sse.deleteAllClassesInOutputDirectory
 		copyFromSource(new File(sourceDir, "v1"), destDir)
 		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-		sse.numberOfFilesChecked should be === 1
+		sse.numberOfTimesSourcesTestedForModifications should be === 1
 		sse.versionNumber should be === 1
 		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-		sse.numberOfFilesChecked should be === 1
+		sse.numberOfTimesSourcesTestedForModifications should be === 1
 		sse.versionNumber should be === 1
 		copyFromSource(new File(sourceDir, "v2"), destDir)
 		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-		sse.numberOfFilesChecked should be === 1
+		sse.numberOfTimesSourcesTestedForModifications should be === 1
 		Thread.sleep(2100)
 		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v2"
 		sse.versionNumber should be === 2
-		sse.numberOfFilesChecked should be === 2
+		sse.numberOfTimesSourcesTestedForModifications should be === 2
 	}
 
 	test("onChangeRefresh: code modifications are reloaded according to recheckEveryMillis even when errors") {

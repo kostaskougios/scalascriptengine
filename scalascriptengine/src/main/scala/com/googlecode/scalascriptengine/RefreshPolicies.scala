@@ -43,9 +43,9 @@ trait TimedRefresh {
 protected trait OnChangeRefresh extends ScalaScriptEngine {
 	val recheckEveryMillis: Long
 	private val lastChecked = new ConcurrentHashMap[String, java.lang.Long]
-	private val filesCheched = new AtomicLong
+	private val timesTested = new AtomicLong
 
-	def numberOfFilesChecked = filesCheched.get
+	def numberOfTimesSourcesTestedForModifications = timesTested.get
 
 	abstract override def get[T](className: String): Class[T] = {
 		val l = lastChecked.get(className)
@@ -60,7 +60,7 @@ protected trait OnChangeRefresh extends ScalaScriptEngine {
 				paths =>
 					paths.isModified(className)
 			}
-			filesCheched.incrementAndGet
+			timesTested.incrementAndGet
 			if (isModO.isDefined && isModO.get) doRefresh
 		}
 		super.get(className)
