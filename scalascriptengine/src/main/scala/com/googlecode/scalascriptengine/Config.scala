@@ -3,9 +3,8 @@ package com.googlecode.scalascriptengine
 import java.io.File
 
 /**
- * this holds the configuration for the script engine. Source paths,
- * compilation class paths, classloading classpaths and output directory
- * for the compiled files. In the future it will hold scala compiler
+ * this holds the configuration for the script engine. Source and output paths,
+ * compilation class paths, classloading classpaths . In the future it will hold scala compiler
  * settings, error reporters and so on.
  */
 case class Config(

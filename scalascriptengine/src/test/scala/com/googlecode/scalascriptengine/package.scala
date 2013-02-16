@@ -45,4 +45,14 @@ package object scalascriptengine {
 		//replaceTime(dest)
 		//		time -= 5000
 	}
+
+	def makeDummyFile(dir: File, name: String, time: Option[Long] = None) = {
+		val f = new File(dir, name)
+		FileUtils.touch(f)
+		time.foreach {
+			t =>
+				f.setLastModified(t)
+		}
+		f
+	}
 }
