@@ -11,7 +11,7 @@ import com.googlecode.scalascriptengine.scalascriptengine._
  * @author kkougios
  */
 @RunWith(classOf[JUnitRunner])
-class DevClassLoaderSuite extends FunSuite with ShouldMatchers {
+class DevUseIDECompiledClassesOnlySuite extends FunSuite with ShouldMatchers {
 	val targetDir = new File("testfiles/ScalaClassLoaderSuite")
 	// parent classloader will contain scala-lib and all test-compiled classes
 	val classPath = Set[File]()
