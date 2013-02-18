@@ -25,6 +25,9 @@ case class Config(
 
 	                 classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.default) {
 
+	if (sourcePaths.map(_.sourceDir).toSet.size < sourcePaths.size) throw new IllegalArgumentException("duplicate source directories for " + sourcePaths)
+	if (sourcePaths.map(_.targetDir).toSet.size < sourcePaths.size) throw new IllegalArgumentException("duplicate target directories for " + sourcePaths)
+
 	// a convenient constructor to create a config with the default options
 	// and one only source folder.
 	def this(sourcePath: File) = this(List(SourcePath(sourcePath)))
@@ -45,5 +48,7 @@ case class SourcePath(
 	                     // use with care! A folder in the temp directory will usually do.
 	                     targetDir: File = ScalaScriptEngine.tmpOutputFolder
 	                     ) {
+	if (!sourceDir.isDirectory) throw new IllegalArgumentException(sourceDir + " is not a directory")
+	if (!targetDir.isDirectory) throw new IllegalArgumentException(targetDir + " is not a directory")
 	val sourceDirPath = sourceDir.getAbsolutePath
 }
