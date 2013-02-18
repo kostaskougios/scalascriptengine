@@ -76,7 +76,7 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 
 		_compilationStatus = CompilationStatus.started
 
-		val allChangedFiles = config.sourcePaths.map(paths => paths.allChanged).flatten
+		val allChangedFiles = config.sourcePaths.map(paths => allChanged(paths)).flatten
 		_compilationStatus.checkStop
 		val result = if (allChangedFiles.isEmpty)
 			codeVersion
@@ -165,6 +165,42 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 			d =>
 				deleteAllClassesInOutputDirectory(d)
 		}
+	}
+
+	private val modified = new LastModMap
+
+	/**
+	 * @param clz       the full class name
+	 * @return          true if the scala file was modified since the last compilation
+	 */
+	def isModified(sourcePath: SourcePath, clz: String): Boolean = {
+		val f = clz.replace('.', '/')
+		val scalaName = f + ".scala"
+		val scalaFile = new File(sourcePath.sourceDir, scalaName)
+		modified.isMod(scalaFile)
+	}
+
+	private def allChanged(sourcePath: SourcePath): Set[File] = {
+
+		def scan(srcDir: File, clzDir: File): Set[File] = {
+			val all = srcDir.listFiles
+			val mod = all.filter(_.getName.endsWith(".scala"))
+				.filter {
+				scalaFile =>
+					modified.isMod(scalaFile)
+			}.toSet
+
+			val sub = all.filter(_.isDirectory).map {
+				dir =>
+					scan(dir, new File(clzDir, dir.getName))
+			}.flatten
+
+			mod ++ sub
+		}
+
+		val all = scan(sourcePath.sourceDir, sourcePath.targetDir)
+		all.foreach(modified.updated(_))
+		all
 	}
 }
 

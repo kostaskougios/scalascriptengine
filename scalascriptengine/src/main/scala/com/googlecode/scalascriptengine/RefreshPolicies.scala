@@ -58,7 +58,7 @@ protected trait OnChangeRefresh extends ScalaScriptEngine {
 					new File(paths.sourceDir, fileName).exists
 			}.map {
 				paths =>
-					paths.isModified(className)
+					isModified(paths, className)
 			}
 			timesTested.incrementAndGet
 			if (isModO.isDefined && isModO.get) doRefresh

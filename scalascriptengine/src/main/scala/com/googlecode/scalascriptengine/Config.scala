@@ -46,36 +46,4 @@ case class SourcePath(
 	                     targetDir: File = ScalaScriptEngine.tmpOutputFolder
 	                     ) {
 	val sourceDirPath = sourceDir.getAbsolutePath
-
-	private val modified = new LastModMap
-
-	def isModified(clz: String) = {
-		val f = clz.replace('.', '/')
-		val scalaName = f + ".scala"
-		val scalaFile = new File(sourceDir, scalaName)
-		modified.isMod(scalaFile)
-	}
-
-	def allChanged: Set[File] = {
-
-		def scan(srcDir: File, clzDir: File): Set[File] = {
-			val all = srcDir.listFiles
-			val mod = all.filter(_.getName.endsWith(".scala"))
-				.filter {
-				scalaFile =>
-					modified.isMod(scalaFile)
-			}.toSet
-
-			val sub = all.filter(_.isDirectory).map {
-				dir =>
-					scan(dir, new File(clzDir, dir.getName))
-			}.flatten
-
-			mod ++ sub
-		}
-
-		val all = scan(sourceDir, targetDir)
-		all.foreach(modified.updated(_))
-		all
-	}
 }
