@@ -105,11 +105,7 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 					throw e
 			}
 			_compilationStatus.checkStop
-			val classLoader = new ScalaClassLoader(
-				config.sourcePaths.map(_.targetDir).toSet,
-				config.scalaSourceDirs.toSet ++ config.classLoadingClassPaths,
-				Thread.currentThread.getContextClassLoader,
-				config.classLoaderConfig)
+			val classLoader = createClassLoader
 			debug("done refreshing")
 			codeVersion = CodeVersionImpl(
 				codeVersion.version + 1,
@@ -122,6 +118,12 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 		_compilationStatus = CompilationStatus.completed(_compilationStatus)
 		result
 	}
+
+	protected def createClassLoader = new ScalaClassLoader(
+		config.sourcePaths.map(_.targetDir).toSet,
+		config.scalaSourceDirs.toSet ++ config.classLoadingClassPaths,
+		Thread.currentThread.getContextClassLoader,
+		config.classLoaderConfig)
 
 	/**
 	 * returns the Class[T] for className
