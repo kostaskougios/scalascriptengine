@@ -18,24 +18,38 @@ class OnChangeRefreshPolicySuite extends FunSuite with ShouldMatchers {
 	val sourceDir = new File("testfiles/versions")
 
 	test("onChangeRefresh: two source/output folders") {
+		val src1 = newTmpDir("dynamicsrc1")
+		val src2 = newTmpDir("dynamicsrc2")
 		val destDir1 = newTmpDir("out1")
 		val destDir2 = newTmpDir("out2")
 		val sse = ScalaScriptEngine.onChangeRefresh(
 			Config(
 				sourcePaths = List(
-					SourcePath(new File("testfiles/src1"), destDir1),
-					SourcePath(new File("testfiles/src2"), destDir2)
+					SourcePath(src1, destDir1),
+					SourcePath(src2, destDir2)
 				)
 			)
 			, 100
 		)
+
 		sse.deleteAllClassesInOutputDirectory
+
+		copyFromSource(new File("testfiles/src1"), src1)
+		copyFromSource(new File("testfiles/src2"), src2)
+
 		sse.refresh
 
 		sse.newInstance[TestClassTrait]("test.A").result should be === "A"
 		sse.versionNumber should be === 1
 		sse.newInstance[TestClassTrait]("test.B").result should be === "B"
 		sse.versionNumber should be === 1
+
+		Thread.sleep(1000)
+		copyFromSource(new File("testfiles/src3"), src1)
+		sse.newInstance[TestClassTrait]("test.A").result should be === "AMod"
+		sse.versionNumber should be === 2
+		sse.newInstance[TestClassTrait]("test.B").result should be === "B"
+		sse.versionNumber should be === 2
 	}
 
 	test("onChangeRefreshAsynchronously: code modifications are refreshed but control returns immediatelly") {
