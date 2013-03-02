@@ -69,9 +69,10 @@ import scala.tools.nsc.util.Position
 
 private class CompilationReporter extends Reporter with Logging {
 	protected def info0(pos: Position, msg: String, severity: Severity, force: Boolean): Unit = {
-		error(msg)
+		val m="At line "+pos.line+": "+msg
+		error(m)
 		if (severity == ERROR)
-			throw new CompilationError("error during compilation : %s".format(msg))
+			throw new CompilationError("error during compilation : %s".format(m))
 	}
 
 	override def hasErrors: Boolean = false
