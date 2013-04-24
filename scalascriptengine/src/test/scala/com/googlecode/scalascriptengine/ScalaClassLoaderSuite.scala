@@ -1,4 +1,5 @@
 package com.googlecode.scalascriptengine
+
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
 import org.junit.runner.RunWith
@@ -10,16 +11,31 @@ import scalascriptengine._
 /**
  * @author kostantinos.kougios
  *
- * 23 Dec 2011
+ *         23 Dec 2011
  */
 @RunWith(classOf[JUnitRunner])
-class ScalaClassLoaderSuite extends FunSuite with ShouldMatchers {
+class ScalaClassLoaderSuite extends FunSuite with ShouldMatchers
+{
 	val sourceDir = new File("testfiles/ScalaClassLoaderSuite")
 	// parent classloader will contain scala-lib and all test-compiled classes
 	val classPath = Set[File]()
 
 	def classLoader(sourceDir: File, classPath: Set[File]) =
 		new ScalaClassLoader(Set(sourceDir), classPath, Thread.currentThread.getContextClassLoader, ClassLoaderConfig.default)
+
+	test("listeners are invoked") {
+		val destDir = newTmpDir("defaultpackage")
+		cleanDestinationAndCopyFromSource(new File(sourceDir, "default"), destDir)
+		var count = 0
+		val scl = new ScalaClassLoader(Set(destDir), classPath, Thread.currentThread.getContextClassLoader, ClassLoaderConfig.default.copy(classLoadingListeners = new ScalaClassLoadingEventListener
+		{
+			def classLoaded(className: String, clz: Class[_]) {
+				if (className == "Test" && classOf[TestClassTrait].isAssignableFrom(clz)) count += 1
+			}
+		} :: Nil))
+		scl.newInstance[TestClassTrait]("Test")
+		count should be(1)
+	}
 
 	test("load a class on the default package") {
 		val destDir = newTmpDir("defaultpackage")

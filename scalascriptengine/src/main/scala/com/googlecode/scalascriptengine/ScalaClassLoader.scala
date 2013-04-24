@@ -13,13 +13,14 @@ import java.security.AccessControlException
  *         22 Dec 2011
  */
 class ScalaClassLoader(
-						  sourceDirs: Set[File],
-						  classPath: Set[File],
-						  parentClassLoader: ClassLoader,
-						  config: ClassLoaderConfig)
+	sourceDirs: Set[File],
+	classPath: Set[File],
+	parentClassLoader: ClassLoader,
+	config: ClassLoaderConfig)
 	extends URLClassLoader(
 		(classPath ++ sourceDirs).toArray.map(_.toURI.toURL),
-		parentClassLoader) {
+		parentClassLoader)
+{
 
 	def get[T](className: String): Class[T] = loadClass(className).asInstanceOf[Class[T]]
 
@@ -48,6 +49,12 @@ class ScalaClassLoader(
 
 		if (!config.allowed(pckg, name))
 			accessForbidden()
-		super.loadClass(name)
+
+		val clz = super.loadClass(name)
+		config.classLoadingListeners.foreach {
+			cll =>
+				cll.classLoaded(name, clz)
+		}
+		clz
 	}
 }

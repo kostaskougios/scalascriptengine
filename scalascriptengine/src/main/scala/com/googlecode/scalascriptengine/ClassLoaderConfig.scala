@@ -3,17 +3,22 @@ package com.googlecode.scalascriptengine
 /**
  * @author kostantinos.kougios
  *
- * 11 Oct 2012
+ *         11 Oct 2012
  */
 case class ClassLoaderConfig(
-		protectPackages: Set[String],
-		protectClasses: Set[String],
-		// a function of (packageName , fullClassName)=> allow access?
-		allowed: (String, String) => Boolean) {
+	protectPackages: Set[String],
+	protectClasses: Set[String],
+	// a function of (packageName , fullClassName)=> allow access?
+	allowed: (String, String) => Boolean,
+	// register listeners for class loading events, i.e. a listener can build a class registry
+	classLoadingListeners: List[ScalaClassLoadingEventListener] = Nil
+	)
+{
 	val protectPackagesSuffixed = protectPackages.map(_ + ".")
 }
 
-object ClassLoaderConfig {
+object ClassLoaderConfig
+{
 	def default = ClassLoaderConfig(Set(), Set(), (_, _) => true)
 }
 
