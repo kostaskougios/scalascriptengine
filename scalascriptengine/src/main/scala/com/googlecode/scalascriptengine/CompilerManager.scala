@@ -13,7 +13,8 @@ import tools.nsc.reporters.Reporter
  *
  *         22 Dec 2011
  */
-protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[File], sse: ScalaScriptEngine) extends Logging {
+protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[File], sse: ScalaScriptEngine) extends Logging
+{
 
 	private def acc(todo: List[SourcePath], done: List[SourcePath]): List[(SourcePath, (Global, Global#Run))] = todo match {
 		case Nil => Nil
@@ -22,7 +23,7 @@ protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[F
 				error("errors report: " + s)
 			})
 			settings.sourcepath.tryToSet(h.sourceDir.getAbsolutePath :: Nil)
-			val cp = done.map(_.targetDir)++classPaths
+			val cp = done.map(_.targetDir) ++ classPaths
 			settings.classpath.tryToSet(List(cp.map(_.getAbsolutePath).mkString(File.pathSeparator)))
 			settings.outdir.tryToSet(h.targetDir.getAbsolutePath :: Nil)
 
@@ -67,9 +68,10 @@ class CompilationError(msg: String) extends RuntimeException(msg)
 
 import scala.tools.nsc.util.Position
 
-private class CompilationReporter extends Reporter with Logging {
+private class CompilationReporter extends Reporter with Logging
+{
 	protected def info0(pos: Position, msg: String, severity: Severity, force: Boolean): Unit = {
-		val m="At line "+pos.line+": "+msg
+		val m = "At line " + pos.line + ": " + msg
 		error(m)
 		if (severity == ERROR)
 			throw new CompilationError("error during compilation : %s".format(m))
