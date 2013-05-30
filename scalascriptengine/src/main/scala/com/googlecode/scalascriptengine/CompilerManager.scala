@@ -22,7 +22,7 @@ protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[F
 				error("errors report: " + s)
 			})
 			settings.sourcepath.tryToSet(h.sourceDir.getAbsolutePath :: Nil)
-			val cp = classPaths ++ done.map(_.targetDir)
+			val cp = done.map(_.targetDir)++classPaths
 			settings.classpath.tryToSet(List(cp.map(_.getAbsolutePath).mkString(File.pathSeparator)))
 			settings.outdir.tryToSet(h.targetDir.getAbsolutePath :: Nil)
 
