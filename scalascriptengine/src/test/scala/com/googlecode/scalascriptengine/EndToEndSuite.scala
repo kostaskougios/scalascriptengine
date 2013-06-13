@@ -1,4 +1,5 @@
 package com.googlecode.scalascriptengine
+
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
 import java.io.File
@@ -8,18 +9,17 @@ import org.scalatest.junit.JUnitRunner
 import com.googlecode.concurrent.ExecutorServiceManager
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicBoolean
-import org.apache.commons.io.FileUtils
-import scala.io.Source
-import org.apache.commons.io.IOUtils
 import java.io.FileWriter
 import java.util.concurrent.atomic.AtomicLong
+
 /**
  * @author kostantinos.kougios
  *
- * 27 Dec 2011
+ *         27 Dec 2011
  */
 @RunWith(classOf[JUnitRunner])
-class EndToEndSuite extends FunSuite with ShouldMatchers {
+class EndToEndSuite extends FunSuite with ShouldMatchers
+{
 	val sourceDir = new File("testfiles/EndToEndSuite")
 
 	test("multi-threaded") {
@@ -27,7 +27,7 @@ class EndToEndSuite extends FunSuite with ShouldMatchers {
 		def write(f: File, version: Int) {
 			val fw = new FileWriter(f)
 			try {
-				fw.write(""" 
+				fw.write( """
 package reload
 import com.googlecode.scalascriptengine.TestClassTrait
 
@@ -35,7 +35,7 @@ class Main extends TestClassTrait
 {
 	override def result="v%d"
 }
-""".format(version))
+				          """.format(version))
 			} finally {
 				fw.close
 			}
@@ -53,26 +53,27 @@ class Main extends TestClassTrait
 		val executor = ExecutorServiceManager.newSingleThreadExecutor
 		try {
 			executor.submit {
-				ExecutorServiceManager.lifecycle(40, 40) { _ =>
-					while (!done.get) {
-						try {
-							val codeVersion = sse.currentVersion
-							val t = codeVersion.newInstance[TestClassTrait]("reload.Main")
-							if (t.result != "v" + codeVersion.version) {
-								errors.incrementAndGet
-								println(t.result)
-							}
+				ExecutorServiceManager.lifecycle(40, 40) {
+					_ =>
+						while (!done.get) {
+							try {
+								val codeVersion = sse.currentVersion
+								val t = codeVersion.newInstance[TestClassTrait]("reload.Main")
+								if (t.result != "v" + codeVersion.version) {
+									errors.incrementAndGet
+									println(t.result)
+								}
 
-							// just to trigger a reload
-							sse.newInstance[TestClassTrait]("reload.Main")
-							Thread.sleep(1)
-							iterations.incrementAndGet
-						} catch {
-							case e =>
-								errors.incrementAndGet
-								e.printStackTrace
+								// just to trigger a reload
+								sse.newInstance[TestClassTrait]("reload.Main")
+								Thread.sleep(1)
+								iterations.incrementAndGet
+							} catch {
+								case e: Throwable =>
+									errors.incrementAndGet
+									e.printStackTrace
+							}
 						}
-					}
 				}
 				println("executor finished")
 			}

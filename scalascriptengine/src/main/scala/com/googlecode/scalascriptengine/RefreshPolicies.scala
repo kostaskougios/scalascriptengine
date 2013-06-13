@@ -16,7 +16,8 @@ import java.util.concurrent.atomic.AtomicLong
  *
  *         25 Dec 2011
  */
-trait TimedRefresh {
+trait TimedRefresh
+{
 	this: ScalaScriptEngine =>
 	def rescheduleAt: DateTime
 
@@ -40,7 +41,8 @@ trait TimedRefresh {
  * 1000 millis if code changes frequently (i.e. during dev) and
  * 30000 millis if code doesn't change that often (i.e. production)
  */
-protected trait OnChangeRefresh extends ScalaScriptEngine {
+protected trait OnChangeRefresh extends ScalaScriptEngine
+{
 	val recheckEveryMillis: Long
 	private val lastChecked = new ConcurrentHashMap[String, java.lang.Long]
 	private val timesTested = new AtomicLong
@@ -77,7 +79,8 @@ protected trait OnChangeRefresh extends ScalaScriptEngine {
  * This is blocking during compilation and is not recommended to be used by
  * web servers. RefreshAsynchronously offers a much better alternative.
  */
-trait RefreshSynchronously extends ScalaScriptEngine with OnChangeRefresh {
+trait RefreshSynchronously extends ScalaScriptEngine with OnChangeRefresh
+{
 	private var lastCompiled: Long = 0
 
 	override def doRefresh: Unit = {
@@ -101,18 +104,19 @@ trait RefreshSynchronously extends ScalaScriptEngine with OnChangeRefresh {
  * compilation will occur in the background and when done, the new
  * compiled version of the code will be used.
  */
-trait RefreshAsynchronously extends ScalaScriptEngine with OnChangeRefresh {
+trait RefreshAsynchronously extends ScalaScriptEngine with OnChangeRefresh
+{
 	private val isCompiling = new AtomicBoolean(false)
 	private val executor = ExecutorServiceManager.newSingleThreadExecutor
 
 	override def doRefresh: Unit = {
-		// refresh only if not already refreshing 
+		// refresh only if not already refreshing
 		val c = isCompiling.getAndSet(true)
 		if (!c) executor.submit {
 			try {
 				refresh
 			} catch {
-				case e => error("error during refresh", e)
+				case e: Throwable => error("error during refresh", e)
 			} finally {
 				isCompiling.set(false)
 			}
