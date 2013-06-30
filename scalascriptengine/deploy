@@ -1,11 +1,7 @@
 # deploy after all tests run
 
-mvn help:effective-pom -P scala2.9,deploy -Dexclude -Doutput=tmp.pom
-mvn -DskipTests -f tmp.pom clean source:jar scala:doc-jar package deploy || { exit 1; }
+#mvn help:effective-pom -P scala2.9,deploy -Dexclude -Doutput=tmp.pom
+#mvn -DskipTests -f tmp.pom clean source:jar scala:doc-jar package deploy || { exit 1; }
 
 mvn help:effective-pom -P scala2.10,deploy -Doutput=tmp.pom
-mvn -DskipTests -f tmp.pom clean source:jar scala:doc-jar package deploy || { exit 1; }
-
-
-mvn help:effective-pom -P scala2.10.2,deploy -Doutput=tmp.pom
 mvn -DskipTests -f tmp.pom clean source:jar scala:doc-jar package deploy || { exit 1; }
