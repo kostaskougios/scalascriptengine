@@ -116,7 +116,8 @@ trait RefreshAsynchronously extends ScalaScriptEngine with OnChangeRefresh
 			try {
 				refresh
 			} catch {
-				case e: Throwable => error("error during refresh", e)
+				case e: Throwable =>
+					error("error during refresh", e)
 			} finally {
 				isCompiling.set(false)
 			}

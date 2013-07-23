@@ -1,9 +1,10 @@
 package com.googlecode.scalascriptengine
 
-import tools.nsc._
+import scala.reflect.internal.util.Position
 import java.io.File
 
-import tools.nsc.reporters.Reporter
+import scala.tools.nsc.reporters.AbstractReporter
+import scala.tools.nsc.{Settings, Global}
 
 /**
  * manages the scala compiler, taking care of setting the correct compiler parameters
@@ -16,7 +17,7 @@ import tools.nsc.reporters.Reporter
 protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[File], sse: ScalaScriptEngine) extends Logging
 {
 
-	private def acc(todo: List[SourcePath], done: List[SourcePath]): List[(SourcePath, (Global, Global#Run))] = todo match {
+	private def acc(todo: List[SourcePath], done: List[SourcePath]): List[(SourcePath, (Global, Global#Run, CompilationReporter))] = todo match {
 		case Nil => Nil
 		case h :: t =>
 			val settings = new Settings(s => {
@@ -27,18 +28,19 @@ protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[F
 			settings.classpath.tryToSet(List(cp.map(_.getAbsolutePath).mkString(File.pathSeparator)))
 			settings.outdir.tryToSet(h.targetDir.getAbsolutePath :: Nil)
 
-			val g = new Global(settings, new CompilationReporter)
+			val reporter = new CompilationReporter(settings)
+			val g = new Global(settings, reporter)
 			val run = new g.Run
-			(h, (g, run)) :: acc(t, h :: done)
+			(h, (g, run, reporter)) :: acc(t, h :: done)
 
 	}
 
-	val runMap = acc(sourcePaths, Nil).toMap
+	private val runMap = acc(sourcePaths, Nil).toMap
 
 	def compile(allFiles: List[String]) = {
 
 		def doCompile(sp: SourcePath, cp: Set[File]) {
-			val (g, run) = runMap(sp)
+			val (g, run, reporter) = runMap(sp)
 
 			val phase = run.phaseNamed("typer")
 			val cps = new CompilationPlugins(g, sse)
@@ -47,6 +49,9 @@ protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[F
 			val rootPath = sp.sourceDir.getAbsolutePath
 			val files = allFiles.filter(_.startsWith(rootPath))
 			run.compile(files)
+
+			val errors = reporter.errors.result
+			if (!errors.isEmpty) throw new CompilationError(s"${errors.size} error(s) occured :\n${errors.mkString("\n")}")
 		}
 
 		def all(todo: List[SourcePath], done: List[SourcePath]) {
@@ -66,16 +71,18 @@ protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[F
 
 class CompilationError(msg: String) extends RuntimeException(msg)
 
-import scala.tools.nsc.util.Position
-
-private class CompilationReporter extends Reporter with Logging
+private class CompilationReporter(val settings: Settings) extends AbstractReporter with Logging
 {
-	protected def info0(pos: Position, msg: String, severity: Severity, force: Boolean): Unit = {
-		val m = "At line " + pos.safeLine + ": " + msg
-		error(m)
+	val errors = List.newBuilder[String]
+
+	def display(pos: Position, msg: String, severity: Severity) {
+		val m = Position.formatMessage(pos, msg, true)
 		if (severity == ERROR)
-			throw new CompilationError("error during compilation : %s".format(m))
+			errors += m
+		else warn(m)
 	}
 
-	override def hasErrors: Boolean = false
+	def displayPrompt() {
+
+	}
 }
