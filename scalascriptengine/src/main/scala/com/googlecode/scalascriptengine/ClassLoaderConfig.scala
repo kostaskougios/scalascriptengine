@@ -10,8 +10,8 @@ case class ClassLoaderConfig(
 	protectClasses: Set[String],
 	// a function of (packageName , fullClassName)=> allow access?
 	allowed: (String, String) => Boolean,
-	// register listeners for class loading events, i.e. a listener can build a class registry
-	classLoadingListeners: List[ScalaClassLoadingEventListener] = Nil
+	// register listeners for class loading events, (className,class)=>Unit
+	classLoadingListeners: List[(String, Class[_]) => Unit] = Nil
 	)
 {
 	val protectPackagesSuffixed = protectPackages.map(_ + ".")

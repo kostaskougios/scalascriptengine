@@ -53,7 +53,7 @@ class ScalaClassLoader(
 		val clz = super.loadClass(name)
 		config.classLoadingListeners.foreach {
 			cll =>
-				cll.classLoaded(name, clz)
+				cll(name, clz)
 		}
 		clz
 	}

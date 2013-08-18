@@ -27,12 +27,13 @@ class ScalaClassLoaderSuite extends FunSuite with ShouldMatchers
 		val destDir = newTmpDir("defaultpackage")
 		cleanDestinationAndCopyFromSource(new File(sourceDir, "default"), destDir)
 		var count = 0
-		val scl = new ScalaClassLoader(Set(destDir), classPath, Thread.currentThread.getContextClassLoader, ClassLoaderConfig.default.copy(classLoadingListeners = new ScalaClassLoadingEventListener
-		{
-			def classLoaded(className: String, clz: Class[_]) {
+		val scl = new ScalaClassLoader(
+			Set(destDir),
+			classPath,
+			Thread.currentThread.getContextClassLoader,
+			ClassLoaderConfig.default.copy(classLoadingListeners = ((className: String, clz: Class[_]) => {
 				if (className == "Test" && classOf[TestClassTrait].isAssignableFrom(clz)) count += 1
-			}
-		} :: Nil))
+			}) :: Nil))
 		scl.newInstance[TestClassTrait]("Test")
 		count should be(1)
 	}
