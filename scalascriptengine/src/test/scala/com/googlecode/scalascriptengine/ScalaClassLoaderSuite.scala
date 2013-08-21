@@ -21,15 +21,15 @@ class ScalaClassLoaderSuite extends FunSuite with ShouldMatchers
 	val classPath = Set[File]()
 
 	def classLoader(sourceDir: File, classPath: Set[File], config: ClassLoaderConfig = ClassLoaderConfig.Default) =
-		new ScalaClassLoader(Set(new File(sourceDir, "v1")), classPath, Thread.currentThread.getContextClassLoader, config)
+		new ScalaClassLoader(Set(sourceDir), classPath, Thread.currentThread.getContextClassLoader, config)
 
 	test("class registry") {
-		val cl = classLoader(sourceDir, Set(), config = ClassLoaderConfig.Default.copy(enableClassRegistry = true))
+		val cl = classLoader(new File(sourceDir, "v1"), Set(), config = ClassLoaderConfig.Default.copy(enableClassRegistry = true))
 		cl.all.map(_.getName).toSet should be(Set("test.TestDep", "test.TestParam", "test.Test"))
 	}
 
 	test("classes of type") {
-		val cl = classLoader(sourceDir, Set(), config = ClassLoaderConfig.Default.copy(enableClassRegistry = true))
+		val cl = classLoader(new File(sourceDir, "v1"), Set(), config = ClassLoaderConfig.Default.copy(enableClassRegistry = true))
 		cl.withTypeOf[TestParamTrait] should be(List(cl.get("test.TestParam")))
 	}
 
