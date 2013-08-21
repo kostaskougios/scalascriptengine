@@ -26,7 +26,7 @@ class ClassRegistry(dirs: List[File])
 			}
 		}
 		classLoader.scan
-	}
+	}.map(_.getName)
 
 	// find all class files
 	private def find(dirs: List[File]): List[File] = dirs.map {

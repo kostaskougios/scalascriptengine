@@ -16,8 +16,6 @@ class ClassRegistrySuite extends FunSuite with ShouldMatchers
 
 	test("loads classes") {
 		val registry = new ClassRegistry(List(sourceDir))
-		registry.allClasses.size should be(3)
-
-		registry.allClasses.filter(classOf[TestParamTrait].isAssignableFrom _).size should be(1)
+		registry.allClasses.toSet should be(Set("test.TestDep", "test.TestParam", "test.Test"))
 	}
 }
