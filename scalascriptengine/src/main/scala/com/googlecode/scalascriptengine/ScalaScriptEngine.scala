@@ -37,12 +37,14 @@ import java.net.URLClassLoader
  *
  *         22 Dec 2011
  */
-class ScalaScriptEngine(val config: Config) extends Logging {
+class ScalaScriptEngine(val config: Config) extends Logging
+{
 
 	private def compileManager = new CompilerManager(config.sourcePaths, config.compilationClassPaths, this)
 
 	// codeversion is initialy to version 0 which is not usable. 
-	@volatile private var codeVersion: CodeVersion = new CodeVersion {
+	@volatile private var codeVersion: CodeVersion = new CodeVersion
+	{
 		override def version: Int = 0
 
 		override def classLoader: ScalaClassLoader = throw new IllegalStateException("CodeVersion not yet ready.")
@@ -116,6 +118,7 @@ class ScalaScriptEngine(val config: Config) extends Logging {
 		}
 
 		_compilationStatus = CompilationStatus.completed(_compilationStatus)
+		config.compilationListeners.foreach(_(result))
 		result
 	}
 
@@ -210,7 +213,8 @@ class ScalaScriptEngine(val config: Config) extends Logging {
  * the companion object provides a lot of useful factory methods to create a script engine
  * with sensible defaults.
  */
-object ScalaScriptEngine {
+object ScalaScriptEngine
+{
 	def tmpOutputFolder = {
 		val dir = new File(System.getProperty("java.io.tmpdir"), "scala-script-engine-classes")
 		dir.mkdir
@@ -239,10 +243,10 @@ object ScalaScriptEngine {
 	 * returns an instance of the engine. Refreshes must be done manually
 	 */
 	def withoutRefreshPolicy(
-		                        sourcePaths: List[SourcePath],
-		                        compilationClassPaths: Set[File],
-		                        classLoadingClassPaths: Set[File]
-		                        ): ScalaScriptEngine =
+		sourcePaths: List[SourcePath],
+		compilationClassPaths: Set[File],
+		classLoadingClassPaths: Set[File]
+		): ScalaScriptEngine =
 		new ScalaScriptEngine(Config(sourcePaths, compilationClassPaths, classLoadingClassPaths))
 
 	/**
@@ -281,7 +285,8 @@ object ScalaScriptEngine {
 		timedRefresh(defaultConfig(sourcePath), refreshEvery)
 
 	def timedRefresh(config: Config, refreshEvery: () => DateTime): ScalaScriptEngine with TimedRefresh =
-		new ScalaScriptEngine(config) with TimedRefresh {
+		new ScalaScriptEngine(config) with TimedRefresh
+		{
 			def rescheduleAt = refreshEvery()
 		}
 
@@ -320,7 +325,8 @@ object ScalaScriptEngine {
 		onChangeRefresh(defaultConfig(sourcePath), recheckSourceEveryDtInMillis)
 
 	def onChangeRefresh(config: Config, recheckSourceEveryDtInMillis: Long): ScalaScriptEngine with OnChangeRefresh =
-		new ScalaScriptEngine(config) with OnChangeRefresh with RefreshSynchronously {
+		new ScalaScriptEngine(config) with OnChangeRefresh with RefreshSynchronously
+		{
 			val recheckEveryMillis = recheckSourceEveryDtInMillis
 		}
 
@@ -349,7 +355,8 @@ object ScalaScriptEngine {
 		onChangeRefreshAsynchronously(defaultConfig(sourcePath), recheckEveryInMillis)
 
 	def onChangeRefreshAsynchronously(config: Config, recheckEveryInMillis: Long): ScalaScriptEngine with OnChangeRefresh with RefreshAsynchronously =
-		new ScalaScriptEngine(config) with OnChangeRefresh with RefreshAsynchronously {
+		new ScalaScriptEngine(config) with OnChangeRefresh with RefreshAsynchronously
+		{
 			val recheckEveryMillis: Long = recheckEveryInMillis
 		}
 }
