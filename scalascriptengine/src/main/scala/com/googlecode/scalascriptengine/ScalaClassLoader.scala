@@ -17,12 +17,10 @@ class ScalaClassLoader(
 	sourceDirs: Set[File],
 	classPath: Set[File],
 	parentClassLoader: ClassLoader,
-	config: ClassLoaderConfig)
+	config: ClassLoaderConfig) extends URLClassLoader(
+	(classPath ++ sourceDirs).toArray.map(_.toURI.toURL),
+	parentClassLoader)
 {
-	private val classLoader = new URLClassLoader(
-		(classPath ++ sourceDirs).toArray.map(_.toURI.toURL),
-		parentClassLoader)
-
 	private val allClasses = if (config.enableClassRegistry) {
 		new ClassRegistry(sourceDirs).allClasses.map(loadClass _)
 	} else Nil
@@ -38,7 +36,7 @@ class ScalaClassLoader(
 
 	def newInstance[T](className: String): T = get[T](className).newInstance
 
-	def loadClass(name: String) = {
+	override def loadClass(name: String) = {
 
 		def accessForbidden() = throw new AccessControlException("access to class " + name + " not allowed")
 
@@ -62,7 +60,7 @@ class ScalaClassLoader(
 		if (!config.allowed(pckg, name))
 			accessForbidden()
 
-		val clz = classLoader.loadClass(name)
+		val clz = super.loadClass(name)
 		config.classLoadingListeners.foreach {
 			cll =>
 				cll(name, clz)
