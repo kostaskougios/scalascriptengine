@@ -3,6 +3,7 @@ package com.googlecode.scalascriptengine
 import java.io.File
 import java.util.UUID
 import java.io.FileWriter
+import scala.reflect.ClassTag
 
 /**
  * @author kostantinos.kougios
@@ -11,13 +12,14 @@ import java.io.FileWriter
  */
 
 private class EvalCodeImpl[T](
-	                             clz: Class[T],
-	                             typeArgs: List[Class[_]],
-	                             argNames: Iterable[String],
-	                             body: String,
-	                             classLoaderConfig: ClassLoaderConfig
-	                             )
-	extends EvalCode[T] {
+	clz: Class[T],
+	typeArgs: List[Class[_]],
+	argNames: Iterable[String],
+	body: String,
+	classLoaderConfig: ClassLoaderConfig
+	)
+	extends EvalCode[T]
+{
 
 	import EvalCode.typesToName
 
@@ -70,7 +72,8 @@ private class EvalCodeImpl[T](
 /**
  * a scala-code evaluator
  */
-trait EvalCode[T] {
+trait EvalCode[T]
+{
 	// the Class[T]
 	val generatedClass: Class[T]
 
@@ -78,7 +81,8 @@ trait EvalCode[T] {
 	def newInstance: T
 }
 
-object EvalCode {
+object EvalCode
+{
 	private[scalascriptengine] val typesToName = Map[Class[_], String](
 		classOf[Int] -> "Int",
 		classOf[Float] -> "Float",
@@ -93,36 +97,36 @@ object EvalCode {
 	def apply[T](clz: Class[T], typeArgs: List[Class[_]], argNames: Iterable[String], body: String, classLoaderConfig: ClassLoaderConfig): EvalCode[T] =
 		new EvalCodeImpl(clz, typeArgs, argNames, body, classLoaderConfig)
 
-	def withoutArgs[R](body: String, classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.default) =
+	def withoutArgs[R](body: String, classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.Default) =
 		apply(classOf[() => R], Nil, Nil, body, classLoaderConfig)
 
 	def with1Arg[A1, R](
-		                   arg1Var: String,
-		                   body: String,
-		                   classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.default)(
-		                   implicit m1: ClassManifest[A1],
-		                   r: ClassManifest[R]) =
-		apply(classOf[A1 => R], List(m1.erasure, r.erasure), List(arg1Var), body, classLoaderConfig)
+		arg1Var: String,
+		body: String,
+		classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.Default)(
+		implicit m1: ClassTag[A1],
+		r: ClassTag[R]) =
+		apply(classOf[A1 => R], List(m1.runtimeClass, r.runtimeClass), List(arg1Var), body, classLoaderConfig)
 
 	def with2Args[A1, A2, R](
-		                        arg1Var: String,
-		                        arg2Var: String,
-		                        body: String,
-		                        classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.default)(
-		                        implicit m1: ClassManifest[A1],
-		                        m2: ClassManifest[A2],
-		                        r: ClassManifest[R]) =
-		apply(classOf[(A1, A2) => R], List(m1.erasure, m2.erasure, r.erasure), List(arg1Var, arg2Var), body, classLoaderConfig)
+		arg1Var: String,
+		arg2Var: String,
+		body: String,
+		classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.Default)(
+		implicit m1: ClassTag[A1],
+		m2: ClassTag[A2],
+		r: ClassTag[R]) =
+		apply(classOf[(A1, A2) => R], List(m1.runtimeClass, m2.runtimeClass, r.runtimeClass), List(arg1Var, arg2Var), body, classLoaderConfig)
 
 	def with3Args[A1, A2, A3, R](
-		                            arg1Var: String,
-		                            arg2Var: String,
-		                            arg3Var: String,
-		                            body: String,
-		                            classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.default)(
-		                            implicit m1: ClassManifest[A1],
-		                            m2: ClassManifest[A2],
-		                            m3: ClassManifest[A3],
-		                            r: ClassManifest[R]) =
-		apply(classOf[(A1, A2, A3) => R], List(m1.erasure, m2.erasure, m3.erasure, r.erasure), List(arg1Var, arg2Var, arg3Var), body, classLoaderConfig)
+		arg1Var: String,
+		arg2Var: String,
+		arg3Var: String,
+		body: String,
+		classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.Default)(
+		implicit m1: ClassTag[A1],
+		m2: ClassTag[A2],
+		m3: ClassTag[A3],
+		r: ClassTag[R]) =
+		apply(classOf[(A1, A2, A3) => R], List(m1.runtimeClass, m2.runtimeClass, m3.runtimeClass, r.runtimeClass), List(arg1Var, arg2Var, arg3Var), body, classLoaderConfig)
 }

@@ -11,7 +11,8 @@ import org.scalatest.matchers.ShouldMatchers
  *         20 Aug 2012
  */
 @RunWith(classOf[JUnitRunner])
-class EvalCodeSuite extends FunSuite with ShouldMatchers {
+class EvalCodeSuite extends FunSuite with ShouldMatchers
+{
 
 	test("using functions") {
 		// create a factory that evaluates code that takes 1 string param and returns an Int.
@@ -60,7 +61,7 @@ class EvalCodeSuite extends FunSuite with ShouldMatchers {
 	test("use case 1") {
 		val sourceDir = new java.io.File("./src/main/scala")
 		val config = ScalaScriptEngine.defaultConfig(sourceDir).copy(
-			classLoaderConfig = ClassLoaderConfig.default.copy(
+			classLoaderConfig = ClassLoaderConfig.Default.copy(
 				protectPackages = Set("javax.swing"),
 				protectClasses = Set("java.lang.Thread") // note: still threads can be created via i.e. Executors
 			)

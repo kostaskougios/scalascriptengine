@@ -14,10 +14,11 @@ import org.scalatest.BeforeAndAfterAll
  *                7 Oct 2012
  */
 @RunWith(classOf[JUnitRunner])
-class SandboxSuite extends FunSuite with ShouldMatchers with BeforeAndAfterAll {
+class SandboxSuite extends FunSuite with ShouldMatchers with BeforeAndAfterAll
+{
 	val sourceDir = new File("testfiles/SandboxSuite")
 	val config = ScalaScriptEngine.defaultConfig(sourceDir).copy(
-		classLoaderConfig = ClassLoaderConfig.default.copy(
+		classLoaderConfig = ClassLoaderConfig.Default.copy(
 			protectPackages = Set("javax.swing"),
 			protectClasses = Set("java.lang.Thread") // note: still threads can be created via i.e. Executors
 		)

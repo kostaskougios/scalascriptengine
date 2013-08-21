@@ -10,19 +10,21 @@ import java.security.AccessControlException
 /**
  * @author kostantinos.kougios
  *
- * 12 Oct 2012
+ *         12 Oct 2012
  */
 @RunWith(classOf[JUnitRunner])
-class SandboxAllowOnlySuite extends FunSuite with ShouldMatchers {
+class SandboxAllowOnlySuite extends FunSuite with ShouldMatchers
+{
 	val sourceDir = new File("testfiles/SandboxAllowOnlySuite")
 	val allowedPackages = Set(
 		"java.lang",
 		"scala",
 		"com.googlecode.scalascriptengine")
 	val config = ScalaScriptEngine.defaultConfig(sourceDir).copy(
-		classLoaderConfig = ClassLoaderConfig.default.copy(
-			allowed = { (pckg, name) =>
-				allowedPackages(pckg) || pckg == "test"
+		classLoaderConfig = ClassLoaderConfig.Default.copy(
+			allowed = {
+				(pckg, name) =>
+					allowedPackages(pckg) || pckg == "test"
 			}
 		)
 	)

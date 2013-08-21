@@ -23,7 +23,7 @@ case class Config(
 	// classLoadingClassPaths is empty
 	val classLoadingClassPaths: Set[File] = Set(),
 
-	classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.default,
+	classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.Default,
 	compilationListeners: List[CodeVersion => Unit] = Nil
 	)
 {
