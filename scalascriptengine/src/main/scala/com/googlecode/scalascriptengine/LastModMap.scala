@@ -7,14 +7,17 @@ import java.io.File
  * @author: kostas.kougios
  *          Date: 16/02/13
  */
-protected class LastModMap {
+protected class LastModMap
+{
 	private val modified = new ConcurrentHashMap[File, java.lang.Long]
 
-	def isMod(f: File) =
-		modified.get(f) match {
+	def isMod(f: File) = {
+		val r = modified.get(f) match {
 			case null => true
 			case l => l < f.lastModified
 		}
+		r
+	}
 
 	def updated(f: File) {
 		modified.put(f, f.lastModified)

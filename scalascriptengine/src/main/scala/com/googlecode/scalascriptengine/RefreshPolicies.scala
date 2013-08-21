@@ -91,7 +91,7 @@ trait RefreshSynchronously extends ScalaScriptEngine with OnChangeRefresh
 				refresh
 			} finally {
 				// set lastCompile even in case of compilation errors
-				lastCompiled = System.currentTimeMillis
+				lastCompiled = time
 			}
 		}
 	}
