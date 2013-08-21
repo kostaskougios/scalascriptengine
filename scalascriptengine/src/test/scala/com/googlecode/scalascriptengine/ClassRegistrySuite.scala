@@ -15,7 +15,7 @@ class ClassRegistrySuite extends FunSuite with ShouldMatchers
 	val sourceDir = new File("testfiles/ScalaClassLoaderSuite/v1")
 
 	test("loads classes") {
-		val registry = new ClassRegistry(List(sourceDir))
+		val registry = new ClassRegistry(Set(sourceDir))
 		registry.allClasses.toSet should be(Set("test.TestDep", "test.TestParam", "test.Test"))
 	}
 }

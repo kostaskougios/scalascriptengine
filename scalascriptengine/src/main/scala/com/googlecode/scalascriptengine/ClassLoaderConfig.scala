@@ -11,7 +11,8 @@ case class ClassLoaderConfig(
 	// a function of (packageName , fullClassName)=> allow access?
 	allowed: (String, String) => Boolean,
 	// register listeners for class loading events, (className,class)=>Unit
-	classLoadingListeners: List[(String, Class[_]) => Unit] = Nil
+	classLoadingListeners: List[(String, Class[_]) => Unit] = Nil,
+	enableClassRegistry: Boolean = false
 	)
 {
 	val protectPackagesSuffixed = protectPackages.map(_ + ".")

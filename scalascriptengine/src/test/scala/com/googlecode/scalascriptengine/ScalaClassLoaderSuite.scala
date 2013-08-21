@@ -20,8 +20,18 @@ class ScalaClassLoaderSuite extends FunSuite with ShouldMatchers
 	// parent classloader will contain scala-lib and all test-compiled classes
 	val classPath = Set[File]()
 
-	def classLoader(sourceDir: File, classPath: Set[File]) =
-		new ScalaClassLoader(Set(sourceDir), classPath, Thread.currentThread.getContextClassLoader, ClassLoaderConfig.default)
+	def classLoader(sourceDir: File, classPath: Set[File], config: ClassLoaderConfig = ClassLoaderConfig.default) =
+		new ScalaClassLoader(Set(new File(sourceDir, "v1")), classPath, Thread.currentThread.getContextClassLoader, config)
+
+	test("class registry") {
+		val cl = classLoader(sourceDir, Set(), config = ClassLoaderConfig.default.copy(enableClassRegistry = true))
+		cl.all.map(_.getName).toSet should be(Set("test.TestDep", "test.TestParam", "test.Test"))
+	}
+
+	test("classes of type") {
+		val cl = classLoader(sourceDir, Set(), config = ClassLoaderConfig.default.copy(enableClassRegistry = true))
+		cl.withTypeOf[TestParamTrait] should be(List(cl.get("test.TestParam")))
+	}
 
 	test("listeners are invoked") {
 		val destDir = newTmpDir("defaultpackage")

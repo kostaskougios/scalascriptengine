@@ -3,13 +3,15 @@ package com.googlecode.scalascriptengine
 import java.io.{FileInputStream, File}
 
 /**
+ * finds all class names for a list of directories
+ *
  * @author: kostas.kougios
  *          Date: 21/08/13
  */
-class ClassRegistry(dirs: List[File])
+class ClassRegistry(dirs: Set[File])
 {
 	val allClasses = {
-		val classFiles = find(dirs)
+		val classFiles = find(dirs.toList)
 		val classLoader = new ClassLoader()
 		{
 			def scan = classFiles.map {
