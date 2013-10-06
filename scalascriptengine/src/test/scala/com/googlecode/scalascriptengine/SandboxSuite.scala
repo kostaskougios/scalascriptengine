@@ -2,11 +2,9 @@ package com.googlecode.scalascriptengine
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.{Matchers, FunSuite, BeforeAndAfterAll}
 import java.io.File
 import java.security.AccessControlException
-import org.scalatest.BeforeAndAfterAll
 
 /**
  * @author		konstantinos.kougios
@@ -14,7 +12,7 @@ import org.scalatest.BeforeAndAfterAll
  *                7 Oct 2012
  */
 @RunWith(classOf[JUnitRunner])
-class SandboxSuite extends FunSuite with ShouldMatchers with BeforeAndAfterAll
+class SandboxSuite extends FunSuite with Matchers with BeforeAndAfterAll
 {
 	val sourceDir = new File("testfiles/SandboxSuite")
 	val config = ScalaScriptEngine.defaultConfig(sourceDir).copy(

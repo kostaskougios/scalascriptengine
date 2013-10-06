@@ -1,7 +1,6 @@
 package com.googlecode.scalascriptengine
 
-import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.FunSuite
+import org.scalatest.{Matchers, FunSuite}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import java.io.File
@@ -14,7 +13,7 @@ import scalascriptengine._
  *         23 Dec 2011
  */
 @RunWith(classOf[JUnitRunner])
-class ScalaClassLoaderSuite extends FunSuite with ShouldMatchers
+class ScalaClassLoaderSuite extends FunSuite with Matchers
 {
 	val sourceDir = new File("testfiles/ScalaClassLoaderSuite")
 	// parent classloader will contain scala-lib and all test-compiled classes

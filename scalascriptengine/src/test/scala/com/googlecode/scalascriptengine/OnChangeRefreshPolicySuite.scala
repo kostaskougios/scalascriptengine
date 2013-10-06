@@ -1,7 +1,6 @@
 package com.googlecode.scalascriptengine
 
-import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.FunSuite
+import org.scalatest.{Matchers, FunSuite}
 import java.io.File
 import scalascriptengine._
 import org.junit.runner.RunWith
@@ -13,7 +12,8 @@ import org.scalatest.junit.JUnitRunner
  *         25 Dec 2011
  */
 @RunWith(classOf[JUnitRunner])
-class OnChangeRefreshPolicySuite extends FunSuite with ShouldMatchers {
+class OnChangeRefreshPolicySuite extends FunSuite with Matchers
+{
 
 	val sourceDir = new File("testfiles/versions")
 

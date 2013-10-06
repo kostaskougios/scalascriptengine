@@ -1,7 +1,6 @@
 package com.googlecode.scalascriptengine
 
-import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.{Matchers, FunSuite}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import java.io.File
@@ -10,7 +9,7 @@ import java.io.File
  * @author kkougios
  */
 @RunWith(classOf[JUnitRunner])
-class ClassRegistrySuite extends FunSuite with ShouldMatchers
+class ClassRegistrySuite extends FunSuite with Matchers
 {
 	val sourceDir = new File("testfiles/ScalaClassLoaderSuite/v1")
 

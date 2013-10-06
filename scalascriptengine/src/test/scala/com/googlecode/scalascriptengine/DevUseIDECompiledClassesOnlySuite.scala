@@ -1,7 +1,6 @@
 package com.googlecode.scalascriptengine
 
-import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.{Matchers, FunSuite}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import java.io.File
@@ -11,7 +10,8 @@ import com.googlecode.scalascriptengine.scalascriptengine._
  * @author kkougios
  */
 @RunWith(classOf[JUnitRunner])
-class DevUseIDECompiledClassesOnlySuite extends FunSuite with ShouldMatchers {
+class DevUseIDECompiledClassesOnlySuite extends FunSuite with Matchers
+{
 	val targetDir = new File("testfiles/ScalaClassLoaderSuite")
 	// parent classloader will contain scala-lib and all test-compiled classes
 	val classPath = Set[File]()
@@ -24,7 +24,7 @@ class DevUseIDECompiledClassesOnlySuite extends FunSuite with ShouldMatchers {
 		))) with DevUseIDECompiledClassesOnly
 
 		for (i <- 0 to 9) {
-			if(i>0) Thread.sleep(150)
+			if (i > 0) Thread.sleep(150)
 			cleanDestinationAndCopyFromSource(new File(targetDir, "v1"), destDir)
 			val tctV1 = sse.newInstance[TestClassTrait]("test.Test")
 			val tcpV1 = sse.newInstance[TestParamTrait]("test.TestParam")

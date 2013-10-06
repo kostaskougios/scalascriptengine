@@ -1,18 +1,17 @@
 package com.googlecode.scalascriptengine
 
 import org.junit.runner.RunWith
-import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.FunSuite
+import org.scalatest.{Matchers, FunSuite}
 import org.scalatest.junit.JUnitRunner
-import org.xml.sax.helpers.NewInstance
 
 /**
  * @author kostantinos.kougios
  *
- * 5 Jan 2012
+ *         5 Jan 2012
  */
 @RunWith(classOf[JUnitRunner])
-class ConstructorsSuite extends FunSuite with ShouldMatchers {
+class ConstructorsSuite extends FunSuite with Matchers
+{
 
 	val constructors = new Constructors(classOf[ConstructorsSuiteTest])
 
@@ -81,9 +80,13 @@ class ConstructorsSuite extends FunSuite with ShouldMatchers {
 	}
 }
 
-class ConstructorsSuiteTest(val s: String, val x: Int, val y: Double, val z: Boolean) {
+class ConstructorsSuiteTest(val s: String, val x: Int, val y: Double, val z: Boolean)
+{
 	def this() = this("noarg", 0, 0, false)
+
 	def this(s: String) = this(s, 1, 0, false)
+
 	def this(s: String, x: Int) = this(s, x, 0, false)
+
 	def this(s: String, x: Int, y: Double) = this(s, x, y, false)
 }

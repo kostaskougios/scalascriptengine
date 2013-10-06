@@ -1,17 +1,18 @@
 package com.googlecode.scalascriptengine
+
 import org.junit.runner.RunWith
-import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.FunSuite
+import org.scalatest.{Matchers, FunSuite}
 import java.io.File
 
 /**
  * @author kostantinos.kougios
  *
- * 2 Jan 2012
+ *         2 Jan 2012
  */
 @RunWith(classOf[JUnitRunner])
-class EnhancersSuite extends FunSuite with ShouldMatchers {
+class EnhancersSuite extends FunSuite with Matchers
+{
 
 	val sourceDir = new File("testfiles/FromClasspathFirst")
 
@@ -23,7 +24,8 @@ class EnhancersSuite extends FunSuite with ShouldMatchers {
 	}
 
 	test("from classpath first loads the script version") {
-		val sse = new ScalaScriptEngine(new Config(sourceDir)) with RefreshSynchronously with FromClasspathFirst {
+		val sse = new ScalaScriptEngine(new Config(sourceDir)) with RefreshSynchronously with FromClasspathFirst
+		{
 			val recheckEveryMillis: Long = 0
 		}
 		sse.deleteAllClassesInOutputDirectory

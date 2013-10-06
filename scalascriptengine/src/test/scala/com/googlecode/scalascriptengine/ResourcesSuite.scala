@@ -1,7 +1,6 @@
 package com.googlecode.scalascriptengine
 
-import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.FunSuite
+import org.scalatest.{Matchers, FunSuite}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import java.io.File
@@ -13,7 +12,8 @@ import scalascriptengine._
  *         29 Dec 2011
  */
 @RunWith(classOf[JUnitRunner])
-class ResourcesSuite extends FunSuite with ShouldMatchers {
+class ResourcesSuite extends FunSuite with Matchers
+{
 	val sourceDir = new File("testfiles/ResourcesSuite")
 
 	val in = getClass.getResourceAsStream("version.txt")

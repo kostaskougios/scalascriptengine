@@ -1,7 +1,6 @@
 package com.googlecode.scalascriptengine
 
-import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.FunSuite
+import org.scalatest.{Matchers, FunSuite}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import scalascriptengine._
@@ -11,10 +10,11 @@ import org.scala_tools.time.Imports._
 /**
  * @author kostantinos.kougios
  *
- * 25 Dec 2011
+ *         25 Dec 2011
  */
 @RunWith(classOf[JUnitRunner])
-class TimedRefreshPolicySuite extends FunSuite with ShouldMatchers {
+class TimedRefreshPolicySuite extends FunSuite with Matchers
+{
 
 	val sourceDir = new File("testfiles/versions")
 
