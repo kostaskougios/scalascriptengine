@@ -4,6 +4,7 @@ import java.io.File
 import java.net.URLClassLoader
 import java.security.AccessControlException
 import scala.reflect.ClassTag
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * a throwaway classloader that keeps one version of the source code. For every code change/refresh,
@@ -21,6 +22,8 @@ class ScalaClassLoader(
 	(classPath ++ sourceDirs).toArray.map(_.toURI.toURL),
 	parentClassLoader)
 {
+	private val cache = new ConcurrentHashMap[String, Class[_]]
+
 	private val allClasses = if (config.enableClassRegistry) {
 		new ClassRegistry(sourceDirs).allClasses.map(loadClass _)
 	} else Nil
@@ -60,7 +63,13 @@ class ScalaClassLoader(
 		if (!config.allowed(pckg, name))
 			accessForbidden()
 
-		val clz = super.loadClass(name)
+		val clz = cache.get(name) match {
+			case null =>
+				val clz = super.loadClass(name)
+				cache.put(name, clz)
+				clz
+			case c => c
+		}
 		config.classLoadingListeners.foreach {
 			cll =>
 				cll(name, clz)

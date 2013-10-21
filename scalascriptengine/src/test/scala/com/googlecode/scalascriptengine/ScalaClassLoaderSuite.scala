@@ -89,4 +89,21 @@ class ScalaClassLoaderSuite extends FunSuite with Matchers
 		val tctV2 = scl2.newInstance[TestClassTrait]("test.Test")
 		tcpV2.result(tctV2) should be === "TP:v2"
 	}
+
+	//	test("stress test loads the same class") {
+	//		val destDir = newTmpDir("dynamicclass")
+	//		cleanDestinationAndCopyFromSource(new File(sourceDir, "v1"), destDir)
+	//		val scl = classLoader(destDir, classPath)
+	//
+	//		for (j <- 0 to 1000) {
+	//			println("go")
+	//			val start=System.currentTimeMillis
+	//			for (i <- 0 to 100000) {
+	//				scl.newInstance[TestClassTrait]("test.Test")
+	//			}
+	//			val dt=System.currentTimeMillis-start
+	//			println("dt="+dt)
+	//			Thread.sleep(1000)
+	//		}
+	//	}
 }
