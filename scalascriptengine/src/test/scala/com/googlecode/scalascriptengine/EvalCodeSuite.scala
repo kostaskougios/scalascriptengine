@@ -12,6 +12,11 @@ import org.scalatest.{Matchers, FunSuite}
 @RunWith(classOf[JUnitRunner])
 class EvalCodeSuite extends FunSuite with Matchers
 {
+	test("withNoArgs") {
+		val ect = EvalCode.withoutArgs[Int]("22")
+		val v = ect.newInstance
+		v() should be(22)
+	}
 
 	test("using functions") {
 		// create a factory that evaluates code that takes 1 string param and returns an Int.
