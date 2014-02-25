@@ -57,7 +57,10 @@ protected trait OnChangeRefresh extends ScalaScriptEngine
 			val fileName = className.replace('.', '/') + ".scala"
 			val isModO = config.sourcePaths.find {
 				paths =>
-					new File(paths.sourceDir, fileName).exists
+					paths.sources.exists {
+						source =>
+							new File(source, fileName).exists
+					}
 			}.map {
 				paths =>
 					isModified(paths, className)

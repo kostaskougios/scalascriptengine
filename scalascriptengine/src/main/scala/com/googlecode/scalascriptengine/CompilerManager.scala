@@ -23,7 +23,7 @@ protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[F
 			val settings = new Settings(s => {
 				error("errors report: " + s)
 			})
-			settings.sourcepath.tryToSet(h.sourceDir.getAbsolutePath :: Nil)
+			settings.sourcepath.tryToSet(h.sources.map(_.getAbsolutePath).toList)
 			val cp = done.map(_.targetDir) ++ classPaths
 			settings.classpath.tryToSet(List(cp.map(_.getAbsolutePath).mkString(File.pathSeparator)))
 			settings.outdir.tryToSet(h.targetDir.getAbsolutePath :: Nil)
@@ -46,8 +46,11 @@ protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[F
 			val cps = new CompilationPlugins(g, sse)
 			cps.Component.newPhase(phase)
 
-			val rootPath = sp.sourceDir.getAbsolutePath
-			val files = allFiles.filter(_.startsWith(rootPath))
+			val rootPaths = sp.sources.map(_.getAbsolutePath)
+			val files = allFiles.filter {
+				f =>
+					rootPaths.exists(rp => f.startsWith(rp))
+			}
 			run.compile(files)
 
 			val errors = reporter.errors.result

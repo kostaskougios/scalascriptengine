@@ -28,31 +28,34 @@ case class Config(
 	)
 {
 
-	if (sourcePaths.map(_.sourceDir).toSet.size < sourcePaths.size) throw new IllegalArgumentException("duplicate source directories for " + sourcePaths)
+	if (sourcePaths.flatMap(_.sources).toSet.size < sourcePaths.size) throw new IllegalArgumentException("duplicate source directories for " + sourcePaths)
 	if (sourcePaths.map(_.targetDir).toSet.size < sourcePaths.size) throw new IllegalArgumentException("duplicate target directories for " + sourcePaths)
 
 	// a convenient constructor to create a config with the default options
 	// and one only source folder.
-	def this(sourcePath: File) = this(List(SourcePath(sourcePath)))
+	def this(sourcePath: File) = this(List(SourcePath(Set(sourcePath))))
 
-	val scalaSourceDirs = sourcePaths.map(_.sourceDir)
+	val scalaSourceDirs = sourcePaths.flatMap(_.sources)
 	val targetDirs = sourcePaths.map(_.targetDir)
 }
 
 /**
  * scala source folder along with the destination class folder
  *
- * @param sourceDir     root folder of scala sources
+ * @param sources     	root folders of scala sources or scala files
  * @param targetDir     root folder of generated class files
  */
 case class SourcePath(
-	sourceDir: File,
+	sources: Set[File],
 	// the outputDir, this is where all compiled classes will be stored. Please
 	// use with care! A folder in the temp directory will usually do.
 	targetDir: File = ScalaScriptEngine.tmpOutputFolder
 	)
 {
-	if (!sourceDir.isDirectory) throw new IllegalArgumentException(sourceDir + " is not a directory")
 	if (!targetDir.isDirectory) throw new IllegalArgumentException(targetDir + " is not a directory")
-	val sourceDirPath = sourceDir.getAbsolutePath
+}
+
+object SourcePath
+{
+	def apply(source: File): SourcePath = SourcePath(Set(source))
 }

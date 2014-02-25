@@ -20,7 +20,7 @@ class DevUseIDECompiledClassesOnlySuite extends FunSuite with Matchers
 		val destDir = newTmpDir("dynamicclass")
 
 		val sse = new ScalaScriptEngine(Config(sourcePaths = List(
-			SourcePath(destDir, destDir)
+			SourcePath(Set(destDir), destDir)
 		))) with DevUseIDECompiledClassesOnly
 
 		for (i <- 0 to 9) {

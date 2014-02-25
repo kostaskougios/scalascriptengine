@@ -181,19 +181,24 @@ class ScalaScriptEngine(val config: Config) extends Logging
 	def isModified(sourcePath: SourcePath, clz: String): Boolean = {
 		val f = clz.replace('.', '/')
 		val scalaName = f + ".scala"
-		val scalaFile = new File(sourcePath.sourceDir, scalaName)
-		modified.isMod(scalaFile)
+		sourcePath.sources.exists {
+			source =>
+				val scalaFile = new File(source, scalaName)
+				modified.isMod(scalaFile)
+		}
 	}
 
 	private def allChanged(sourcePath: SourcePath): Set[File] = {
 
-		def scan(srcDir: File, clzDir: File): Set[File] = {
-			val all = srcDir.listFiles
-			val mod = all.filter(_.getName.endsWith(".scala"))
+		def scan(src: File, clzDir: File): Set[File] = {
+			val srcIsDir = src.isDirectory
+			val all = if (srcIsDir) src.listFiles else Array(src)
+			val mod = if (srcIsDir) all.filter(_.getName.endsWith(".scala"))
 				.filter {
 				scalaFile =>
 					modified.isMod(scalaFile)
 			}.toSet
+			else Set(src)
 
 			val sub = all.filter(_.isDirectory).map {
 				dir =>
@@ -203,7 +208,7 @@ class ScalaScriptEngine(val config: Config) extends Logging
 			mod ++ sub
 		}
 
-		val all = scan(sourcePath.sourceDir, sourcePath.targetDir)
+		val all = sourcePath.sources.flatMap(source => scan(source, sourcePath.targetDir))
 		all.foreach(modified.updated(_))
 		all
 	}
@@ -234,7 +239,7 @@ object ScalaScriptEngine
 	}
 
 	def defaultConfig(sourcePath: File) = Config(
-		List(SourcePath(sourcePath)),
+		List(SourcePath(Set(sourcePath))),
 		currentClassPath,
 		Set()
 	)

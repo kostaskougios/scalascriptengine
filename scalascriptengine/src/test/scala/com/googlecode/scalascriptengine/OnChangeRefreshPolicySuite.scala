@@ -25,8 +25,8 @@ class OnChangeRefreshPolicySuite extends FunSuite with Matchers
 		val sse = ScalaScriptEngine.onChangeRefresh(
 			Config(
 				sourcePaths = List(
-					SourcePath(src1, destDir1),
-					SourcePath(src2, destDir2)
+					SourcePath(Set(src1), destDir1),
+					SourcePath(Set(src2), destDir2)
 				)
 			)
 			, 100

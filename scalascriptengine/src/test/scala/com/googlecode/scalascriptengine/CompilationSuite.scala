@@ -17,6 +17,31 @@ class CompilationSuite extends FunSuite with Matchers
 	val sourceDir = new File("testfiles/CompilationSuite")
 	val versionsDir = new File("testfiles/versions")
 
+	test("compile only 1 file") {
+		val sse = ScalaScriptEngine.withoutRefreshPolicy(SourcePath(new File(sourceDir, "test/Dep1.scala")))
+		sse.deleteAllClassesInOutputDirectory
+		sse.refresh
+		val tct = sse.newInstance[TestClassTrait]("test.Dep1")
+		tct.result should be === "Dep1R"
+
+		evaluating {
+			sse.newInstance[Any]("test.MyClass")
+		} should produce[ClassNotFoundException]
+	}
+
+	test("compile 2 files") {
+		val sse = ScalaScriptEngine.withoutRefreshPolicy(SourcePath(
+			Set(
+				new File(sourceDir, "test/Dep1.scala"),
+				new File(sourceDir, "test/Dep2.scala")
+			))
+		)
+		sse.deleteAllClassesInOutputDirectory
+		sse.refresh
+		sse.newInstance[TestClassTrait]("test.Dep1").result should be === "Dep1R"
+		sse.newInstance[TestClassTrait]("test.Dep2").result should be === "Dep2R"
+	}
+
 	test("invoking compilation listeners") {
 		val sourceDir1 = new File("testfiles/CompilationSuite1")
 		var cnt = 0
@@ -35,7 +60,7 @@ class CompilationSuite extends FunSuite with Matchers
 		val sourceDir2 = new File("testfiles/CompilationSuite2")
 		val target1 = tmpOutputFolder(1)
 		val target2 = tmpOutputFolder(2)
-		val sse = ScalaScriptEngine.withoutRefreshPolicy(List(SourcePath(sourceDir1, target1), SourcePath(sourceDir2, target2)))
+		val sse = ScalaScriptEngine.withoutRefreshPolicy(List(SourcePath(Set(sourceDir1), target1), SourcePath(Set(sourceDir2), target2)))
 		sse.deleteAllClassesInOutputDirectory
 
 		sse.refresh
