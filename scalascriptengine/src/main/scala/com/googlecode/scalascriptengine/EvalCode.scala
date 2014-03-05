@@ -53,7 +53,7 @@ private class EvalCodeImpl[T](
 
 	private def toString(tt: TypeTag[_]) = {
 		val t = tt.tpe
-		t.typeSymbol.name
+		t.toString
 	}
 
 	private val src = new FileWriter(new File(srcFolder, "Eval.scala"))
