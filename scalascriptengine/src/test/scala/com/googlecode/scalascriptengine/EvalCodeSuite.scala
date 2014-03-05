@@ -12,6 +12,12 @@ import org.scalatest.{Matchers, FunSuite}
 @RunWith(classOf[JUnitRunner])
 class EvalCodeSuite extends FunSuite with Matchers
 {
+	test("typed list") {
+		val ect = EvalCode.with1Arg[List[Int], Int]("l", "l.sum")
+		val v = ect.newInstance
+		v(List(5, 10, 15)) should be(30)
+	}
+
 	test("withNoArgs") {
 		val ect = EvalCode.withoutArgs[Int]("22")
 		val v = ect.newInstance

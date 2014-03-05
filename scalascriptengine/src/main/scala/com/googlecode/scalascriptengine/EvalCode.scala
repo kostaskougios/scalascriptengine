@@ -3,7 +3,7 @@ package com.googlecode.scalascriptengine
 import java.io.File
 import java.util.UUID
 import java.io.FileWriter
-import scala.reflect.ClassTag
+import reflect.runtime.universe._
 
 /**
  * @author kostantinos.kougios
@@ -13,16 +13,13 @@ import scala.reflect.ClassTag
 
 private class EvalCodeImpl[T](
 	clz: Class[T],
-	typeArgs: List[Class[_]],
+	typeArgs: List[TypeTag[_]],
 	argNames: Iterable[String],
 	body: String,
 	classLoaderConfig: ClassLoaderConfig
 	)
 	extends EvalCode[T]
 {
-
-	import EvalCode.typesToName
-
 	private val srcFolder = new File(System.getProperty("java.io.tmpdir"), UUID.randomUUID.toString)
 	if (!srcFolder.mkdir) throw new IllegalStateException("can't create temp folder %s".format(srcFolder))
 
@@ -39,21 +36,25 @@ private class EvalCodeImpl[T](
 	// type args
 	if (typeArgs.isEmpty) ""
 	else "[" + typeArgs.map {
-		e =>
-			typesToName.getOrElse(e, e.getName)
+		tt =>
+			toString(tt)
 	}.mkString(",") + "]",
 	// params
 	(argNames zip typeArgs).map {
-		case (pName, e) =>
-			val typeName = typesToName.getOrElse(e, e.getName)
-			pName + " : " + typeName
+		case (pName, tt) =>
+			pName + " : " + toString(tt)
 	}.mkString(","), {
 		val last = typeArgs.last
-		typesToName.getOrElse(last, last.getName)
+		toString(last)
 	},
 	// body
 	body
 	)
+
+	private def toString(tt: TypeTag[_]) = {
+		val t = tt.tpe
+		t.typeSymbol.name
+	}
 
 	private val src = new FileWriter(new File(srcFolder, "Eval.scala"))
 	try {
@@ -83,32 +84,21 @@ trait EvalCode[T]
 
 object EvalCode
 {
-	private[scalascriptengine] val typesToName = Map[Class[_], String](
-		classOf[Int] -> "Int",
-		classOf[Float] -> "Float",
-		classOf[Double] -> "Double",
-		classOf[Boolean] -> "Boolean",
-		classOf[Short] -> "Short",
-		classOf[Byte] -> "Byte",
-		classOf[Char] -> "Char",
-		classOf[Long] -> "Long"
-	)
-
-	def apply[T](clz: Class[T], typeArgs: List[Class[_]], argNames: Iterable[String], body: String, classLoaderConfig: ClassLoaderConfig): EvalCode[T] =
+	def apply[T](clz: Class[T], typeArgs: List[TypeTag[_]], argNames: Iterable[String], body: String, classLoaderConfig: ClassLoaderConfig): EvalCode[T] =
 		new EvalCodeImpl(clz, typeArgs, argNames, body, classLoaderConfig)
 
-	def withoutArgs[R](body: String, classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.Default)(implicit r: ClassTag[R]) =
-		apply(classOf[() => R], List(r.runtimeClass), Nil, body, classLoaderConfig)
+	def withoutArgs[R](body: String, classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.Default)(implicit retTag: TypeTag[R]) =
+		apply(classOf[() => R], List(retTag), Nil, body, classLoaderConfig)
 
 	def with1Arg[A1, R](
 		arg1Var: String,
 		body: String,
 		classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.Default
 		)(
-		implicit m1: ClassTag[A1],
-		r: ClassTag[R]
+		implicit arg1Tag: TypeTag[A1],
+		retTag: TypeTag[R]
 		) =
-		apply(classOf[A1 => R], List(m1.runtimeClass, r.runtimeClass), List(arg1Var), body, classLoaderConfig)
+		apply(classOf[A1 => R], List(arg1Tag, retTag), List(arg1Var), body, classLoaderConfig)
 
 	def with2Args[A1, A2, R](
 		arg1Var: String,
@@ -116,11 +106,11 @@ object EvalCode
 		body: String,
 		classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.Default
 		)(
-		implicit m1: ClassTag[A1],
-		m2: ClassTag[A2],
-		r: ClassTag[R]
+		implicit arg1Tag: TypeTag[A1],
+		arg2Tag: TypeTag[A2],
+		retTag: TypeTag[R]
 		) =
-		apply(classOf[(A1, A2) => R], List(m1.runtimeClass, m2.runtimeClass, r.runtimeClass), List(arg1Var, arg2Var), body, classLoaderConfig)
+		apply(classOf[(A1, A2) => R], List(arg1Tag, arg2Tag, retTag), List(arg1Var, arg2Var), body, classLoaderConfig)
 
 	def with3Args[A1, A2, A3, R](
 		arg1Var: String,
@@ -129,10 +119,10 @@ object EvalCode
 		body: String,
 		classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.Default
 		)(
-		implicit m1: ClassTag[A1],
-		m2: ClassTag[A2],
-		m3: ClassTag[A3],
-		r: ClassTag[R]
+		implicit arg1Tag: TypeTag[A1],
+		arg2Tag: TypeTag[A2],
+		arg3Tag: TypeTag[A3],
+		retTag: TypeTag[R]
 		) =
-		apply(classOf[(A1, A2, A3) => R], List(m1.runtimeClass, m2.runtimeClass, m3.runtimeClass, r.runtimeClass), List(arg1Var, arg2Var, arg3Var), body, classLoaderConfig)
+		apply(classOf[(A1, A2, A3) => R], List(arg1Tag, arg2Tag, arg3Tag, retTag), List(arg1Var, arg2Var, arg3Var), body, classLoaderConfig)
 }
