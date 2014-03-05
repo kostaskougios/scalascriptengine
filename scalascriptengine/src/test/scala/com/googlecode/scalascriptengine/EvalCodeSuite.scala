@@ -18,6 +18,12 @@ class EvalCodeSuite extends FunSuite with Matchers
 		v(List(5, 10, 15)) should be(30)
 	}
 
+	test("typed map") {
+		val ect = EvalCode.with1Arg[Map[Int, String], String]("m", "m(1)")
+		val v = ect.newInstance
+		v(Map(1 -> "x", 2 -> "y")) should be("x")
+	}
+
 	test("withNoArgs") {
 		val ect = EvalCode.withoutArgs[Int]("22")
 		val v = ect.newInstance
