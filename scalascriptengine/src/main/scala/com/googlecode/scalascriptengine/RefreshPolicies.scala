@@ -1,11 +1,11 @@
 package com.googlecode.scalascriptengine
 
-import org.scala_tools.time.Imports._
 import com.googlecode.concurrent.ExecutorServiceManager
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
+import org.joda.time.DateTime
 
 /**
  * periodically scans the source directories and if a file changed, it recompiles

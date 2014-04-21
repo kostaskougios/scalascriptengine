@@ -5,7 +5,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import scalascriptengine._
 import java.io.File
-import org.scala_tools.time.Imports._
+import org.joda.time.DateTime
 
 /**
  * @author kostantinos.kougios
@@ -20,7 +20,7 @@ class TimedRefreshPolicySuite extends FunSuite with Matchers
 
 	test("after compilation error, valid version is used") {
 		val destDir = newTmpDir("dynamicsrc")
-		val sse = ScalaScriptEngine.timedRefresh(destDir, () => DateTime.now + 500.millis)
+		val sse = ScalaScriptEngine.timedRefresh(destDir, () => DateTime.now.plusMillis(500))
 		sse.deleteAllClassesInOutputDirectory
 		try {
 			copyFromSource(new File(sourceDir, "v1/reload"), destDir)
@@ -38,7 +38,7 @@ class TimedRefreshPolicySuite extends FunSuite with Matchers
 	}
 	test("code modifications are reloaded in time") {
 		val destDir = newTmpDir("dynamicsrc")
-		val sse = ScalaScriptEngine.timedRefresh(destDir, () => DateTime.now + 500.millis)
+		val sse = ScalaScriptEngine.timedRefresh(destDir, () => DateTime.now.plusMillis(500))
 		sse.deleteAllClassesInOutputDirectory
 		try {
 			copyFromSource(new File(sourceDir, "v1/reload"), destDir)

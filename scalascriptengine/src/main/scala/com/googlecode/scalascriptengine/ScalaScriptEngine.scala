@@ -1,8 +1,8 @@
 package com.googlecode.scalascriptengine
 
 import java.io.File
-import org.scala_tools.time.Imports._
 import java.net.URLClassLoader
+import org.joda.time.DateTime
 
 /**
  * The implementation of the script engine.

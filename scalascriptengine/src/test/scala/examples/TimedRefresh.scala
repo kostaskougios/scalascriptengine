@@ -1,7 +1,8 @@
 package examples
+
 import com.googlecode.scalascriptengine.ScalaScriptEngine
 import java.io.File
-import org.scala_tools.time.Imports._
+import org.joda.time.DateTime
 
 /**
  * demonstrates the timed refresh policy. A background thread scans the
@@ -11,11 +12,12 @@ import org.scala_tools.time.Imports._
  *
  * @author kostantinos.kougios
  *
- * 27 Dec 2011
+ *         27 Dec 2011
  */
-object TimedRefresh extends App {
+object TimedRefresh extends App
+{
 	val sourceDir = new File("examplefiles/simple")
-	val sse = ScalaScriptEngine.timedRefresh(sourceDir, () => DateTime.now + 1.second)
+	val sse = ScalaScriptEngine.timedRefresh(sourceDir, () => DateTime.now.plusSeconds(1))
 	sse.refresh
 	while (true) {
 		val t = sse.newInstance[TryMeTrait]("my.TryMe")
