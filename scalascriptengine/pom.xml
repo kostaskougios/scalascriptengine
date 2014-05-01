@@ -222,7 +222,7 @@
             <id>scala2.10</id>
             <properties>
 				<scala.major.version>2.10</scala.major.version>
-				<scala.version>${scala.major.version}.3</scala.version>
+				<scala.version>${scala.major.version}.4</scala.version>
 			</properties>
             <activation>
                 <property>

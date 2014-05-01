@@ -12,6 +12,12 @@ import org.scalatest.{Matchers, FunSuite}
 @RunWith(classOf[JUnitRunner])
 class EvalCodeSuite extends FunSuite with Matchers
 {
+	test("create list") {
+		val ect = EvalCode.with1Arg[Int => Int, List[Int]]("f", "List(f(5),f(10))")
+		val v = ect.newInstance
+		v(x => x * 2) should be(List(10, 20))
+	}
+
 	test("typed function") {
 		val ect = EvalCode.with1Arg[Int => Int, Int]("f", "f(5)")
 		val v = ect.newInstance
