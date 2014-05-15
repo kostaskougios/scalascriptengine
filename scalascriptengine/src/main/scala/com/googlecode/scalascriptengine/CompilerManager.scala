@@ -44,7 +44,7 @@ protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[F
 
 			val phase = run.phaseNamed("typer")
 			val cps = new CompilationPlugins(g, sse)
-			cps.Component.newPhase(phase)
+			cps.newPhase(phase)
 
 			val rootPaths = sp.sources.map(_.getAbsolutePath)
 			val files = allFiles.filter {
