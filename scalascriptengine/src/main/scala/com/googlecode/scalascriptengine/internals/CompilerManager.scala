@@ -1,10 +1,11 @@
-package com.googlecode.scalascriptengine
+package com.googlecode.scalascriptengine.internals
 
 import scala.reflect.internal.util.Position
 import java.io.File
 
 import scala.tools.nsc.reporters.AbstractReporter
 import scala.tools.nsc.{Phase, SubComponent, Settings, Global}
+import com.googlecode.scalascriptengine.{Logging, ScalaScriptEngine, SourcePath}
 
 /**
  * manages the scala compiler, taking care of setting the correct compiler parameters
@@ -14,7 +15,7 @@ import scala.tools.nsc.{Phase, SubComponent, Settings, Global}
  *
  *         22 Dec 2011
  */
-protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[File], sse: ScalaScriptEngine) extends Logging
+class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[File], sse: ScalaScriptEngine) extends Logging
 {
 
 	private def acc(todo: List[SourcePath], done: List[SourcePath]): List[(SourcePath, (Global, Global#Run, CompilationReporter))] = todo match {

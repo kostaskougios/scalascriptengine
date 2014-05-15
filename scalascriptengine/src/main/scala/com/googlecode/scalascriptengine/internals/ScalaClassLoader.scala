@@ -1,10 +1,11 @@
-package com.googlecode.scalascriptengine
+package com.googlecode.scalascriptengine.internals
 
 import java.io.File
 import java.net.URLClassLoader
 import java.security.AccessControlException
 import scala.reflect.ClassTag
 import java.util.concurrent.ConcurrentHashMap
+import com.googlecode.scalascriptengine.{ClassRegistry, ClassLoaderConfig}
 
 /**
  * a throwaway classloader that keeps one version of the source code. For every code change/refresh,
@@ -18,7 +19,8 @@ class ScalaClassLoader(
 	sourceDirs: Set[File],
 	classPath: Set[File],
 	parentClassLoader: ClassLoader,
-	config: ClassLoaderConfig) extends URLClassLoader(
+	config: ClassLoaderConfig
+	) extends URLClassLoader(
 	(classPath ++ sourceDirs).toArray.map(_.toURI.toURL),
 	parentClassLoader)
 {

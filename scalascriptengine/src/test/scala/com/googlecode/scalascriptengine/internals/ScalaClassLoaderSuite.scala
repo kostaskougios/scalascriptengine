@@ -1,11 +1,12 @@
-package com.googlecode.scalascriptengine
+package com.googlecode.scalascriptengine.internals
 
 import org.scalatest.{Matchers, FunSuite}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import java.io.File
 
-import scalascriptengine._
+import com.googlecode.scalascriptengine.{TestClassTrait, TestParamTrait, ClassLoaderConfig}
+import com.googlecode.scalascriptengine.scalascriptengine._
 
 /**
  * @author kostantinos.kougios

@@ -1,5 +1,7 @@
 package com.googlecode.scalascriptengine
 
+import com.googlecode.scalascriptengine.internals.ScalaClassLoader
+
 /**
  * this is useful during development. If your IDE compiles the classes (and recompiles them),
  * then there is no need for the script engine to recompile those. Just mixin this trait
@@ -11,7 +13,8 @@ package com.googlecode.scalascriptengine
  * @author: kostas.kougios
  *          Date: 18/02/13
  */
-trait DevUseIDECompiledClassesOnly extends ScalaScriptEngine {
+trait DevUseIDECompiledClassesOnly extends ScalaScriptEngine
+{
 
 	@volatile
 	private var cl: ScalaClassLoader = createClassLoader
