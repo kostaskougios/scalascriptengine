@@ -4,7 +4,7 @@ import scala.reflect.internal.util.Position
 import java.io.File
 
 import scala.tools.nsc.reporters.AbstractReporter
-import scala.tools.nsc.{Settings, Global}
+import scala.tools.nsc.{Phase, SubComponent, Settings, Global}
 
 /**
  * manages the scala compiler, taking care of setting the correct compiler parameters
@@ -29,7 +29,34 @@ protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[F
 			settings.outdir.tryToSet(h.targetDir.getAbsolutePath :: Nil)
 
 			val reporter = new CompilationReporter(settings)
-			val g = new Global(settings, reporter)
+
+			class MyGlobal extends Global(settings, reporter)
+			{
+
+				object SSEPhase extends SubComponent
+				{
+					val global: MyGlobal.this.type = MyGlobal.this
+					val phaseName = "repl"
+					val runsAfter = List[String]("typer")
+					val runsRightAfter = None
+
+					def newPhase(_prev: Phase): StdPhase = new StdPhase(_prev)
+					{
+						def apply(unit: CompilationUnit) {
+							info("compiling unit " + unit)
+							sse.compilationStatus.checkStop
+						}
+					}
+				}
+
+				override protected def computePhaseDescriptors = {
+					addToPhasesSet(SSEPhase, "SSEPhase")
+					super.computePhaseDescriptors
+				}
+			}
+
+			val g = new MyGlobal
+
 			val run = new g.Run
 			(h, (g, run, reporter)) :: acc(t, h :: done)
 
@@ -41,10 +68,6 @@ protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[F
 
 		def doCompile(sp: SourcePath, cp: Set[File]) {
 			val (g, run, reporter) = runMap(sp)
-
-			//			val phase = run.phaseNamed("typer")
-			//			val cps = new CompilationPlugins(g, sse)
-			//			cps.newPhase(phase)
 
 			val rootPaths = sp.sources.map(_.getAbsolutePath)
 			val files = allFiles.filter {
