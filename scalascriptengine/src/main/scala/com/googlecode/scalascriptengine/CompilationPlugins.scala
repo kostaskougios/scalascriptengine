@@ -17,6 +17,9 @@ class CompilationPlugins(val global: Global, sse: ScalaScriptEngine)
 
 	class PrePhase(prev: Phase, nxt: Phase) extends global.GlobalPhase(prev) with Logging
 	{
+		if (prev == null) throw new IllegalArgumentException("prev can't be null")
+		if (nxt == null) throw new IllegalArgumentException("nxt can't be null")
+
 		override def name = "sse-compilation-plugins"
 
 		override def next = nxt
