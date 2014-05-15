@@ -42,9 +42,9 @@ protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[F
 		def doCompile(sp: SourcePath, cp: Set[File]) {
 			val (g, run, reporter) = runMap(sp)
 
-			val phase = run.phaseNamed("typer")
-			val cps = new CompilationPlugins(g, sse)
-			cps.newPhase(phase)
+			//			val phase = run.phaseNamed("typer")
+			//			val cps = new CompilationPlugins(g, sse)
+			//			cps.newPhase(phase)
 
 			val rootPaths = sp.sources.map(_.getAbsolutePath)
 			val files = allFiles.filter {

@@ -52,7 +52,7 @@ class ScalaClassLoaderSuite extends FunSuite with Matchers
 		cleanDestinationAndCopyFromSource(new File(sourceDir, "default"), destDir)
 		val scl = classLoader(destDir, classPath)
 		val tct = scl.newInstance[TestClassTrait]("Test")
-		tct.result should be === "v2"
+		tct.result should be === "result"
 	}
 
 	test("will load a class") {
