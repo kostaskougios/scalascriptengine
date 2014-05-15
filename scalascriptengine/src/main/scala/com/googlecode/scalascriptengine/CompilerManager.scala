@@ -30,13 +30,13 @@ protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[F
 
 			val reporter = new CompilationReporter(settings)
 
-			class MyGlobal extends Global(settings, reporter)
+			class SSEGlobal extends Global(settings, reporter)
 			{
 
 				object SSEPhase extends SubComponent
 				{
-					val global: MyGlobal.this.type = MyGlobal.this
-					val phaseName = "repl"
+					val global: SSEGlobal.this.type = SSEGlobal.this
+					val phaseName = "SSEPhase"
 					val runsAfter = List[String]("typer")
 					val runsRightAfter = None
 
@@ -55,7 +55,7 @@ protected class CompilerManager(sourcePaths: List[SourcePath], classPaths: Set[F
 				}
 			}
 
-			val g = new MyGlobal
+			val g = new SSEGlobal
 
 			val run = new g.Run
 			(h, (g, run, reporter)) :: acc(t, h :: done)
