@@ -1,13 +1,13 @@
-package com.googlecode.scalascriptengine
+package com.googlecode.scalascriptengine.internals
 
 import java.util.concurrent.ConcurrentHashMap
 import java.io.File
 
 /**
- * @author: kostas.kougios
- *          Date: 16/02/13
+ * @author kostas.kougios
+ *         Date: 16/02/13
  */
-protected class LastModMap
+class LastModMap
 {
 	private val modified = new ConcurrentHashMap[File, java.lang.Long]
 

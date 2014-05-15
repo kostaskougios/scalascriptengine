@@ -5,7 +5,7 @@ import java.io.{FileInputStream, File}
 /**
  * finds all class names for a list of directories
  *
- * @author: kostas.kougios
+ * @author kostas.kougios
  *          Date: 21/08/13
  */
 class ClassRegistry(dirs: Set[File])

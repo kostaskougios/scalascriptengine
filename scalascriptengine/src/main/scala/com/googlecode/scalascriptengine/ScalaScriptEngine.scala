@@ -3,6 +3,7 @@ package com.googlecode.scalascriptengine
 import java.io.File
 import java.net.URLClassLoader
 import org.joda.time.DateTime
+import com.googlecode.scalascriptengine.internals.LastModMap
 
 /**
  * The implementation of the script engine.
