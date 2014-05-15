@@ -24,9 +24,9 @@ class CompilationSuite extends FunSuite with Matchers
 		val tct = sse.newInstance[TestClassTrait]("test.Dep1")
 		tct.result should be === "Dep1R"
 
-		evaluating {
+		an[ClassNotFoundException] should be thrownBy {
 			sse.newInstance[Any]("test.MyClass")
-		} should produce[ClassNotFoundException]
+		}
 	}
 
 	test("compile 2 files") {
