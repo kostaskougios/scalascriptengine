@@ -56,7 +56,8 @@ private class EvalCodeImpl[T](
 		t.toString
 	}
 
-	private val src = new FileWriter(new File(srcFolder, "Eval.scala"))
+	private val srcFile = new File(srcFolder, "Eval.scala")
+	private val src = new FileWriter(srcFile)
 	try {
 		src.write(templateTop)
 	} finally {
@@ -65,6 +66,10 @@ private class EvalCodeImpl[T](
 
 	// the Class[T]
 	val generatedClass = sse.get[T]("Eval")
+
+	// clean up
+	srcFile.delete()
+	srcFolder.delete()
 
 	// creates a new instance of the evaluated class
 	def newInstance: T = generatedClass.newInstance
