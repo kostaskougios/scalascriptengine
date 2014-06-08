@@ -10,7 +10,7 @@ import com.googlecode.scalascriptengine.internals.ScalaClassLoader
  * Note: don't use this on production or stress tests as it will reload the classes over
  * and over again until java runs out of PermGen space.
  *
- * @author: kostas.kougios
+ * @author kostas.kougios
  *          Date: 18/02/13
  */
 trait DevUseIDECompiledClassesOnly extends ScalaScriptEngine
