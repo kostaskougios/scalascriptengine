@@ -3,9 +3,11 @@ package com.googlecode.scalascriptengine.internals
 import java.io.File
 import java.net.URLClassLoader
 import java.security.AccessControlException
-import scala.reflect.ClassTag
 import java.util.concurrent.ConcurrentHashMap
-import com.googlecode.scalascriptengine.{ClassRegistry, ClassLoaderConfig}
+
+import com.googlecode.scalascriptengine.{ClassLoaderConfig, ClassRegistry}
+
+import scala.reflect.ClassTag
 
 /**
  * a throwaway classloader that keeps one version of the source code. For every code change/refresh,
@@ -35,7 +37,7 @@ class ScalaClassLoader(
 	 */
 	def all = if (config.enableClassRegistry) allClasses else throw new IllegalStateException("ClassLoaderConfig.enableClassRegistry not true, class registry not enabled")
 
-	def withTypeOf[T](implicit ct: ClassTag[T]) = all.filter(ct.runtimeClass.isAssignableFrom _)
+	def withTypeOf[T](implicit ct: ClassTag[T]): List[Class[T]] = all.filter(ct.runtimeClass.isAssignableFrom _).asInstanceOf[List[Class[T]]]
 
 	def get[T](className: String): Class[T] = loadClass(className).asInstanceOf[Class[T]]
 
