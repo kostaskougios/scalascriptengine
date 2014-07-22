@@ -24,7 +24,8 @@ case class Config(
 	val classLoadingClassPaths: Set[File] = Set(),
 
 	classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.Default,
-	compilationListeners: List[CodeVersion => Unit] = Nil
+	compilationListeners: List[CodeVersion => Unit] = Nil,
+	parentClassLoader: ClassLoader = Thread.currentThread.getContextClassLoader
 	)
 {
 

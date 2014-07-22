@@ -2,8 +2,9 @@ package com.googlecode.scalascriptengine
 
 import java.io.File
 import java.net.URLClassLoader
+
+import com.googlecode.scalascriptengine.internals.{CompilerManager, LastModMap, ScalaClassLoader}
 import org.joda.time.DateTime
-import com.googlecode.scalascriptengine.internals.{ScalaClassLoader, CompilerManager, LastModMap}
 
 /**
  * The implementation of the script engine.
@@ -126,7 +127,7 @@ class ScalaScriptEngine(val config: Config) extends Logging
 	protected def createClassLoader = new ScalaClassLoader(
 		config.sourcePaths.map(_.targetDir).toSet,
 		config.scalaSourceDirs.toSet ++ config.classLoadingClassPaths,
-		Thread.currentThread.getContextClassLoader,
+		config.parentClassLoader,
 		config.classLoaderConfig)
 
 	/**
