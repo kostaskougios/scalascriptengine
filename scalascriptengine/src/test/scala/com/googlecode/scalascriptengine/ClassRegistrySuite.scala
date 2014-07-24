@@ -1,9 +1,10 @@
 package com.googlecode.scalascriptengine
 
-import org.scalatest.{Matchers, FunSuite}
+import java.io.File
+
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import java.io.File
+import org.scalatest.{FunSuite, Matchers}
 
 /**
  * @author kkougios
@@ -14,7 +15,7 @@ class ClassRegistrySuite extends FunSuite with Matchers
 	val sourceDir = new File("testfiles/ScalaClassLoaderSuite/v1")
 
 	test("loads classes") {
-		val registry = new ClassRegistry(Set(sourceDir))
-		registry.allClasses.toSet should be(Set("test.TestDep", "test.TestParam", "test.Test"))
+		val registry = new ClassRegistry(getClass.getClassLoader, Set(sourceDir))
+		registry.allClasses.map(_.getName).toSet should be(Set("test.TestDep", "test.TestParam", "test.Test"))
 	}
 }

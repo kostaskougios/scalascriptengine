@@ -25,7 +25,7 @@ case class Config(
 
 	classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.Default,
 	compilationListeners: List[CodeVersion => Unit] = Nil,
-	parentClassLoader: ClassLoader = Thread.currentThread.getContextClassLoader
+	parentClassLoader: ClassLoader = getClass.getClassLoader
 	)
 {
 

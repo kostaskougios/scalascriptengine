@@ -3,6 +3,7 @@ package com.googlecode.scalascriptengine
 import java.io.{File, FileInputStream}
 
 import scala.language.reflectiveCalls
+import scala.reflect.ClassTag
 
 /**
  * finds all class names for a list of directories
@@ -10,11 +11,11 @@ import scala.language.reflectiveCalls
  * @author kostas.kougios
  *          Date: 21/08/13
  */
-class ClassRegistry(dirs: Set[File])
+class ClassRegistry(parentClassLoader: ClassLoader, dirs: Set[File])
 {
 	val allClasses = {
 		val classFiles = find(dirs.toList)
-		val classLoader = new ClassLoader()
+		val classLoader = new ClassLoader(parentClassLoader)
 		{
 			def scan = classFiles.map {
 				f =>
@@ -30,11 +31,14 @@ class ClassRegistry(dirs: Set[File])
 			}
 		}
 		classLoader.scan
-	}.map(_.getName)
+	}
+
+	def withTypeOf[T](implicit ct: ClassTag[T]) = allClasses.filter(ct.runtimeClass.isAssignableFrom _)
 
 	// find all class files
 	private def find(dirs: List[File]): List[File] = dirs.map {
 		dir =>
+			if (!dir.isDirectory) throw new IllegalArgumentException(s"not a directory: $dir")
 			val files = dir.listFiles.toList
 			val subDirs = find(files.filter(_.isDirectory))
 			files.filter(_.getName.endsWith(".class")) ::: subDirs
