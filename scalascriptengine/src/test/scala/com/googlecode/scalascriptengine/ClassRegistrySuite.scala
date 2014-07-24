@@ -2,6 +2,7 @@ package com.googlecode.scalascriptengine
 
 import java.io.File
 
+import com.googlecode.scalascriptengine.classloading.ClassRegistry
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FunSuite, Matchers}

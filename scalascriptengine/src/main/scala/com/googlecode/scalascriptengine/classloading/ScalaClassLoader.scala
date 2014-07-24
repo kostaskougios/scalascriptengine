@@ -1,11 +1,11 @@
-package com.googlecode.scalascriptengine.internals
+package com.googlecode.scalascriptengine.classloading
 
 import java.io.File
 import java.net.URLClassLoader
 import java.security.AccessControlException
 import java.util.concurrent.ConcurrentHashMap
 
-import com.googlecode.scalascriptengine.{ClassLoaderConfig, ClassRegistry}
+import com.googlecode.scalascriptengine.ClassLoaderConfig
 
 import scala.reflect.ClassTag
 
@@ -17,7 +17,7 @@ import scala.reflect.ClassTag
  *
  *         22 Dec 2011
  */
-class ScalaClassLoader(
+case class ScalaClassLoader(
 	sourceDirs: Set[File],
 	classPath: Set[File],
 	parentClassLoader: ClassLoader,

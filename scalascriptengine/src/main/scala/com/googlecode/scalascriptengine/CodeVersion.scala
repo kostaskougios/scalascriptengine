@@ -1,7 +1,8 @@
 package com.googlecode.scalascriptengine
 
 import java.io.File
-import com.googlecode.scalascriptengine.internals.ScalaClassLoader
+
+import com.googlecode.scalascriptengine.classloading.ScalaClassLoader
 
 /**
  * the script engine works by keeping 1 version of the compiled source directories.

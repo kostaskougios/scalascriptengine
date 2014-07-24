@@ -3,7 +3,8 @@ package com.googlecode.scalascriptengine
 import java.io.File
 import java.net.URLClassLoader
 
-import com.googlecode.scalascriptengine.internals.{CompilerManager, LastModMap, ScalaClassLoader}
+import com.googlecode.scalascriptengine.classloading.ScalaClassLoader
+import com.googlecode.scalascriptengine.internals.{CompilerManager, LastModMap}
 import org.joda.time.DateTime
 
 /**

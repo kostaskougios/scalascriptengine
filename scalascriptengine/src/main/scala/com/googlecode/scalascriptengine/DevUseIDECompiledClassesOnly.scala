@@ -1,6 +1,6 @@
 package com.googlecode.scalascriptengine
 
-import com.googlecode.scalascriptengine.internals.ScalaClassLoader
+import com.googlecode.scalascriptengine.classloading.ScalaClassLoader
 
 /**
  * this is useful during development. If your IDE compiles the classes (and recompiles them),
@@ -11,7 +11,7 @@ import com.googlecode.scalascriptengine.internals.ScalaClassLoader
  * and over again until java runs out of PermGen space.
  *
  * @author kostas.kougios
- *          Date: 18/02/13
+ *         Date: 18/02/13
  */
 trait DevUseIDECompiledClassesOnly extends ScalaScriptEngine
 {

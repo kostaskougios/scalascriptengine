@@ -1,4 +1,4 @@
-package com.googlecode.scalascriptengine
+package com.googlecode.scalascriptengine.classloading
 
 import java.io.{File, FileInputStream}
 
