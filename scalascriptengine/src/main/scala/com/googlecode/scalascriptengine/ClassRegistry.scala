@@ -1,6 +1,8 @@
 package com.googlecode.scalascriptengine
 
-import java.io.{FileInputStream, File}
+import java.io.{File, FileInputStream}
+
+import scala.language.reflectiveCalls
 
 /**
  * finds all class names for a list of directories

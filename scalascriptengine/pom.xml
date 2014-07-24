@@ -92,9 +92,11 @@
 				<configuration>
 					<scalaVersion>${scala.version}</scalaVersion>
 					<args>
-						<arg>-target:jvm-1.5</arg>
+						<arg>-target:jvm-1.6</arg>
 						<arg>-optimize</arg>
 						<arg>-unchecked</arg>
+						<arg>-feature</arg>
+						<arg>-deprecation</arg>
 					</args>
 					<charset>${project.build.sourceEncoding}</charset>
 					<jvmArgs>

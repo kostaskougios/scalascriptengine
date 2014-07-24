@@ -1,10 +1,11 @@
 package com.googlecode.scalascriptengine
 
-import org.scalatest.{Matchers, FunSuite}
+import java.io.File
+
+import com.googlecode.scalascriptengine.scalascriptengine._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import java.io.File
-import scalascriptengine._
+import org.scalatest.{FunSuite, Matchers}
 
 /**
  * @author kostantinos.kougios
@@ -22,7 +23,7 @@ class CompilationSuite extends FunSuite with Matchers
 		sse.deleteAllClassesInOutputDirectory
 		sse.refresh
 		val tct = sse.newInstance[TestClassTrait]("test.Dep1")
-		tct.result should be === "Dep1R"
+		tct.result should be("Dep1R")
 
 		an[ClassNotFoundException] should be thrownBy {
 			sse.newInstance[Any]("test.MyClass")
@@ -38,8 +39,8 @@ class CompilationSuite extends FunSuite with Matchers
 		)
 		sse.deleteAllClassesInOutputDirectory
 		sse.refresh
-		sse.newInstance[TestClassTrait]("test.Dep1").result should be === "Dep1R"
-		sse.newInstance[TestClassTrait]("test.Dep2").result should be === "Dep2R"
+		sse.newInstance[TestClassTrait]("test.Dep1").result should be("Dep1R")
+		sse.newInstance[TestClassTrait]("test.Dep2").result should be("Dep2R")
 	}
 
 	test("invoking compilation listeners") {
@@ -77,11 +78,11 @@ class CompilationSuite extends FunSuite with Matchers
 			copyFromSource(new File(versionsDir, "v1"), destDir)
 			sse.refresh
 			val v1 = sse.newInstance[TestClassTrait]("reload.Reload")
-			v1.result should be === "v1"
+			v1.result should be("v1")
 			copyFromSource(new File(versionsDir, "v2"), destDir)
 			sse.refresh
 			val v2 = sse.newInstance[TestClassTrait]("reload.Reload")
-			v2.result should be === "v2"
+			v2.result should be("v2")
 		}
 	}
 
@@ -99,7 +100,7 @@ class CompilationSuite extends FunSuite with Matchers
 		sse.deleteAllClassesInOutputDirectory
 		sse.refresh
 		val tct = sse.newInstance[TestClassTrait]("test.MyClass")
-		tct.result should be === "ok"
+		tct.result should be("ok")
 	}
 
 	test("deleteAllClassesInOutputDirectory deletes all class files") {
