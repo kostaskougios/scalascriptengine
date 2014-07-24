@@ -1,10 +1,12 @@
 package com.googlecode.scalascriptengine
 
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.{Matchers, FunSuite, BeforeAndAfterAll}
 import java.io.File
 import java.security.AccessControlException
+
+import com.googlecode.scalascriptengine.classloading.ClassLoaderConfig
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
+import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
 
 /**
  * @author		konstantinos.kougios

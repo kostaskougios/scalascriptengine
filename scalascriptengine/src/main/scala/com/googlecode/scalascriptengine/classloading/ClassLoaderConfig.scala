@@ -1,4 +1,4 @@
-package com.googlecode.scalascriptengine
+package com.googlecode.scalascriptengine.classloading
 
 /**
  * @author kostantinos.kougios

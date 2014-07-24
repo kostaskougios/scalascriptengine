@@ -2,6 +2,8 @@ package com.googlecode.scalascriptengine
 
 import java.io.File
 
+import com.googlecode.scalascriptengine.classloading.ClassLoaderConfig
+
 /**
  * this holds the configuration for the script engine. Source and output paths,
  * compilation class paths, classloading classpaths . In the future it will hold scala compiler

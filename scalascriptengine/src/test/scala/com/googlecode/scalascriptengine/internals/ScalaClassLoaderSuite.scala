@@ -2,9 +2,9 @@ package com.googlecode.scalascriptengine.internals
 
 import java.io.File
 
-import com.googlecode.scalascriptengine.classloading.ScalaClassLoader
+import com.googlecode.scalascriptengine.classloading.{ClassLoaderConfig, ScalaClassLoader}
 import com.googlecode.scalascriptengine.scalascriptengine._
-import com.googlecode.scalascriptengine.{ClassLoaderConfig, TestClassTrait, TestParamTrait}
+import com.googlecode.scalascriptengine.{TestClassTrait, TestParamTrait}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FunSuite, Matchers}

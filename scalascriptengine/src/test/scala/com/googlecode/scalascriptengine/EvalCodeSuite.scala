@@ -1,8 +1,9 @@
 package com.googlecode.scalascriptengine
 
+import com.googlecode.scalascriptengine.classloading.ClassLoaderConfig
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.{Matchers, FunSuite}
+import org.scalatest.{FunSuite, Matchers}
 
 /**
  * @author kostantinos.kougios

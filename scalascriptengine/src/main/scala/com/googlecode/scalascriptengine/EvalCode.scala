@@ -1,9 +1,11 @@
 package com.googlecode.scalascriptengine
 
-import java.io.File
+import java.io.{File, FileWriter}
 import java.util.UUID
-import java.io.FileWriter
-import reflect.runtime.universe._
+
+import com.googlecode.scalascriptengine.classloading.ClassLoaderConfig
+
+import scala.reflect.runtime.universe._
 
 /**
  * @author kostantinos.kougios

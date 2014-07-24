@@ -5,8 +5,6 @@ import java.net.URLClassLoader
 import java.security.AccessControlException
 import java.util.concurrent.ConcurrentHashMap
 
-import com.googlecode.scalascriptengine.ClassLoaderConfig
-
 import scala.reflect.ClassTag
 
 /**
