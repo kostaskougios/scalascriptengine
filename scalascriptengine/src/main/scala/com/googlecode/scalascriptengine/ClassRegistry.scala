@@ -11,7 +11,7 @@ import scala.reflect.ClassTag
  * @author kostas.kougios
  *          Date: 21/08/13
  */
-class ClassRegistry(parentClassLoader: ClassLoader, dirs: Set[File])
+case class ClassRegistry(parentClassLoader: ClassLoader, dirs: Set[File])
 {
 	val allClasses = {
 		val classFiles = find(dirs.toList)

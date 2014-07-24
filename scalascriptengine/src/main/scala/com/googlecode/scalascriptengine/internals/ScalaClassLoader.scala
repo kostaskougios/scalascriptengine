@@ -29,7 +29,7 @@ class ScalaClassLoader(
 	private val cache = new ConcurrentHashMap[String, Class[_]]
 
 	private val allClasses = if (config.enableClassRegistry) {
-		new ClassRegistry(parentClassLoader, sourceDirs).allClasses.map(c => loadClass(c.getName))
+		ClassRegistry(parentClassLoader, sourceDirs).allClasses.map(c => loadClass(c.getName))
 	} else Nil
 
 	/**
