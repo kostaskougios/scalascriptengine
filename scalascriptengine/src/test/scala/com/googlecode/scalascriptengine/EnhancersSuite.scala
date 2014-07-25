@@ -1,9 +1,10 @@
 package com.googlecode.scalascriptengine
 
+import java.io.File
+
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.{Matchers, FunSuite}
-import java.io.File
+import org.scalatest.{FunSuite, Matchers}
 
 /**
  * @author kostantinos.kougios
@@ -20,7 +21,7 @@ class EnhancersSuite extends FunSuite with Matchers
 		val sse = new ScalaScriptEngine(new Config(sourceDir)) with FromClasspathFirst
 		sse.deleteAllClassesInOutputDirectory
 		val t = sse.newInstance[TestClassTrait]("test.FromClasspathFirst")
-		t.result should be === "fcf:5"
+		t.result should be("fcf:5")
 	}
 
 	test("from classpath first loads the script version") {
@@ -30,7 +31,7 @@ class EnhancersSuite extends FunSuite with Matchers
 		}
 		sse.deleteAllClassesInOutputDirectory
 		val t = sse.newInstance[TestClassTrait]("test.FCF")
-		t.result should be === "not from classpath"
+		t.result should be("not from classpath")
 	}
 
 	test("constructors use classpath class") {
@@ -38,6 +39,6 @@ class EnhancersSuite extends FunSuite with Matchers
 		sse.deleteAllClassesInOutputDirectory
 		val constructors = sse.constructors[TestClassTrait]("test.FromClasspathFirst")
 		val t = constructors.newInstance(8)
-		t.result should be === "fcf:8"
+		t.result should be("fcf:8")
 	}
 }

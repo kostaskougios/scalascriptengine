@@ -1,10 +1,11 @@
 package com.googlecode.scalascriptengine
 
-import org.scalatest.{Matchers, FunSuite}
+import java.io.File
+
+import com.googlecode.scalascriptengine.scalascriptengine._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import java.io.File
-import scalascriptengine._
+import org.scalatest.{FunSuite, Matchers}
 
 /**
  * @author kostantinos.kougios
@@ -25,7 +26,7 @@ class ResourcesSuite extends FunSuite with Matchers
 		sse.refresh
 
 		val t: TestClassTrait = sse.newInstance[TestClassTrait]("reload.Main")
-		t.result should be === "v1"
+		t.result should be("v1")
 	}
 
 	test("loads changed resources from classpath without refreshing") {
@@ -36,11 +37,11 @@ class ResourcesSuite extends FunSuite with Matchers
 		sse.refresh
 
 		val t1: TestClassTrait = sse.newInstance[TestClassTrait]("reload.Main")
-		t1.result should be === "v1"
+		t1.result should be("v1")
 
 		copyFromSource(new File(sourceDir, "v2"), destDir)
 		val t2: TestClassTrait = sse.newInstance[TestClassTrait]("reload.Main")
-		t2.result should be === "v2"
+		t2.result should be("v2")
 	}
 
 	test("loads changed resources from classpath with refreshing") {
@@ -51,11 +52,11 @@ class ResourcesSuite extends FunSuite with Matchers
 		sse.refresh
 
 		val t1: TestClassTrait = sse.newInstance[TestClassTrait]("reload.Main")
-		t1.result should be === "v1"
+		t1.result should be("v1")
 
 		copyFromSource(new File(sourceDir, "v2"), destDir)
 		sse.refresh
 		val t2: TestClassTrait = sse.newInstance[TestClassTrait]("reload.Main")
-		t2.result should be === "v2"
+		t2.result should be("v2")
 	}
 }

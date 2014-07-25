@@ -1,10 +1,11 @@
 package com.googlecode.scalascriptengine
 
-import org.scalatest.{Matchers, FunSuite}
 import java.io.File
-import scalascriptengine._
+
+import com.googlecode.scalascriptengine.scalascriptengine._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
+import org.scalatest.{FunSuite, Matchers}
 
 /**
  * @author kostantinos.kougios
@@ -39,17 +40,17 @@ class OnChangeRefreshPolicySuite extends FunSuite with Matchers
 
 		sse.refresh
 
-		sse.newInstance[TestClassTrait]("test.A").result should be === "A"
-		sse.versionNumber should be === 1
-		sse.newInstance[TestClassTrait]("test.B").result should be === "B"
-		sse.versionNumber should be === 1
+		sse.newInstance[TestClassTrait]("test.A").result should be("A")
+		sse.versionNumber should be(1)
+		sse.newInstance[TestClassTrait]("test.B").result should be("B")
+		sse.versionNumber should be(1)
 
 		Thread.sleep(1000)
 		copyFromSource(new File("testfiles/src3"), src1)
-		sse.newInstance[TestClassTrait]("test.A").result should be === "AMod"
-		sse.versionNumber should be === 2
-		sse.newInstance[TestClassTrait]("test.B").result should be === "B"
-		sse.versionNumber should be === 2
+		sse.newInstance[TestClassTrait]("test.A").result should be("AMod")
+		sse.versionNumber should be(2)
+		sse.newInstance[TestClassTrait]("test.B").result should be("B")
+		sse.versionNumber should be(2)
 	}
 
 	test("onChangeRefreshAsynchronously: code modifications are refreshed but control returns immediatelly") {
@@ -58,16 +59,16 @@ class OnChangeRefreshPolicySuite extends FunSuite with Matchers
 		sse.deleteAllClassesInOutputDirectory
 		copyFromSource(new File(sourceDir, "v1"), destDir)
 		sse.refresh
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-		sse.versionNumber should be === 1
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
+		sse.versionNumber should be(1)
 		// this should trigger a refresh but on the background
 		copyFromSource(new File(sourceDir, "v2"), destDir)
 		// this will trigger the refresh which will occur on a different thread
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-		sse.versionNumber should be === 1
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
+		sse.versionNumber should be(1)
 		Thread.sleep(2000)
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v2"
-		sse.versionNumber should be === 2
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v2")
+		sse.versionNumber should be(2)
 		sse.shutdown
 	}
 
@@ -77,21 +78,21 @@ class OnChangeRefreshPolicySuite extends FunSuite with Matchers
 		sse.deleteAllClassesInOutputDirectory
 		copyFromSource(new File(sourceDir, "v1"), destDir)
 		sse.refresh
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-		sse.versionNumber should be === 1
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
+		sse.versionNumber should be(1)
 		copyFromSource(new File("testfiles/erroneous/ve"), destDir)
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
 		Thread.sleep(2000)
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-		sse.versionNumber should be === 1
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
+		sse.versionNumber should be(1)
 
 		copyFromSource(new File(sourceDir, "v2"), destDir)
 		// this will trigger the refresh which will occur on a different thread
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-		sse.versionNumber should be === 1
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
+		sse.versionNumber should be(1)
 		Thread.sleep(2000)
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v2"
-		sse.versionNumber should be === 2
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v2")
+		sse.versionNumber should be(2)
 		sse.shutdown
 	}
 
@@ -101,17 +102,17 @@ class OnChangeRefreshPolicySuite extends FunSuite with Matchers
 		sse.deleteAllClassesInOutputDirectory
 		for (i <- 1 to 10) {
 			copyFromSource(new File(sourceDir, "v1"), destDir)
-			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-			if (i == 1) sse.numberOfTimesSourcesTestedForModifications should be === 1
-			sse.versionNumber should be === i * 2 - 1
-			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-			if (i == 1) sse.numberOfTimesSourcesTestedForModifications should be === 2
-			sse.versionNumber should be === i * 2 - 1
+			sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
+			if (i == 1) sse.numberOfTimesSourcesTestedForModifications should be(1)
+			sse.versionNumber should be(i * 2 - 1)
+			sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
+			if (i == 1) sse.numberOfTimesSourcesTestedForModifications should be(2)
+			sse.versionNumber should be(i * 2 - 1)
 			Thread.sleep(10)
 			copyFromSource(new File(sourceDir, "v2"), destDir)
-			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v2"
-			if (i == 1) sse.numberOfTimesSourcesTestedForModifications should be === 3
-			sse.versionNumber should be === i * 2
+			sse.newInstance[TestClassTrait]("reload.Reload").result should be("v2")
+			if (i == 1) sse.numberOfTimesSourcesTestedForModifications should be(3)
+			sse.versionNumber should be(i * 2)
 		}
 	}
 
@@ -120,19 +121,19 @@ class OnChangeRefreshPolicySuite extends FunSuite with Matchers
 		val sse = ScalaScriptEngine.onChangeRefresh(destDir, 2000)
 		sse.deleteAllClassesInOutputDirectory
 		copyFromSource(new File(sourceDir, "v1"), destDir)
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-		sse.numberOfTimesSourcesTestedForModifications should be === 1
-		sse.versionNumber should be === 1
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-		sse.numberOfTimesSourcesTestedForModifications should be === 1
-		sse.versionNumber should be === 1
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
+		sse.numberOfTimesSourcesTestedForModifications should be(1)
+		sse.versionNumber should be(1)
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
+		sse.numberOfTimesSourcesTestedForModifications should be(1)
+		sse.versionNumber should be(1)
 		copyFromSource(new File(sourceDir, "v2"), destDir)
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-		sse.numberOfTimesSourcesTestedForModifications should be === 1
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
+		sse.numberOfTimesSourcesTestedForModifications should be(1)
 		Thread.sleep(2100)
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v2"
-		sse.versionNumber should be === 2
-		sse.numberOfTimesSourcesTestedForModifications should be === 2
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v2")
+		sse.versionNumber should be(2)
+		sse.numberOfTimesSourcesTestedForModifications should be(2)
 	}
 
 	test("onChangeRefresh: code modifications are reloaded according to recheckEveryMillis even when errors") {
@@ -140,24 +141,24 @@ class OnChangeRefreshPolicySuite extends FunSuite with Matchers
 		val sse = ScalaScriptEngine.onChangeRefresh(destDir, 2000)
 		sse.deleteAllClassesInOutputDirectory
 		copyFromSource(new File(sourceDir, "v1"), destDir)
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-		sse.versionNumber should be === 1
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
-		sse.versionNumber should be === 1
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
+		sse.versionNumber should be(1)
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
+		sse.versionNumber should be(1)
 		copyFromSource(new File("testfiles/erroneous/ve"), destDir)
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
 		Thread.sleep(2100)
 		try {
-			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
+			sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
 		}
 		catch {
 			case e: Throwable =>
 		}
-		sse.versionNumber should be === 1
+		sse.versionNumber should be(1)
 		copyFromSource(new File(sourceDir, "v2"), destDir)
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
 		Thread.sleep(2100)
-		sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v2"
-		sse.versionNumber should be === 2
+		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v2")
+		sse.versionNumber should be(2)
 	}
 }

@@ -54,7 +54,7 @@ class ScalaClassLoaderSuite extends FunSuite with Matchers
 		cleanDestinationAndCopyFromSource(new File(sourceDir, "default"), destDir)
 		val scl = classLoader(destDir, classPath)
 		val tct = scl.newInstance[TestClassTrait]("Test")
-		tct.result should be === "result"
+		tct.result should be("result")
 	}
 
 	test("will load a class") {
@@ -62,7 +62,7 @@ class ScalaClassLoaderSuite extends FunSuite with Matchers
 		cleanDestinationAndCopyFromSource(new File(sourceDir, "v1"), destDir)
 		val scl = classLoader(destDir, classPath)
 		val tct = scl.newInstance[TestClassTrait]("test.Test")
-		tct.result should be === "v1"
+		tct.result should be("v1")
 	}
 
 	test("loads dependent classes") {
@@ -70,7 +70,7 @@ class ScalaClassLoaderSuite extends FunSuite with Matchers
 		cleanDestinationAndCopyFromSource(new File(sourceDir, "v1"), destDir)
 		val scl = classLoader(destDir, classPath)
 		val tctV1 = scl.newInstance[TestClassTrait]("test.TestDep")
-		tctV1.result should be === "TestDep:v1"
+		tctV1.result should be("TestDep:v1")
 	}
 
 	test("using both v1 and v2 classes") {
@@ -80,16 +80,16 @@ class ScalaClassLoaderSuite extends FunSuite with Matchers
 
 		val tctV1 = scl1.newInstance[TestClassTrait]("test.Test")
 		val tcpV1 = scl1.newInstance[TestParamTrait]("test.TestParam")
-		tcpV1.result(tctV1) should be === "TP:v1"
+		tcpV1.result(tctV1) should be("TP:v1")
 
 		cleanDestinationAndCopyFromSource(new File(sourceDir, "v2"), destDir)
 		val scl2 = classLoader(destDir, classPath)
 
 		val tcpV2 = scl2.newInstance[TestParamTrait]("test.TestParam")
-		tcpV2.result(tctV1) should be === "TP:v1"
+		tcpV2.result(tctV1) should be("TP:v1")
 
 		val tctV2 = scl2.newInstance[TestClassTrait]("test.Test")
-		tcpV2.result(tctV2) should be === "TP:v2"
+		tcpV2.result(tctV2) should be("TP:v2")
 	}
 
 	//	test("stress test loads the same class") {

@@ -48,7 +48,7 @@ class SandboxSuite extends FunSuite with Matchers with BeforeAndAfterAll
 		val ex = intercept[AccessControlException] {
 			sseSM.secured {
 				val tct = sse.newInstance[TestClassTrait]("test.TryFile")
-				tct.result should be === "directory"
+				tct.result should be("directory")
 			}
 		}
 		ex.getPermission match {
@@ -61,7 +61,7 @@ class SandboxSuite extends FunSuite with Matchers with BeforeAndAfterAll
 	test("will allow access to a file") {
 		sseSM.secured {
 			val tct = sse.newInstance[TestClassTrait]("test.TryHome")
-			tct.result should be === "directory"
+			tct.result should be("directory")
 		}
 	}
 

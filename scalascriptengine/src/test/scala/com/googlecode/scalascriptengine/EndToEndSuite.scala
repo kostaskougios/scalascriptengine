@@ -1,15 +1,13 @@
 package com.googlecode.scalascriptengine
 
-import org.scalatest.{Matchers, FunSuite}
-import java.io.File
-import scalascriptengine._
+import java.io.{File, FileWriter}
+import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger, AtomicLong}
+
+import com.googlecode.concurrent.ExecutorServiceManager
+import com.googlecode.scalascriptengine.scalascriptengine._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import com.googlecode.concurrent.ExecutorServiceManager
-import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.atomic.AtomicBoolean
-import java.io.FileWriter
-import java.util.concurrent.atomic.AtomicLong
+import org.scalatest.{FunSuite, Matchers}
 
 /**
  * @author kostantinos.kougios
@@ -85,10 +83,10 @@ class Main extends TestClassTrait
 					write(main, currentVersion + 1)
 				}
 				Thread.sleep(500)
-				errors.get should be === 0
+				errors.get should be(0)
 			}
 			done.set(true)
-			errors.get should be === 0
+			errors.get should be(0)
 		} finally {
 			executor.shutdownAndAwaitTermination(1)
 			sse.shutdown

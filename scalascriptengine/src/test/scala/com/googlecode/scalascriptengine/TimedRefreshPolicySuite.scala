@@ -1,11 +1,12 @@
 package com.googlecode.scalascriptengine
 
-import org.scalatest.{Matchers, FunSuite}
+import java.io.File
+
+import com.googlecode.scalascriptengine.scalascriptengine._
+import org.joda.time.DateTime
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import scalascriptengine._
-import java.io.File
-import org.joda.time.DateTime
+import org.scalatest.{FunSuite, Matchers}
 
 /**
  * @author kostantinos.kougios
@@ -25,13 +26,13 @@ class TimedRefreshPolicySuite extends FunSuite with Matchers
 		try {
 			copyFromSource(new File(sourceDir, "v1/reload"), destDir)
 			sse.refresh
-			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
+			sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
 			copyFromSource(new File("testfiles/erroneous/ve/reload"), destDir)
 			Thread.sleep(3000)
-			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
+			sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
 			copyFromSource(new File(sourceDir, "v2/reload"), destDir)
 			Thread.sleep(3000)
-			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v2"
+			sse.newInstance[TestClassTrait]("reload.Reload").result should be("v2")
 		} finally {
 			sse.shutdown
 		}
@@ -43,14 +44,14 @@ class TimedRefreshPolicySuite extends FunSuite with Matchers
 		try {
 			copyFromSource(new File(sourceDir, "v1/reload"), destDir)
 			sse.refresh
-			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
+			sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
 			copyFromSource(new File(sourceDir, "v2/reload"), destDir)
-			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
+			sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
 			Thread.sleep(3000)
-			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v2"
+			sse.newInstance[TestClassTrait]("reload.Reload").result should be("v2")
 			copyFromSource(new File(sourceDir, "v1/reload"), destDir)
 			Thread.sleep(3000)
-			sse.newInstance[TestClassTrait]("reload.Reload").result should be === "v1"
+			sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
 		} finally {
 			sse.shutdown
 		}

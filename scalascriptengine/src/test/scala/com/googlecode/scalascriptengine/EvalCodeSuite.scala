@@ -54,7 +54,7 @@ class EvalCodeSuite extends FunSuite with Matchers
 		val x = ect.newInstance
 
 		// evaluates f("17") = "17".toInt
-		x("17") should be === 17
+		x("17") should be(17)
 	}
 
 	test("constructs src code correctly, 2 args") {
@@ -66,7 +66,7 @@ class EvalCodeSuite extends FunSuite with Matchers
 		val x = ect.newInstance
 
 		// and apply it
-		x(12.5f, 2.5) should be === 15.0
+		x(12.5f, 2.5) should be(15.0)
 	}
 
 	test("constructs src code correctly, 3 args") {
@@ -78,13 +78,13 @@ class EvalCodeSuite extends FunSuite with Matchers
 		val x = ect.newInstance
 
 		// and apply it
-		x(2, 5, 10) should be === 42
+		x(2, 5, 10) should be(42)
 	}
 
 	test("return type string") {
 		val ect = EvalCode.with2Args[Float, Double, String]("i1", "i2", "(i1 + i2).toString")
 		val x = ect.newInstance
-		x(12.5f, 2.5) should be === "15.0"
+		x(12.5f, 2.5) should be("15.0")
 	}
 
 	test("use case 1") {
