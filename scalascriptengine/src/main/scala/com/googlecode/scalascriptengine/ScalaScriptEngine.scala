@@ -191,6 +191,19 @@ class ScalaScriptEngine(val config: Config) extends Logging
 		}
 	}
 
+	/**
+	 * marks all source files as modified, hence it will recompile all the source
+	 * files on the next call to refresh()
+	 */
+	def markAllAsModified() {
+		modified.markAllAsModified()
+	}
+
+	/**
+	 * finds all changed sources in the this sourcePath
+	 * @param sourcePath	SourcePath to scan
+	 * @return				all changed files
+	 */
 	private def allChanged(sourcePath: SourcePath): Set[File] = {
 
 		def scan(src: File, clzDir: File): Set[File] = {

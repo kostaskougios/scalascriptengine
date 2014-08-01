@@ -1,7 +1,7 @@
 package com.googlecode.scalascriptengine.internals
 
-import java.util.concurrent.ConcurrentHashMap
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author kostas.kougios
@@ -21,5 +21,9 @@ class LastModMap
 
 	def updated(f: File) {
 		modified.put(f, f.lastModified)
+	}
+
+	def markAllAsModified() {
+		modified.clear()
 	}
 }
