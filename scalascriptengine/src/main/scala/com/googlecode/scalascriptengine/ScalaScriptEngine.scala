@@ -200,6 +200,17 @@ class ScalaScriptEngine(val config: Config) extends Logging
 	}
 
 	/**
+	 * forces a clean build of all source files
+	 *
+	 * @return	the new CodeVersion
+	 */
+	def cleanBuild: CodeVersion = {
+		deleteAllClassesInOutputDirectory()
+		markAllAsModified()
+		refresh
+	}
+
+	/**
 	 * finds all changed sources in the this sourcePath
 	 * @param sourcePath	SourcePath to scan
 	 * @return				all changed files
