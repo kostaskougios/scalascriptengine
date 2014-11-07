@@ -2,6 +2,6 @@ For queries/bug reports, please contact kostas.kougios@googlemail.com
 
 --- Only for maintainers ---
 
-to release to scala-tools.org:
+to release:
 
 mvn clean -P release deploy
