@@ -28,9 +28,9 @@ Different compilation and refreshing strategies are provided to suit various pur
 
 ### Examples ###
 
-[Please click to view examples](http://code.google.com/p/scalascriptengine/source/browse/#git%2Fscalascriptengine%2Fsrc%2Ftest%2Fscala%2Fexamples)
+[Please click to view examples](https://github.com/kostaskougios/scalascriptengine/tree/master/src/test/scala/examples)
 
-[eval(): Evaluating scala code from a String](https://code.google.com/p/scalascriptengine/source/browse/scalascriptengine/src/test/scala/com/googlecode/scalascriptengine/EvalCodeSuite.scala)
+[eval(): Evaluating scala code from a String](https://github.com/kostaskougios/scalascriptengine/blob/master/src/test/scala/com/googlecode/scalascriptengine/EvalCodeSuite.scala)
 
 ### Discuss ###
 
@@ -117,7 +117,7 @@ NOTE: this frequently throws away a classloader and it is not recommended for pr
 
 ### Examples ###
 
-[Please click to view examples](http://code.google.com/p/scalascriptengine/source/browse/#git%2Fscalascriptengine%2Fsrc%2Ftest%2Fscala%2Fexamples)
+[Please click to view examples](https://github.com/kostaskougios/scalascriptengine/tree/master/src/test/scala/examples)
 
 ### How does it work ###
 
@@ -137,8 +137,8 @@ In case of compilation errors, the previous version remains in use.
 
 Please view the test suites:
 
-  * [policy file](http://code.google.com/p/scalascriptengine/source/browse/scalascriptengine/testfiles/SandboxSuite/test.policy) [Example 1](http://code.google.com/p/scalascriptengine/source/browse/scalascriptengine/src/test/scala/com/googlecode/scalascriptengine/SandboxSuite.scala)
-  * [Example 2](http://code.google.com/p/scalascriptengine/source/browse/scalascriptengine/src/test/scala/com/googlecode/scalascriptengine/SandboxAllowOnlySuite.scala)
+  * [policy file](https://github.com/kostaskougios/scalascriptengine/blob/master/src/test/scala/com/googlecode/scalascriptengine/SandboxSuite.scala)
+  * [Example 2](https://github.com/kostaskougios/scalascriptengine/blob/master/src/test/scala/com/googlecode/scalascriptengine/SandboxAllowOnlySuite.scala)
 
 
 ScalaScriptEngine can be configured to work with a Java sandbox and in addition offers extra help in terms of SecureManager and limited classloading for scripts.
