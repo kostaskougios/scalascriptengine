@@ -1,0 +1,1 @@
+Please download from [http://oss.sonatype.org/content/repositories/releases/com/googlecode/scalascriptengine/scalascriptengine/](http://oss.sonatype.org/content/repositories/releases/com/googlecode/scalascriptengine/scalascriptengine/)
