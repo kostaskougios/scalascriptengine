@@ -21,7 +21,7 @@ Different compilation and refreshing strategies are provided to suit various pur
   * 23/01/2013 : snapshots of v1.2.1 are available in sonatype snapshot repo. Those fix sbt issues.
   * 12/01/2013 : v1.2.0 for scala 2.10.0 is now available
   * 16/10/2012 : v1.2.0 : Sandbox, better eval() and compilation for scala 2.9.2 and 2.10.0-M7 . For Sandbox please look at the end of this page.
-  * 25/08/2012 : v1.1.0 : this has support for [evaluating scala code from a String](https://code.google.com/p/scalascriptengine/source/browse/scalascriptengine/src/test/scala/com/googlecode/scalascriptengine/EvalCodeSuite.scala).
+  * 25/08/2012 : v1.1.0 : this has support for evaluating scala code from a String.
   * 22/07/2012 : migrated to git
   * 19/07/2012 : v1.0.0 : v0.6.4 is promoted to v1.0.0
 [more...](wiki/News.md)
