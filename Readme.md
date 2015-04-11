@@ -82,6 +82,12 @@ Please add the sonatype releases repository to your repositories:
 
 ```
 
+NOTE: add
+
+fork:=true
+
+to your build.sbt because sbt seems to create issues with the scala compiler.
+ 
 ### Usage ###
 
 This is not the most efficient usage of the library, but is the one with the most expected behavior:
