@@ -41,6 +41,20 @@ at [http://groups.google.com/group/scala-script-engine](http://groups.google.com
 Please use the maven repository to download the required jar, sources and javadocs :
 [Download](https://oss.sonatype.org/content/repositories/releases/com/googlecode/scalascriptengine/scalascriptengine/)
 
+### sbt ###
+
+```
+"com.googlecode.scalascriptengine" %% "scalascriptengine" % "1.3.10",
+"org.scala-lang" % "scala-compiler" % "2.11.1"
+
+```
+
+NOTE: add
+
+fork:=true
+
+to your build.sbt because sbt seems to create issues with the scala compiler.
+
 ### Maven ###
 
 Both scalascriptengine, scala-reflect and scala-compiler must be added as dependencies :
@@ -73,20 +87,6 @@ Please add the sonatype releases repository to your repositories:
         </repository>
 </repositories>
 ```
-
-### sbt ###
-
-```
-"com.googlecode.scalascriptengine" %% "scalascriptengine" % "1.3.10",
-"org.scala-lang" % "scala-compiler" % "2.11.1"
-
-```
-
-NOTE: add
-
-fork:=true
-
-to your build.sbt because sbt seems to create issues with the scala compiler.
  
 ### Usage ###
 
