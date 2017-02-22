@@ -22,43 +22,37 @@ private class EvalCodeImpl[T](
 	)
 	extends EvalCode[T]
 {
-	private val srcFolder = new File(System.getProperty("java.io.tmpdir"), UUID.randomUUID.toString)
+  private val id = UUID.randomUUID.toString.replace("-", "_")
+	private val srcFolder = new File(System.getProperty("java.io.tmpdir"), id)
 	if (!srcFolder.mkdir) throw new IllegalStateException("can't create temp folder %s".format(srcFolder))
 
-	private val config = ScalaScriptEngine.defaultConfig(srcFolder).copy(classLoaderConfig = classLoaderConfig)
+  private val config = ScalaScriptEngine.defaultConfig(srcFolder).copy(classLoaderConfig = classLoaderConfig)
 	private val sse = ScalaScriptEngine.onChangeRefresh(config, 0)
 
-	private val templateTop = """
-		class Eval extends %s%s {
-			override def apply(%s):%s = { %s }
+  private val className = s"Eval_$id"
+
+  private val templateTop = {
+		def ttString(tt: TypeTag[_]) = tt.tpe.toString
+
+    val typeArgsString =
+      if (typeArgs.isEmpty) ""
+      else typeArgs.map(ttString).mkString("[", ",", "]")
+
+		val params = (argNames zip typeArgs).map {
+			case (pName, tt) => pName + ": " + ttString(tt)
+		}.mkString(",")
+
+		val retType = ttString(typeArgs.last)
+
+		s"""
+		class $className extends ${clz.getName}$typeArgsString {
+			override def apply($params): $retType = {
+        $body
+      }
 		}
-							  """.format(
-	// super class name
-	clz.getName,
-	// type args
-	if (typeArgs.isEmpty) ""
-	else "[" + typeArgs.map {
-		tt =>
-			toString(tt)
-	}.mkString(",") + "]",
-	// params
-	(argNames zip typeArgs).map {
-		case (pName, tt) =>
-			pName + " : " + toString(tt)
-	}.mkString(","), {
-		val last = typeArgs.last
-		toString(last)
-	},
-	// body
-	body
-	)
-
-	private def toString(tt: TypeTag[_]) = {
-		val t = tt.tpe
-		t.toString
+			"""
 	}
-
-	private val srcFile = new File(srcFolder, "Eval.scala")
+	private val srcFile = new File(srcFolder, s"$className.scala")
 	private val src = new FileWriter(srcFile)
 	try {
 		src.write(templateTop)
@@ -67,11 +61,13 @@ private class EvalCodeImpl[T](
 	}
 
 	// the Class[T]
-	val generatedClass = sse.get[T]("Eval")
-
-	// clean up
-	srcFile.delete()
-	srcFolder.delete()
+  val generatedClass: Class[T] =
+    try sse.get[T](className)
+    finally {
+      // clean up
+      srcFile.delete()
+      srcFolder.delete()
+    }
 
 	// creates a new instance of the evaluated class
 	def newInstance: T = generatedClass.newInstance
