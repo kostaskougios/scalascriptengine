@@ -30,7 +30,7 @@ class OnChangeRefreshPolicySuite extends FunSuite with Matchers
 			, 100
 		)
 
-		sse.deleteAllClassesInOutputDirectory
+		sse.deleteAllClassesInOutputDirectory()
 
 		copyFromSource(new File("testfiles/src1"), src1)
 		copyFromSource(new File("testfiles/src2"), src2)

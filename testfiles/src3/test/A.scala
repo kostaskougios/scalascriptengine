@@ -1,6 +1,6 @@
 package test
 
-class A extends TestClassTrait
+class A extends com.googlecode.scalascriptengine.TestClassTrait
 {
 	def result = "AMod"
 }

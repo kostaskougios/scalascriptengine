@@ -5,10 +5,10 @@ import java.io.File
 import org.apache.commons.io.FileUtils
 
 /**
- * @author kostantinos.kougios
- *
- *         22 Dec 2011
- */
+  * @author kostantinos.kougios
+  *
+  *         22 Dec 2011
+  */
 package object scalascriptengine
 {
 	def tmpDirStr = System.getProperty("java.io.tmpdir")
@@ -35,6 +35,7 @@ package object scalascriptengine
 	var time = System.currentTimeMillis - 50000
 
 	def copyFromSource(src: File, dest: File) = {
+		if (!src.exists) throw new IllegalArgumentException(s"dir ${src.getAbsolutePath} doesn't exist")
 
 		def replaceTime(dir: File) {
 			val files = dir.listFiles

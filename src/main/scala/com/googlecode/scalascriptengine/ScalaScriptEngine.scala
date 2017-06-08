@@ -164,7 +164,7 @@ class ScalaScriptEngine(val config: Config) extends Logging
 	 * methods to create an instance of the script engine, the output dir will
 	 * be in the tmp directory.
 	 */
-	def deleteAllClassesInOutputDirectory() {
+	def deleteAllClassesInOutputDirectory() = {
 		def deleteAllClassesInOutputDirectory(dir: File) {
 			dir.listFiles.filter(_.getName.endsWith(".class")).foreach(_.delete)
 			dir.listFiles.filter(_.isDirectory).foreach(d => deleteAllClassesInOutputDirectory(d))
