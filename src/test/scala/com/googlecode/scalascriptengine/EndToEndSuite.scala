@@ -5,8 +5,6 @@ import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger, AtomicLong}
 
 import com.googlecode.concurrent.ExecutorServiceManager
 import com.googlecode.scalascriptengine.scalascriptengine._
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FunSuite, Matchers}
 
 /**
@@ -14,7 +12,6 @@ import org.scalatest.{FunSuite, Matchers}
  *
  *         27 Dec 2011
  */
-@RunWith(classOf[JUnitRunner])
 class EndToEndSuite extends FunSuite with Matchers
 {
 	val sourceDir = new File("testfiles/EndToEndSuite")

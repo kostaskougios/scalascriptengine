@@ -1,3 +1,0 @@
-# run all tests for all scala supported versions
-
-mvn -P scala2.12 clean test || { exit 1; }

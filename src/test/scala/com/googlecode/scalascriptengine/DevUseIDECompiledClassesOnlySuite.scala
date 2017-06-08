@@ -3,14 +3,11 @@ package com.googlecode.scalascriptengine
 import java.io.File
 
 import com.googlecode.scalascriptengine.scalascriptengine._
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FunSuite, Matchers}
 
 /**
  * @author kkougios
  */
-@RunWith(classOf[JUnitRunner])
 class DevUseIDECompiledClassesOnlySuite extends FunSuite with Matchers
 {
 	val targetDir = new File("testfiles/ScalaClassLoaderSuite")

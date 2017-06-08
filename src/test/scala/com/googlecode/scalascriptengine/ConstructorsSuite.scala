@@ -1,7 +1,5 @@
 package com.googlecode.scalascriptengine
 
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FunSuite, Matchers}
 
 /**
@@ -9,7 +7,6 @@ import org.scalatest.{FunSuite, Matchers}
  *
  *         5 Jan 2012
  */
-@RunWith(classOf[JUnitRunner])
 class ConstructorsSuite extends FunSuite with Matchers
 {
 

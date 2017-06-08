@@ -4,8 +4,6 @@ import java.io.File
 
 import com.googlecode.scalascriptengine.scalascriptengine._
 import org.joda.time.DateTime
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FunSuite, Matchers}
 
 /**
@@ -13,7 +11,6 @@ import org.scalatest.{FunSuite, Matchers}
  *
  *         25 Dec 2011
  */
-@RunWith(classOf[JUnitRunner])
 class TimedRefreshPolicySuite extends FunSuite with Matchers
 {
 

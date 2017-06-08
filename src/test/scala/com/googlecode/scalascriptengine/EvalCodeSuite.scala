@@ -3,9 +3,7 @@ package com.googlecode.scalascriptengine
 import java.util.concurrent.Executors
 
 import com.googlecode.scalascriptengine.classloading.ClassLoaderConfig
-import org.junit.runner.RunWith
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FunSuite, Matchers}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -15,7 +13,6 @@ import scala.concurrent.{ExecutionContext, Future}
  *
  *         20 Aug 2012
  */
-@RunWith(classOf[JUnitRunner])
 class EvalCodeSuite extends FunSuite with Matchers with ScalaFutures with IntegrationPatience
 {
 	test("create list") {

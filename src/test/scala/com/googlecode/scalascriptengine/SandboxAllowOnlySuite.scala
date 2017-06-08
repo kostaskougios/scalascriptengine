@@ -4,8 +4,6 @@ import java.io.File
 import java.security.AccessControlException
 
 import com.googlecode.scalascriptengine.classloading.ClassLoaderConfig
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FunSuite, Matchers}
 
 /**
@@ -13,7 +11,6 @@ import org.scalatest.{FunSuite, Matchers}
  *
  *         12 Oct 2012
  */
-@RunWith(classOf[JUnitRunner])
 class SandboxAllowOnlySuite extends FunSuite with Matchers
 {
 	val sourceDir = new File("testfiles/SandboxAllowOnlySuite")

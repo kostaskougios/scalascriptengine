@@ -5,8 +5,6 @@ import java.io.File
 import com.googlecode.scalascriptengine.classloading.{ClassLoaderConfig, ScalaClassLoader}
 import com.googlecode.scalascriptengine.scalascriptengine._
 import com.googlecode.scalascriptengine.{TestClassTrait, TestParamTrait}
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FunSuite, Matchers}
 
 /**
@@ -14,7 +12,6 @@ import org.scalatest.{FunSuite, Matchers}
  *
  *         23 Dec 2011
  */
-@RunWith(classOf[JUnitRunner])
 class ScalaClassLoaderSuite extends FunSuite with Matchers
 {
 	val sourceDir = new File("testfiles/ScalaClassLoaderSuite")
