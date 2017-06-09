@@ -4,14 +4,15 @@ import java.io.File
 import java.security.AccessControlException
 
 import com.googlecode.scalascriptengine.classloading.ClassLoaderConfig
-import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
+import org.scalatest.Matchers._
+import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 /**
  * @author		konstantinos.kougios
  *
  *                7 Oct 2012
  */
-class SandboxSuite extends FunSuite with Matchers with BeforeAndAfterAll
+class SandboxSuite extends FunSuite with BeforeAndAfterAll
 {
 	val sourceDir = new File("testfiles/SandboxSuite")
 	val config = ScalaScriptEngine.defaultConfig(sourceDir).copy(
