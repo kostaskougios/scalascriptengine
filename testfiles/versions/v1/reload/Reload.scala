@@ -1,8 +1,6 @@
 package reload
 
-class Reload extends TestClassTrait
+class Reload extends com.googlecode.scalascriptengine.TestClassTrait
 {
-	println("ReloadV1")
-
 	def result = "v1"
 }

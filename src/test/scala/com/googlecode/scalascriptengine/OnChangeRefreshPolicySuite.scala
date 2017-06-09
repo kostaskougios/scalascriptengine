@@ -53,7 +53,7 @@ class OnChangeRefreshPolicySuite extends FunSuite with Matchers
 	test("onChangeRefreshAsynchronously: code modifications are refreshed but control returns immediatelly") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.onChangeRefreshAsynchronously(destDir)
-		sse.deleteAllClassesInOutputDirectory
+		sse.deleteAllClassesInOutputDirectory()
 		copyFromSource(new File(sourceDir, "v1"), destDir)
 		sse.refresh
 		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
@@ -72,7 +72,7 @@ class OnChangeRefreshPolicySuite extends FunSuite with Matchers
 	test("onChangeRefreshAsynchronously: code modifications are refreshed but control returns immediatelly even on errors") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.onChangeRefreshAsynchronously(destDir)
-		sse.deleteAllClassesInOutputDirectory
+		sse.deleteAllClassesInOutputDirectory()
 		copyFromSource(new File(sourceDir, "v1"), destDir)
 		sse.refresh
 		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
@@ -96,7 +96,7 @@ class OnChangeRefreshPolicySuite extends FunSuite with Matchers
 	test("onChangeRefresh: code modifications are reloaded immediatelly") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.onChangeRefresh(destDir)
-		sse.deleteAllClassesInOutputDirectory
+		sse.deleteAllClassesInOutputDirectory()
 		for (i <- 1 to 10) {
 			copyFromSource(new File(sourceDir, "v1"), destDir)
 			sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
@@ -116,7 +116,7 @@ class OnChangeRefreshPolicySuite extends FunSuite with Matchers
 	test("onChangeRefresh: code modifications are reloaded according to recheckEveryMillis") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.onChangeRefresh(destDir, 2000)
-		sse.deleteAllClassesInOutputDirectory
+		sse.deleteAllClassesInOutputDirectory()
 		copyFromSource(new File(sourceDir, "v1"), destDir)
 		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
 		sse.numberOfTimesSourcesTestedForModifications should be(1)
@@ -136,7 +136,7 @@ class OnChangeRefreshPolicySuite extends FunSuite with Matchers
 	test("onChangeRefresh: code modifications are reloaded according to recheckEveryMillis even when errors") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.onChangeRefresh(destDir, 2000)
-		sse.deleteAllClassesInOutputDirectory
+		sse.deleteAllClassesInOutputDirectory()
 		copyFromSource(new File(sourceDir, "v1"), destDir)
 		sse.newInstance[TestClassTrait]("reload.Reload").result should be("v1")
 		sse.versionNumber should be(1)
