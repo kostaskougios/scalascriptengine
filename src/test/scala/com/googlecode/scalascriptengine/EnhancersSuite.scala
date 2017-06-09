@@ -2,16 +2,16 @@ package com.googlecode.scalascriptengine
 
 import java.io.File
 
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.FunSuite
+import org.scalatest.Matchers._
 
 /**
- * @author kostantinos.kougios
- *
- *         2 Jan 2012
- */
-class EnhancersSuite extends FunSuite with Matchers
+  * @author kostantinos.kougios
+  *
+  *         2 Jan 2012
+  */
+class EnhancersSuite extends FunSuite
 {
-
 	val sourceDir = new File("testfiles/FromClasspathFirst")
 
 	test("from classpath first loads the already compiled version") {

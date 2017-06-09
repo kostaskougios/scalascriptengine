@@ -3,17 +3,18 @@ package com.googlecode.scalascriptengine
 import java.util.concurrent.Executors
 
 import com.googlecode.scalascriptengine.classloading.ClassLoaderConfig
+import org.scalatest.FunSuite
+import org.scalatest.Matchers._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.{FunSuite, Matchers}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
- * @author kostantinos.kougios
- *
- *         20 Aug 2012
- */
-class EvalCodeSuite extends FunSuite with Matchers with ScalaFutures with IntegrationPatience
+  * @author kostantinos.kougios
+  *
+  *         20 Aug 2012
+  */
+class EvalCodeSuite extends FunSuite with ScalaFutures with IntegrationPatience
 {
 	test("create list") {
 		val ect = EvalCode.with1Arg[Int => Int, List[Int]]("f", "List(f(5),f(10))")
@@ -104,25 +105,25 @@ class EvalCodeSuite extends FunSuite with Matchers with ScalaFutures with Integr
 			f(1)
 		}
 
-    eval("world.asInstanceOf[Object]")
-  }
+		eval("world.asInstanceOf[Object]")
+	}
 
-  test("can keep classes for later use") {
-    val num = 10
+	test("can keep classes for later use") {
+		val num = 10
 
-    val ects = for (i <- 1 to num) yield EvalCode.withoutArgs[Int](s"$i")
+		val ects = for (i <- 1 to num) yield EvalCode.withoutArgs[Int](s"$i")
 
-    ects.map{ect => ect.newInstance()} should be (1 to num)
-  }
+		ects.map { ect => ect.newInstance() } should be(1 to num)
+	}
 
-  test("compilation of multiple different scripts is thread safe") {
-    val num = 10
-    implicit val ec = ExecutionContext.fromExecutor(Executors.newFixedThreadPool(num))
+	test("compilation of multiple different scripts is thread safe") {
+		val num = 10
+		implicit val ec = ExecutionContext.fromExecutor(Executors.newFixedThreadPool(num))
 
-    val results = for (i <- 1 to num) yield
-      Future(EvalCode.withoutArgs[Int](s"$i")).map(_.newInstance())
+		val results = for (i <- 1 to num) yield
+			Future(EvalCode.withoutArgs[Int](s"$i")).map(_.newInstance())
 
-    Future.sequence(results).futureValue should be (1 to num)
-  }
+		Future.sequence(results).futureValue should be(1 to num)
+	}
 }
 
