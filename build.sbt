@@ -14,3 +14,5 @@ libraryDependencies ++= Seq(
 	"joda-time" % "joda-time" % "2.9.9"
 )
 
+// fork in test cause there are conflicts with sbt classpath
+fork in Test := true

@@ -27,7 +27,7 @@ class SandboxSuite extends FunSuite with BeforeAndAfterAll
 	System.setSecurityManager(sseSM)
 
 	val sse = ScalaScriptEngine.onChangeRefresh(config, 5)
-	sse.deleteAllClassesInOutputDirectory
+	sse.deleteAllClassesInOutputDirectory()
 	sse.refresh
 
 	test("will prevent access of a package") {

@@ -28,7 +28,7 @@ class SandboxAllowOnlySuite extends FunSuite
 		)
 	)
 	val sse = ScalaScriptEngine.onChangeRefresh(config, 5)
-	sse.deleteAllClassesInOutputDirectory
+	sse.deleteAllClassesInOutputDirectory()
 	sse.refresh
 
 	test("allow only specific packages, positive") {
