@@ -3,12 +3,13 @@ package com.googlecode.scalascriptengine
 import java.io.File
 
 import com.googlecode.scalascriptengine.scalascriptengine._
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.FunSuite
+import org.scalatest.Matchers._
 
 /**
- * @author kkougios
- */
-class DevUseIDECompiledClassesOnlySuite extends FunSuite with Matchers
+  * @author kkougios
+  */
+class DevUseIDECompiledClassesOnlySuite extends FunSuite
 {
 	val targetDir = new File("testfiles/ScalaClassLoaderSuite")
 	// parent classloader will contain scala-lib and all test-compiled classes

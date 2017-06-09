@@ -5,14 +5,15 @@ import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger, AtomicLong}
 
 import com.googlecode.concurrent.ExecutorServiceManager
 import com.googlecode.scalascriptengine.scalascriptengine._
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.FunSuite
+import org.scalatest.Matchers._
 
 /**
- * @author kostantinos.kougios
- *
- *         27 Dec 2011
- */
-class EndToEndSuite extends FunSuite with Matchers
+  * @author kostantinos.kougios
+  *
+  *         27 Dec 2011
+  */
+class EndToEndSuite extends FunSuite
 {
 	val sourceDir = new File("testfiles/EndToEndSuite")
 
@@ -21,7 +22,8 @@ class EndToEndSuite extends FunSuite with Matchers
 		def write(f: File, version: Int) {
 			val fw = new FileWriter(f)
 			try {
-				fw.write( """
+				fw.write(
+					"""
 package reload
 import com.googlecode.scalascriptengine.TestClassTrait
 
@@ -34,6 +36,7 @@ class Main extends TestClassTrait
 				fw.close
 			}
 		}
+
 		val destDir = newTmpDir("dynamicsrc/reload")
 		val main = new File(destDir, "Main.scala")
 		write(main, 1)
