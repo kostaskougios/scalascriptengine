@@ -3,12 +3,13 @@ package com.googlecode.scalascriptengine
 import java.io.File
 
 import com.googlecode.scalascriptengine.classloading.ClassRegistry
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.FunSuite
+import org.scalatest.Matchers._
 
 /**
  * @author kkougios
  */
-class ClassRegistrySuite extends FunSuite with Matchers
+class ClassRegistrySuite extends FunSuite
 {
 	val sourceDir = new File("testfiles/ScalaClassLoaderSuite/v1")
 
