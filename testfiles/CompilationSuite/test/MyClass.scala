@@ -1,6 +1,6 @@
 package test
 
-class MyClass extends TestClassTrait
+class MyClass extends com.googlecode.scalascriptengine.TestClassTrait
 {
 	val d = new Dep1
 

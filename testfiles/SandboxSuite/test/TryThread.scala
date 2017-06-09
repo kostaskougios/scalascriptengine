@@ -1,6 +1,6 @@
 package test
 
-class TryThread extends TestClassTrait
+class TryThread extends com.googlecode.scalascriptengine.TestClassTrait
 {
 	def result = {
 		new Thread

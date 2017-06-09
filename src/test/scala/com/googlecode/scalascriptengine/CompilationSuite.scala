@@ -3,21 +3,22 @@ package com.googlecode.scalascriptengine
 import java.io.File
 
 import com.googlecode.scalascriptengine.scalascriptengine._
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.FunSuite
+import org.scalatest.Matchers._
 
 /**
- * @author kostantinos.kougios
- *
- *         22 Dec 2011
- */
-class CompilationSuite extends FunSuite with Matchers
+  * @author kostantinos.kougios
+  *
+  *         22 Dec 2011
+  */
+class CompilationSuite extends FunSuite
 {
 	val sourceDir = new File("testfiles/CompilationSuite")
 	val versionsDir = new File("testfiles/versions")
 
 	test("compile only 1 file") {
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(SourcePath(new File(sourceDir, "test/Dep1.scala")))
-		sse.deleteAllClassesInOutputDirectory
+		sse.deleteAllClassesInOutputDirectory()
 		sse.refresh
 		val tct = sse.newInstance[TestClassTrait]("test.Dep1")
 		tct.result should be("Dep1R")
@@ -34,7 +35,7 @@ class CompilationSuite extends FunSuite with Matchers
 				new File(sourceDir, "test/Dep2.scala")
 			))
 		)
-		sse.deleteAllClassesInOutputDirectory
+		sse.deleteAllClassesInOutputDirectory()
 		sse.refresh
 		sse.newInstance[TestClassTrait]("test.Dep1").result should be("Dep1R")
 		sse.newInstance[TestClassTrait]("test.Dep2").result should be("Dep2R")
@@ -47,7 +48,7 @@ class CompilationSuite extends FunSuite with Matchers
 			version => cnt += 1
 		))
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(config, Set[File]())
-		sse.deleteAllClassesInOutputDirectory
+		sse.deleteAllClassesInOutputDirectory()
 		sse.refresh
 
 		cnt should be(1)
@@ -59,7 +60,7 @@ class CompilationSuite extends FunSuite with Matchers
 		val target1 = tmpOutputFolder(1)
 		val target2 = tmpOutputFolder(2)
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(List(SourcePath(Set(sourceDir1), target1), SourcePath(Set(sourceDir2), target2)))
-		sse.deleteAllClassesInOutputDirectory
+		sse.deleteAllClassesInOutputDirectory()
 
 		sse.refresh
 
@@ -70,7 +71,7 @@ class CompilationSuite extends FunSuite with Matchers
 	test("code modifications are reloaded") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(SourcePath(destDir))
-		sse.deleteAllClassesInOutputDirectory
+		sse.deleteAllClassesInOutputDirectory()
 		for (i <- 1 to 5) {
 			copyFromSource(new File(versionsDir, "v1"), destDir)
 			sse.refresh
@@ -85,7 +86,7 @@ class CompilationSuite extends FunSuite with Matchers
 
 	test("scala files to compiled classes") {
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(SourcePath(sourceDir))
-		sse.deleteAllClassesInOutputDirectory
+		sse.deleteAllClassesInOutputDirectory()
 		sse.refresh
 		sse.newInstance[Any]("test.MyClass")
 		new File(sse.config.targetDirs.head, "test/MyClass.class").exists should be(true)
@@ -94,7 +95,7 @@ class CompilationSuite extends FunSuite with Matchers
 
 	test("scala files correct") {
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(SourcePath(sourceDir))
-		sse.deleteAllClassesInOutputDirectory
+		sse.deleteAllClassesInOutputDirectory()
 		sse.refresh
 		val tct = sse.newInstance[TestClassTrait]("test.MyClass")
 		tct.result should be("ok")
@@ -102,10 +103,10 @@ class CompilationSuite extends FunSuite with Matchers
 
 	test("deleteAllClassesInOutputDirectory deletes all class files") {
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(SourcePath(sourceDir))
-		sse.deleteAllClassesInOutputDirectory
+		sse.deleteAllClassesInOutputDirectory()
 		sse.refresh
 		sse.newInstance[Any]("test.MyClass")
-		sse.deleteAllClassesInOutputDirectory
+		sse.deleteAllClassesInOutputDirectory()
 		new File(sse.config.targetDirs.head, "test/MyClass.class").exists should be(false)
 		new File(sse.config.targetDirs.head, "test/Dep1.class").exists should be(false)
 	}

@@ -5,7 +5,7 @@ package test
  *
  *         2 Jan 2012
  */
-class FCF extends TestClassTrait
+class FCF extends com.googlecode.scalascriptengine.TestClassTrait
 {
 	def result = "not from classpath"
 }

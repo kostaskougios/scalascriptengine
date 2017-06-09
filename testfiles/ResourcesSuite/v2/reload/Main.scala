@@ -2,7 +2,7 @@ package reload
 
 import scala.io.Source
 
-class Main extends TestClassTrait
+class Main extends com.googlecode.scalascriptengine.TestClassTrait
 {
 	def result = {
 		val in = getClass.getResourceAsStream("version.txt")

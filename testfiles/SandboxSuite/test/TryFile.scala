@@ -2,7 +2,7 @@ package test
 
 import java.io.File
 
-class TryFile extends TestClassTrait
+class TryFile extends com.googlecode.scalascriptengine.TestClassTrait
 {
 	def result = {
 		val a = A("hi")
