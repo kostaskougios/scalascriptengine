@@ -4,14 +4,15 @@ import java.io.File
 
 import com.googlecode.scalascriptengine.scalascriptengine._
 import org.joda.time.DateTime
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.FunSuite
+import org.scalatest.Matchers._
 
 /**
  * @author kostantinos.kougios
  *
  *         25 Dec 2011
  */
-class TimedRefreshPolicySuite extends FunSuite with Matchers
+class TimedRefreshPolicySuite extends FunSuite
 {
 
 	val sourceDir = new File("testfiles/versions")
