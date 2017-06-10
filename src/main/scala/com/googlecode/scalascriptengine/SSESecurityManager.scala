@@ -12,7 +12,7 @@ class SSESecurityManager(securityManager: SecurityManager) extends SecurityManag
 
 	if (securityManager == null) throw new NullPointerException("securityManager shouldn't be null")
 
-	private var enabled = new InheritableThreadLocal[Boolean]
+	private val enabled = new InheritableThreadLocal[Boolean]
 
 	override def checkPermission(perm: Permission) {
 		if (enabled.get) {

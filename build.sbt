@@ -16,3 +16,5 @@ libraryDependencies ++= Seq(
 
 // fork in test cause there are conflicts with sbt classpath
 fork in Test := true
+
+testOptions in Test += Tests.Argument("-oF")

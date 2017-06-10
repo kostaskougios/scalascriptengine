@@ -50,7 +50,7 @@ class SandboxSuite extends FunSuite with BeforeAndAfterAll
 			}
 		}
 		ex.getPermission match {
-			case fp: java.io.FilePermission if (fp.getActions == "read" && fp.getName == "/tmp") =>
+			case fp: java.io.FilePermission if fp.getActions == "read" && fp.getName == "/tmp" =>
 			// ok
 			case _ => throw ex
 		}

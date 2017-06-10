@@ -22,7 +22,7 @@ class SandboxAllowOnlySuite extends FunSuite
 	val config = ScalaScriptEngine.defaultConfig(sourceDir).copy(
 		classLoaderConfig = ClassLoaderConfig.Default.copy(
 			allowed = {
-				(pckg, name) =>
+				(pckg, _) =>
 					allowedPackages(pckg) || pckg == "test"
 			}
 		)
