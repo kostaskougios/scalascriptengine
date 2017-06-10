@@ -14,16 +14,16 @@ case class Config(
 	// each source folder is compiled and in turn is used as classpath for the next source folder.
 	// hence source folders must be in order of dependency, with the root classes been the
 	// first element of the list
-	val sourcePaths: List[SourcePath],
+	sourcePaths: List[SourcePath],
 	// this is the classpath for compilation and must be provided. i.e.
 	// ScalaScriptEngine.currentClassPath
-	val compilationClassPaths: Set[File] = ScalaScriptEngine.currentClassPath,
+	compilationClassPaths: Set[File] = ScalaScriptEngine.currentClassPath,
 	// this is an extra class loading classpath. I.e. the script folder might
 	// utilize extra jars. Also the parent classloader will be used
 	// to find any unresolved classes. This means that all classes visible to
 	// your application will also be visible to the scripts even if the
 	// classLoadingClassPaths is empty
-	val classLoadingClassPaths: Set[File] = Set(),
+	classLoadingClassPaths: Set[File] = Set.empty,
 
 	classLoaderConfig: ClassLoaderConfig = ClassLoaderConfig.Default,
 	compilationListeners: List[CodeVersion => Unit] = Nil,

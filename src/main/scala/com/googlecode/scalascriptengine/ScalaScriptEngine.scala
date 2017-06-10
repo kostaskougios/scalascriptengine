@@ -81,7 +81,7 @@ class ScalaScriptEngine(val config: Config) extends Logging
 
 		_compilationStatus = CompilationStatus.started
 
-		val allChangedFiles = config.sourcePaths.map(paths => allChanged(paths)).flatten
+		val allChangedFiles = config.sourcePaths.flatMap(paths => allChanged(paths))
 		_compilationStatus.checkStop
 		val result = if (allChangedFiles.isEmpty)
 			codeVersion
@@ -125,7 +125,7 @@ class ScalaScriptEngine(val config: Config) extends Logging
 		result
 	}
 
-	protected def createClassLoader = new ScalaClassLoader(
+	protected def createClassLoader = ScalaClassLoader(
 		config.sourcePaths.map(_.targetDir).toSet,
 		config.scalaSourceDirs.toSet ++ config.classLoadingClassPaths,
 		config.parentClassLoader,
@@ -227,16 +227,16 @@ class ScalaScriptEngine(val config: Config) extends Logging
 			}.toSet
 			else Set(src)
 
-			val sub = all.filter(_.isDirectory).map {
+			val sub = all.filter(_.isDirectory).flatMap {
 				dir =>
 					scan(dir, new File(clzDir, dir.getName))
-			}.flatten
+			}
 
 			mod ++ sub
 		}
 
 		val all = sourcePath.sources.flatMap(source => scan(source, sourcePath.targetDir))
-		all.foreach(modified.updated(_))
+		all.foreach(modified.updated)
 		all
 	}
 }
