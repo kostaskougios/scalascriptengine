@@ -22,7 +22,9 @@ class SandboxSuite extends FunSuite with BeforeAndAfterAll
 		)
 	)
 	System.setProperty("script.classes", config.targetDirs.head.toURI.toString)
-	System.setProperty("java.security.policy", new File("testfiles/SandboxSuite/test.policy").toURI.toString)
+
+	val policy = new File("testfiles/SandboxSuite/test.policy")
+	System.setProperty("java.security.policy", policy.toURI.toString)
 	val sseSM = new SSESecurityManager(new SecurityManager)
 	System.setSecurityManager(sseSM)
 

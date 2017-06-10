@@ -9,7 +9,6 @@ import java.security.Permission
  */
 class SSESecurityManager(securityManager: SecurityManager) extends SecurityManager
 {
-
 	if (securityManager == null) throw new NullPointerException("securityManager shouldn't be null")
 
 	private val enabled = new InheritableThreadLocal[Boolean]
