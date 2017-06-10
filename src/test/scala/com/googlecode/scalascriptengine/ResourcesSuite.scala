@@ -20,7 +20,7 @@ class ResourcesSuite extends FunSuite
 
 	test("loads resources from classpath") {
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(SourcePath(new File(sourceDir, "v1")))
-		sse.deleteAllClassesInOutputDirectory
+		sse.deleteAllClassesInOutputDirectory()
 		sse.refresh
 
 		val t: TestClassTrait = sse.newInstance[TestClassTrait]("reload.Main")
@@ -30,7 +30,7 @@ class ResourcesSuite extends FunSuite
 	test("loads changed resources from classpath without refreshing") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(SourcePath(destDir))
-		sse.deleteAllClassesInOutputDirectory
+		sse.deleteAllClassesInOutputDirectory()
 		copyFromSource(new File(sourceDir, "v1"), destDir)
 		sse.refresh
 
@@ -45,7 +45,7 @@ class ResourcesSuite extends FunSuite
 	test("loads changed resources from classpath with refreshing") {
 		val destDir = newTmpDir("dynamicsrc")
 		val sse = ScalaScriptEngine.withoutRefreshPolicy(SourcePath(destDir))
-		sse.deleteAllClassesInOutputDirectory
+		sse.deleteAllClassesInOutputDirectory()
 		copyFromSource(new File(sourceDir, "v1"), destDir)
 		sse.refresh
 
