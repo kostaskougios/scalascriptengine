@@ -33,15 +33,17 @@ class SandboxSuite extends FunSuite with BeforeAndAfterAll
 	sse.refresh
 
 	test("will prevent access of a package") {
-		intercept[AccessControlException] {
+		val ex = intercept[AccessControlException] {
 			sse.newInstance[TestClassTrait]("test.TryPackage").result
 		}
+		ex.getMessage should be("access to class javax.swing.Icon not allowed")
 	}
 
 	test("will prevent creating a thread") {
-		intercept[AccessControlException] {
+		val ex = intercept[AccessControlException] {
 			sse.newInstance[TestClassTrait]("test.TryThread").result
 		}
+		ex.getMessage should be("access to class java.lang.Thread not allowed")
 	}
 
 	test("will prevent access to a file") {

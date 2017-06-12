@@ -18,3 +18,5 @@ libraryDependencies ++= Seq(
 fork in Test := true
 
 testOptions in Test += Tests.Argument("-oF")
+
+parallelExecution in Test := false
