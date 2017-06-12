@@ -1,5 +1,7 @@
 name := "scalascriptengine"
 
+organization := "com.googlecode"
+
 version := "1.3.11"
 
 scalaVersion := "2.12.2"
