@@ -4,4 +4,7 @@ For queries/bug reports, please contact kostas.kougios@googlemail.com
 
 to release:
 
-mvn clean -P release deploy
+sbt
+publishSigned
+(and then close & publish the artifact @ oss.sonatype.org)
+
