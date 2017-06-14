@@ -6,6 +6,7 @@ Classpath detection can be automatic (effectively using the classpath of the cal
 Different compilation and refreshing strategies are provided to suit various purposes.
 
 ### News ###
+  * 14/06/2017 : v1.3.11 for scala 2.12 is now available
   * 08/06/2014 : v1.3.10 for scala 2.11 is now available, fixing the artifactId for sbt and scala version
   * 15/05/2014 : v1.3.9 for scala 2.11 is now available.
   * 05/03/2014 : v1.3.9 is available, bug fixes for Eval, and now eval is capable of taking arguments with generics. Also source paths can now be a set of files instead of directories.
@@ -44,8 +45,8 @@ Please use the maven repository to download the required jar, sources and javado
 ### sbt ###
 
 ```
-"com.googlecode.scalascriptengine" %% "scalascriptengine" % "1.3.10",
-"org.scala-lang" % "scala-compiler" % "2.11.1"
+"com.googlecode.scalascriptengine" %% "scalascriptengine" % "1.3.11",
+"org.scala-lang" % "scala-compiler" % "2.12.2"
 
 ```
 
