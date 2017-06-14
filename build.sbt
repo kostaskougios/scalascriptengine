@@ -1,8 +1,10 @@
+import sbt.Tests.{ Group, SubProcess }
+
 name := "scalascriptengine"
 
 organization := "com.googlecode.scalascriptengine"
 
-version := "1.3.11-SNAPSHOT"
+version := "1.3.11"
 
 pomIncludeRepository := { _ => false }
 
@@ -49,6 +51,21 @@ libraryDependencies ++= Seq(
 )
 
 // fork in test cause there are conflicts with sbt classpath
-fork in Test := true
+def forkedJvmPerTest(testDefs: Seq[TestDefinition]) = testDefs.groupBy(
+	test => test.name match {
+		case "com.googlecode.scalascriptengine.SandboxSuite" =>
+			test.name
+		case _ => "global"
+	}
+).map { case (name, tests) =>
+	Group(
+		name = name,
+		tests = tests,
+		runPolicy = SubProcess(ForkOptions())
+	)
+}.toSeq
+
+//definedTests in Test returns all of the tests (that are by default under src/test/scala).
+testGrouping in Test <<= (definedTests in Test) map forkedJvmPerTest
 
 testOptions in Test += Tests.Argument("-oF")

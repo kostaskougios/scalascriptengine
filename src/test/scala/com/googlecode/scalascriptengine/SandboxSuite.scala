@@ -5,7 +5,7 @@ import java.security.AccessControlException
 
 import com.googlecode.scalascriptengine.classloading.ClassLoaderConfig
 import org.scalatest.Matchers._
-import org.scalatest.{BeforeAndAfterAll, FunSuite}
+import org.scalatest.{ BeforeAndAfterAll, FunSuite }
 
 /**
  * @author		konstantinos.kougios
@@ -27,6 +27,7 @@ class SandboxSuite extends FunSuite with BeforeAndAfterAll
 	System.setProperty("java.security.policy", policy.toURI.toString)
 	val sseSM = new SSESecurityManager(new SecurityManager)
 	System.setSecurityManager(sseSM)
+	System.getSecurityManager should be theSameInstanceAs sseSM
 
 	val sse = ScalaScriptEngine.onChangeRefresh(config, 5)
 	sse.deleteAllClassesInOutputDirectory()
